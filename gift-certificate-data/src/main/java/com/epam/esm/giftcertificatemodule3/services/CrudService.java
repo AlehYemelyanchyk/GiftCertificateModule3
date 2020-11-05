@@ -28,13 +28,20 @@ public interface CrudService<T, ID> {
     T findById(ID id) throws ServiceException;
 
     /**
-     * Saves a given entity if id is equals to 0.
-     * Updates a given entity if id is not equals to 0.
+     * Saves a given entity.
      *
      * @param object must not be {@literal null}.
      * @throws ServiceException if a DAOException is thrown from its invoked DAO level method.
      */
     void save(T object) throws ServiceException;
+
+    /**
+     * Updates a given entity.
+     *
+     * @param object must not be {@literal null}.
+     * @throws ServiceException if a DAOException is thrown from its invoked DAO level method.
+     */
+    void update(T object) throws ServiceException;
 
     /**
      * Deletes a given entity.

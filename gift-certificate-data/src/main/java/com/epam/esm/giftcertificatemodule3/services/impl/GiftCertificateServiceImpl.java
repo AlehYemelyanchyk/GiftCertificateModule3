@@ -6,8 +6,8 @@ import com.epam.esm.giftcertificatemodule3.services.GiftCertificateService;
 import com.epam.esm.giftcertificatemodule3.services.exceptions.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -36,6 +36,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public void save(GiftCertificate object) throws ServiceException {
         giftCertificateDAO.save(object);
+    }
+
+    @Override
+    public void update(GiftCertificate object) throws ServiceException {
+        giftCertificateDAO.update(object);
     }
 
     @Transactional

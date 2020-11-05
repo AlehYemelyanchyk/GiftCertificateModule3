@@ -8,6 +8,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @RestController
@@ -54,7 +56,8 @@ public class GiftCertificateController {
     @PostMapping("/certificates")
     public GiftCertificate saveGiftCertificate(@RequestBody GiftCertificate giftCertificate) {
         try {
-            giftCertificate.setId(0L);
+            giftCertificate.setCreateDate(formatDate());
+            giftCertificate.setLastUpdateDate(formatDate());
             giftCertificateService.save(giftCertificate);
         } catch (ServiceException e) {
             LOGGER.error("save error: " + e.getMessage());
@@ -66,6 +69,7 @@ public class GiftCertificateController {
     @PutMapping("/certificates")
     public GiftCertificate update(@RequestBody GiftCertificate giftCertificate) {
         try {
+            giftCertificate.setLastUpdateDate(formatDate());
             giftCertificateService.save(giftCertificate);
         } catch (ServiceException e) {
             LOGGER.error("save error: " + e.getMessage());
@@ -92,5 +96,10 @@ public class GiftCertificateController {
             LOGGER.error("delete error: " + e.getMessage());
             throw new RuntimeException("GiftCertificate (id = " + id + ")");
         }
+    }
+
+    private OffsetDateTime formatDate() {
+//        return LocalDateTime.parse(ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+        return ZonedDateTime.now().toOffsetDateTime();
     }
 }

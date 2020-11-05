@@ -25,12 +25,18 @@ public interface CrudDAO<T, ID> {
     T findById(ID id);
 
     /**
-     * Saves a given entity if id is equals to 0.
-     * Updates a given entity if id is not equals to 0.
+     * Saves a given entity.
      *
      * @param object must not be {@literal null}.
      */
     void save(T object);
+
+    /**
+     * Updates a given entity.
+     *
+     * @param object must not be {@literal null}.
+     */
+    void update(T object);
 
     /**
      * Deletes a given entity.

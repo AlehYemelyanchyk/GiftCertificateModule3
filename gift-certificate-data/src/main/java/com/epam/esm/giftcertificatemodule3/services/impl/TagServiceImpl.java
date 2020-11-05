@@ -38,6 +38,11 @@ public class TagServiceImpl implements TagService {
         tagDAO.save(object);
     }
 
+    @Override
+    public void update(Tag object) throws ServiceException {
+        tagDAO.update(object);
+    }
+
     @Transactional
     @Override
     public void delete(Tag object) throws ServiceException {

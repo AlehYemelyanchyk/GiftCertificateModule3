@@ -54,7 +54,6 @@ public class TagController {
     @PostMapping("/tags")
     public Tag saveTag(@RequestBody Tag tag) {
         try {
-            tag.setId(0);
             tagService.save(tag);
         } catch (ServiceException e) {
             LOGGER.error("save error: " + e.getMessage());
@@ -66,7 +65,7 @@ public class TagController {
     @PutMapping("/tags")
     public Tag update(@RequestBody Tag tag) {
         try {
-            tagService.save(tag);
+            tagService.update(tag);
         } catch (ServiceException e) {
             LOGGER.error("save error: " + e.getMessage());
             throw new RuntimeException();

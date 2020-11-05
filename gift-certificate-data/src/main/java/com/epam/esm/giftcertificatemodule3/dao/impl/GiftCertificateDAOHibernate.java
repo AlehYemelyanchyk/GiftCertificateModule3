@@ -36,7 +36,13 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
     @Override
     public void save(GiftCertificate object) {
         Session session = entityManager.unwrap(Session.class);
-        session.saveOrUpdate(object);
+        session.save(object);
+    }
+
+    @Override
+    public void update(GiftCertificate object) {
+        Session session = entityManager.unwrap(Session.class);
+        session.update(object);
     }
 
     @Override
@@ -48,7 +54,7 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
     @Override
     public void deleteById(Long id) {
         Session session = entityManager.unwrap(Session.class);
-        Query query = session.createQuery("delete from GiftCertificate where id_cert=:id");
+        Query query = session.createQuery("delete from GiftCertificate where id=:id_cert");
         query.setParameter("id_cert", id);
         query.executeUpdate();
     }

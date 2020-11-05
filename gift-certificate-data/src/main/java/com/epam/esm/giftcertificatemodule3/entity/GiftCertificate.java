@@ -2,7 +2,7 @@ package com.epam.esm.giftcertificatemodule3.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 @Entity
@@ -25,10 +25,10 @@ public class GiftCertificate implements Serializable {
     private Double price;
 
     @Column(name = "create_date")
-    private LocalDateTime createDate;
+    private OffsetDateTime createDate;
 
     @Column(name = "last_update_date")
-    private LocalDateTime lastUpdateDate;
+    private OffsetDateTime lastUpdateDate;
 
     @Column(name = "duration")
     private Integer duration;
@@ -69,19 +69,19 @@ public class GiftCertificate implements Serializable {
         this.price = price;
     }
 
-    public LocalDateTime getCreateDate() {
+    public OffsetDateTime getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(LocalDateTime createDate) {
+    public void setCreateDate(OffsetDateTime createDate) {
         this.createDate = createDate;
     }
 
-    public LocalDateTime getLastUpdateDate() {
+    public OffsetDateTime getLastUpdateDate() {
         return lastUpdateDate;
     }
 
-    public void setLastUpdateDate(LocalDateTime lastUpdateDate) {
+    public void setLastUpdateDate(OffsetDateTime lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
 

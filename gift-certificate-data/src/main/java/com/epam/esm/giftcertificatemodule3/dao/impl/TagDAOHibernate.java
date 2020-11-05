@@ -36,7 +36,13 @@ public class TagDAOHibernate implements TagDAO {
     @Override
     public void save(Tag object) {
         Session session = entityManager.unwrap(Session.class);
-        session.saveOrUpdate(object);
+        session.save(object);
+    }
+
+    @Override
+    public void update(Tag object) {
+        Session session = entityManager.unwrap(Session.class);
+        session.update(object);
     }
 
     @Override
