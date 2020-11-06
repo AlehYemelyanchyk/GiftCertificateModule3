@@ -1,13 +1,20 @@
 package com.epam.esm.giftcertificatemodule3.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "tags")
 public class Tag implements Serializable {
     private static final long serialVersionUID = 8700472259924409409L;
+
+    @ManyToMany(mappedBy = "tags")
+    @JsonBackReference
+    private List<GiftCertificate> certificates;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +42,14 @@ public class Tag implements Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public List<GiftCertificate> getCertificates() {
+        return certificates;
+    }
+
+    public void setCertificates(List<GiftCertificate> certificates) {
+        this.certificates = certificates;
     }
 
     @Override
