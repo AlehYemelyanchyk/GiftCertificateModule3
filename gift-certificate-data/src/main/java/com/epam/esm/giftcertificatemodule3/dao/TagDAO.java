@@ -9,4 +9,5 @@ import com.epam.esm.giftcertificatemodule3.entity.Tag;
  * @author Aleh Yemelyanchyk
  */
 public interface TagDAO extends CrudDAO<Tag, Integer> {
+    Tag findByName(String name);
 }

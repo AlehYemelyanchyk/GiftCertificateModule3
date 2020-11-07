@@ -28,12 +28,12 @@ public class Tag implements Serializable {
     public Tag() {
     }
 
-    public String getName() {
-        return name;
+    public List<GiftCertificate> getCertificates() {
+        return certificates;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCertificates(List<GiftCertificate> certificates) {
+        this.certificates = certificates;
     }
 
     public int getId() {
@@ -44,12 +44,12 @@ public class Tag implements Serializable {
         this.id = id;
     }
 
-    public List<GiftCertificate> getCertificates() {
-        return certificates;
+    public String getName() {
+        return name;
     }
 
-    public void setCertificates(List<GiftCertificate> certificates) {
-        this.certificates = certificates;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

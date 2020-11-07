@@ -1,7 +1,5 @@
 package com.epam.esm.giftcertificatemodule3.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -13,14 +11,12 @@ import java.util.Objects;
 public class GiftCertificate implements Serializable {
     private static final Long serialVersionUID = 1724820758632935338L;
 
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name = "tagged_certificates",
             joinColumns = @JoinColumn(name = "certificate_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    @JsonManagedReference
     private List<Tag> tags;
 
     @Id
@@ -48,6 +44,14 @@ public class GiftCertificate implements Serializable {
 
     // Required by Hibernate
     public GiftCertificate() {
+    }
+
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
     }
 
     public Long getId() {
@@ -104,14 +108,6 @@ public class GiftCertificate implements Serializable {
 
     public void setDuration(Integer duration) {
         this.duration = duration;
-    }
-
-    public List<Tag> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<Tag> tags) {
-        this.tags = tags;
     }
 
     @Override

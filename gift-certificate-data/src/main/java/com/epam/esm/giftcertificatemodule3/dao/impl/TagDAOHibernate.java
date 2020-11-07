@@ -34,6 +34,14 @@ public class TagDAOHibernate implements TagDAO {
     }
 
     @Override
+    public Tag findByName(String name) {
+        Session session = entityManager.unwrap(Session.class);
+        Query query = session.createQuery("from Tag where name=:name");
+        query.setParameter("name", name);
+        return (Tag) query.uniqueResult();
+    }
+
+    @Override
     public void save(Tag object) {
         Session session = entityManager.unwrap(Session.class);
         session.save(object);

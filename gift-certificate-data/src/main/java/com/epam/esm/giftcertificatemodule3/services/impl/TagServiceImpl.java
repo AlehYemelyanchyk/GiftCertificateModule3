@@ -7,7 +7,7 @@ import com.epam.esm.giftcertificatemodule3.services.exceptions.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
@@ -38,6 +38,7 @@ public class TagServiceImpl implements TagService {
         tagDAO.save(object);
     }
 
+    @Transactional
     @Override
     public void update(Tag object) throws ServiceException {
         tagDAO.update(object);

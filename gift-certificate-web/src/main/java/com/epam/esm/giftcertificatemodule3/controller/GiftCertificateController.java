@@ -54,10 +54,8 @@ public class GiftCertificateController {
     }
 
     @PostMapping("/certificates")
-    public GiftCertificate saveGiftCertificate(@RequestBody GiftCertificate giftCertificate) {
+    public GiftCertificate save(@RequestBody GiftCertificate giftCertificate) {
         try {
-            giftCertificate.setCreateDate(formatDate());
-            giftCertificate.setLastUpdateDate(formatDate());
             giftCertificateService.save(giftCertificate);
         } catch (ServiceException e) {
             LOGGER.error("save error: " + e.getMessage());
@@ -69,8 +67,7 @@ public class GiftCertificateController {
     @PutMapping("/certificates")
     public GiftCertificate update(@RequestBody GiftCertificate giftCertificate) {
         try {
-            giftCertificate.setLastUpdateDate(formatDate());
-            giftCertificateService.save(giftCertificate);
+            giftCertificateService.update(giftCertificate);
         } catch (ServiceException e) {
             LOGGER.error("save error: " + e.getMessage());
             throw new RuntimeException();
@@ -99,7 +96,6 @@ public class GiftCertificateController {
     }
 
     private OffsetDateTime formatDate() {
-//        return LocalDateTime.parse(ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
         return ZonedDateTime.now().toOffsetDateTime();
     }
 }

@@ -1,7 +1,9 @@
 package com.epam.esm.giftcertificatemodule3.services.impl;
 
 import com.epam.esm.giftcertificatemodule3.dao.GiftCertificateDAO;
+import com.epam.esm.giftcertificatemodule3.dao.TagDAO;
 import com.epam.esm.giftcertificatemodule3.entity.GiftCertificate;
+import com.epam.esm.giftcertificatemodule3.entity.Tag;
 import com.epam.esm.giftcertificatemodule3.services.GiftCertificateService;
 import com.epam.esm.giftcertificatemodule3.services.exceptions.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +16,12 @@ import java.util.List;
 public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     private final GiftCertificateDAO giftCertificateDAO;
+    private final TagDAO tagDAO;
 
     @Autowired
-    public GiftCertificateServiceImpl(GiftCertificateDAO giftCertificateDAO) {
+    public GiftCertificateServiceImpl(GiftCertificateDAO giftCertificateDAO, TagDAO tagDAO) {
         this.giftCertificateDAO = giftCertificateDAO;
+        this.tagDAO = tagDAO;
     }
 
     @Transactional
@@ -34,19 +38,27 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Transactional
     @Override
-    public void save(GiftCertificate object) throws ServiceException {
-        giftCertificateDAO.save(object);
-    }
-
-    @Override
-    public void update(GiftCertificate object) throws ServiceException {
-        giftCertificateDAO.update(object);
+    public void save(GiftCertificate giftCertificate) throws ServiceException {
+        List<Tag> tags = giftCertificate.getTags();
+        tags.forEach(tag -> {
+            Tag savedTag = tagDAO.findByName(tag.getName());
+            if (savedTag != null) {
+                tag.setId(savedTag.getId());
+            }
+        });
+        giftCertificateDAO.save(giftCertificate);
     }
 
     @Transactional
     @Override
-    public void delete(GiftCertificate object) throws ServiceException {
-        giftCertificateDAO.delete(object);
+    public void update(GiftCertificate giftCertificate) throws ServiceException {
+        giftCertificateDAO.update(giftCertificate);
+    }
+
+    @Transactional
+    @Override
+    public void delete(GiftCertificate giftCertificate) throws ServiceException {
+        giftCertificateDAO.delete(giftCertificate);
     }
 
     @Transactional
