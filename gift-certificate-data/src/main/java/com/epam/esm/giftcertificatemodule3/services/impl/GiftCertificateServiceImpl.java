@@ -39,19 +39,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Transactional
     @Override
     public void save(GiftCertificate giftCertificate) throws ServiceException {
-        List<Tag> tags = giftCertificate.getTags();
-        tags.forEach(tag -> {
-            Tag savedTag = tagDAO.findByName(tag.getName());
-            if (savedTag != null) {
-                tag.setId(savedTag.getId());
-            }
-        });
+        getTagsId(giftCertificate);
         giftCertificateDAO.save(giftCertificate);
     }
 
     @Transactional
     @Override
     public void update(GiftCertificate giftCertificate) throws ServiceException {
+        getTagsId(giftCertificate);
         giftCertificateDAO.update(giftCertificate);
     }
 
@@ -65,5 +60,17 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public void deleteById(Long id) throws ServiceException {
         giftCertificateDAO.deleteById(id);
+    }
+
+    private void getTagsId(GiftCertificate giftCertificate) {
+        List<Tag> tags = giftCertificate.getTags();
+        if (tags != null) {
+            tags.forEach(tag -> {
+                Tag savedTag = tagDAO.findByName(tag.getName());
+                if (savedTag != null) {
+                    tag.setId(savedTag.getId());
+                }
+            });
+        }
     }
 }

@@ -2,7 +2,6 @@ package com.epam.esm.giftcertificatemodule3.dao.impl;
 
 import com.epam.esm.giftcertificatemodule3.dao.GiftCertificateDAO;
 import com.epam.esm.giftcertificatemodule3.entity.GiftCertificate;
-import com.epam.esm.giftcertificatemodule3.entity.Tag;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Repository
 public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
@@ -49,10 +45,12 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
 
     @Override
     public void update(GiftCertificate giftCertificate) {
+        giftCertificate.setLastUpdateDate(ZonedDateTime.now().toOffsetDateTime());
         Session session = entityManager.unwrap(Session.class);
         GiftCertificate oldGiftCertificate = findById(giftCertificate.getId());
         setUpdatedFields(giftCertificate, oldGiftCertificate);
-        session.saveOrUpdate(oldGiftCertificate);
+        session.clear();
+        session.saveOrUpdate(giftCertificate);
     }
 
     @Override
@@ -70,25 +68,18 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
     }
 
     private void setUpdatedFields(GiftCertificate giftCertificate, GiftCertificate oldGiftCertificate) {
-        if (giftCertificate.getName() != null) {
-            oldGiftCertificate.setName(giftCertificate.getName());
+        if (giftCertificate.getName() == null) {
+            giftCertificate.setName(oldGiftCertificate.getName());
         }
-        if (giftCertificate.getDescription() != null) {
-            oldGiftCertificate.setDescription(giftCertificate.getDescription());
+        if (giftCertificate.getDescription() == null) {
+            giftCertificate.setDescription(oldGiftCertificate.getDescription());
         }
-        if (giftCertificate.getPrice() != null) {
-            oldGiftCertificate.setPrice(giftCertificate.getPrice());
+        if (giftCertificate.getPrice() == null) {
+            giftCertificate.setPrice(oldGiftCertificate.getPrice());
         }
-        if (giftCertificate.getDuration() != null) {
-            oldGiftCertificate.setDuration(giftCertificate.getDuration());
+        if (giftCertificate.getDuration() == null) {
+            giftCertificate.setDuration(oldGiftCertificate.getDuration());
         }
-        if (giftCertificate.getTags() != null) {
-            Set<Tag> tagsSet = new HashSet<>();
-            tagsSet.addAll(oldGiftCertificate.getTags());
-            tagsSet.addAll(giftCertificate.getTags());
-            List<Tag> tagsList = new ArrayList<>(tagsSet);
-            oldGiftCertificate.setTags(tagsList);
-        }
-        oldGiftCertificate.setLastUpdateDate(ZonedDateTime.now().toOffsetDateTime());
+        giftCertificate.setCreateDate(oldGiftCertificate.getCreateDate());
     }
 }
