@@ -9,10 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.OffsetDateTime;
-import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -58,21 +55,21 @@ public class GiftCertificateController {
     }
 
     @GetMapping("/certificates/findBy")
-    public List<GiftCertificate> findBy(@RequestParam Optional<Long> id,
-                                              @RequestParam Optional<String> tagName,
-                                              @RequestParam Optional<String> name,
-                                              @RequestParam Optional<String> description,
-                                              @RequestParam Optional<String> sortBy,
-                                              @RequestParam Optional<String> sortOrder) {
+    public List<GiftCertificate> findBy(@RequestParam(required = false) Long id,
+                                        @RequestParam(required = false) String tagName,
+                                        @RequestParam(required = false) String name,
+                                        @RequestParam(required = false) String description,
+                                        @RequestParam(required = false) String sortBy,
+                                        @RequestParam(required = false) String sortOrder) {
         List<GiftCertificate> returnObject;
 
         SearchParametersHolder searchParametersHolder = new SearchParametersHolder();
-        searchParametersHolder.setId(id.orElse(null));
-        searchParametersHolder.setTagName(tagName.orElse(null));
-        searchParametersHolder.setName(name.orElse(null));
-        searchParametersHolder.setDescription(description.orElse(null));
-        searchParametersHolder.setSortBy(sortBy.orElse(null));
-        searchParametersHolder.setSortOrder(sortOrder.orElse(null));
+        searchParametersHolder.setId(id);
+        searchParametersHolder.setTagName(tagName);
+        searchParametersHolder.setName(name);
+        searchParametersHolder.setDescription(description);
+        searchParametersHolder.setSortBy(sortBy);
+        searchParametersHolder.setSortOrder(sortOrder);
 
         try {
             returnObject = giftCertificateService.findBy(searchParametersHolder);
@@ -126,9 +123,5 @@ public class GiftCertificateController {
             LOGGER.error("delete error: " + e.getMessage());
             throw new RuntimeException("GiftCertificate (id = " + id + ")");
         }
-    }
-
-    private OffsetDateTime formatDate() {
-        return ZonedDateTime.now().toOffsetDateTime();
     }
 }

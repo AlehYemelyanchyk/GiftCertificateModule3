@@ -12,6 +12,7 @@ import java.util.List;
  * @author Aleh Yemelyanchyk
  */
 public interface GiftCertificateDAO extends CrudDAO<GiftCertificate, Long> {
+
     /**
      * Returns all instances of the GiftCertificate type.
      *
