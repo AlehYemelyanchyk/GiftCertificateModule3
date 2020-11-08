@@ -1,6 +1,7 @@
 package com.epam.esm.giftcertificatemodule3.controller;
 
 import com.epam.esm.giftcertificatemodule3.entity.GiftCertificate;
+import com.epam.esm.giftcertificatemodule3.model.SearchParametersHolder;
 import com.epam.esm.giftcertificatemodule3.services.GiftCertificateService;
 import com.epam.esm.giftcertificatemodule3.services.exceptions.ServiceException;
 import org.apache.logging.log4j.LogManager;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -49,6 +51,35 @@ public class GiftCertificateController {
         } catch (ServiceException e) {
             LOGGER.error("findById error: " + e.getMessage());
             throw new RuntimeException();
+        }
+        return returnObject;
+    }
+
+    @GetMapping("/certificates/findBy")
+    public List<GiftCertificate> findBy(@RequestParam Optional<Long> id,
+                                              @RequestParam Optional<String> tagName,
+                                              @RequestParam Optional<String> name,
+                                              @RequestParam Optional<String> description,
+                                              @RequestParam Optional<String> sortBy,
+                                              @RequestParam Optional<String> sortOrder) {
+        List<GiftCertificate> returnObject;
+
+        SearchParametersHolder searchParametersHolder = new SearchParametersHolder();
+        searchParametersHolder.setId(id.orElse(null));
+        searchParametersHolder.setTagName(tagName.orElse(null));
+        searchParametersHolder.setName(name.orElse(null));
+        searchParametersHolder.setDescription(description.orElse(null));
+        searchParametersHolder.setSortBy(sortBy.orElse(null));
+        searchParametersHolder.setSortOrder(sortOrder.orElse(null));
+
+        try {
+            returnObject = giftCertificateService.findBy(searchParametersHolder);
+        } catch (ServiceException e) {
+            LOGGER.error("searchBy error: " + e.getMessage());
+            throw new RuntimeException();
+        }
+        if (returnObject.isEmpty()) {
+            throw new RuntimeException("Certificates");
         }
         return returnObject;
     }

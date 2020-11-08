@@ -4,6 +4,7 @@ import com.epam.esm.giftcertificatemodule3.dao.GiftCertificateDAO;
 import com.epam.esm.giftcertificatemodule3.dao.TagDAO;
 import com.epam.esm.giftcertificatemodule3.entity.GiftCertificate;
 import com.epam.esm.giftcertificatemodule3.entity.Tag;
+import com.epam.esm.giftcertificatemodule3.model.SearchParametersHolder;
 import com.epam.esm.giftcertificatemodule3.services.GiftCertificateService;
 import com.epam.esm.giftcertificatemodule3.services.exceptions.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public GiftCertificate findById(Long id) throws ServiceException {
         return giftCertificateDAO.findById(id);
+    }
+
+    @Override
+    public List<GiftCertificate> findBy(SearchParametersHolder searchParametersHolder) throws ServiceException {
+        return giftCertificateDAO.findBy(searchParametersHolder);
     }
 
     @Transactional
