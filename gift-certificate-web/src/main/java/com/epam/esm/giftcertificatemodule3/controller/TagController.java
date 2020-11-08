@@ -6,9 +6,14 @@ import com.epam.esm.giftcertificatemodule3.services.exceptions.ServiceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/api")
@@ -37,10 +42,10 @@ public class TagController {
     }
 
     @GetMapping("/tags/{id}")
-    public Tag findById(@PathVariable int id) {
-        Tag returnObject;
+    public EntityModel<Tag> findById(@PathVariable int id) {
+        EntityModel<Tag> returnObject;
         try {
-            returnObject = tagService.findById(id);
+            returnObject = EntityModel.of(tagService.findById(id));
             if (returnObject == null) {
                 throw new RuntimeException();
             }
@@ -48,6 +53,8 @@ public class TagController {
             LOGGER.error("findById error: " + e.getMessage());
             throw new RuntimeException();
         }
+        WebMvcLinkBuilder linkToFindAll = linkTo(methodOn(this.getClass()).findAll());
+        returnObject.add(linkToFindAll.withRel("all-tags"));
         return returnObject;
     }
 
