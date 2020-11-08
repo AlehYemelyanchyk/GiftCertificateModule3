@@ -28,11 +28,13 @@ public class GiftCertificateController {
     }
 
     @GetMapping("/certificates")
-    public List<GiftCertificate> findAll() {
+    public List<GiftCertificate> findAll(
+            @RequestParam int firstResult,
+            @RequestParam int maxResults
+    ) {
         List<GiftCertificate> giftCertificates;
-
         try {
-            giftCertificates = giftCertificateService.findAll();
+            giftCertificates = giftCertificateService.findAll(firstResult, maxResults);
         } catch (ServiceException e) {
             LOGGER.error("findAll error: " + e.getMessage());
             throw new RuntimeException();

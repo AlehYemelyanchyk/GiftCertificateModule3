@@ -13,10 +13,12 @@ public interface CrudService<T, ID> {
     /**
      * Returns all instances of the type.
      *
+     * @param firstResult is the position of the first result in the datasource which should be returned.
+     * @param maxResults is the number of the results by one page.
      * @return all entities
      * @throws ServiceException if a DAOException is thrown from its invoked DAO level method.
      */
-    List<T> findAll() throws ServiceException;
+    List<T> findAll(int firstResult, int maxResults) throws ServiceException;
 
     /**
      * Returns whether an entity with the given id exists.

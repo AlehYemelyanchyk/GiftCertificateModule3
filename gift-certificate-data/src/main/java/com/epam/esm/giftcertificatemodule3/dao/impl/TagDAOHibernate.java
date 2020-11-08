@@ -21,9 +21,11 @@ public class TagDAOHibernate implements TagDAO {
     }
 
     @Override
-    public List<Tag> findAll() {
+    public List<Tag> findAll(int firstResult, int maxResults) {
         Session session = entityManager.unwrap(Session.class);
         Query<Tag> query = session.createQuery("from Tag", Tag.class);
+        query.setFirstResult(firstResult);
+        query.setMaxResults(maxResults);
         return query.getResultList();
     }
 

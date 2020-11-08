@@ -29,11 +29,14 @@ public class TagController {
     }
 
     @GetMapping("/tags")
-    public List<Tag> findAll() {
+    public List<Tag> findAll(
+            @PathVariable int firstResult,
+            @PathVariable int maxResults
+    ) {
         List<Tag> tags;
 
         try {
-            tags = tagService.findAll();
+            tags = tagService.findAll(firstResult, maxResults);
         } catch (ServiceException e) {
             LOGGER.error("findAll error: " + e.getMessage());
             throw new RuntimeException();
@@ -53,7 +56,7 @@ public class TagController {
             LOGGER.error("findById error: " + e.getMessage());
             throw new RuntimeException();
         }
-        WebMvcLinkBuilder linkToFindAll = linkTo(methodOn(this.getClass()).findAll());
+        WebMvcLinkBuilder linkToFindAll = linkTo(methodOn(this.getClass()).findAll(0, 10));
         returnObject.add(linkToFindAll.withRel("all-tags"));
         return returnObject;
     }

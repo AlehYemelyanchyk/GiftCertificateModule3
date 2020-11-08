@@ -23,9 +23,11 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
     }
 
     @Override
-    public List<GiftCertificate> findAll() {
+    public List<GiftCertificate> findAll(int firstResult, int maxResults) {
         Session session = entityManager.unwrap(Session.class);
         Query<GiftCertificate> query = session.createQuery("from GiftCertificate", GiftCertificate.class);
+        query.setFirstResult(firstResult);
+        query.setMaxResults(maxResults);
         return query.getResultList();
     }
 

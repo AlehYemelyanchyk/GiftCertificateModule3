@@ -22,8 +22,8 @@ public class TagServiceImpl implements TagService {
 
     @Transactional
     @Override
-    public List<Tag> findAll() throws ServiceException {
-        return tagDAO.findAll();
+    public List<Tag> findAll(int firstResult, int maxResults) throws ServiceException {
+        return tagDAO.findAll(firstResult, maxResults);
     }
 
     @Transactional

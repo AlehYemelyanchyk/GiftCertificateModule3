@@ -27,8 +27,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Transactional
     @Override
-    public List<GiftCertificate> findAll() throws ServiceException {
-        return giftCertificateDAO.findAll();
+    public List<GiftCertificate> findAll(int firstResult, int maxResults) throws ServiceException {
+        return giftCertificateDAO.findAll(firstResult, maxResults);
     }
 
     @Transactional
