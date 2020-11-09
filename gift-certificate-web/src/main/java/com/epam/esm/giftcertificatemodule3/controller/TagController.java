@@ -13,6 +13,7 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -31,19 +32,26 @@ public class TagController {
     }
 
     @GetMapping("/tags")
-    public List<Tag> findAll(
+    public List<EntityModel<Tag>> findAll(
             @RequestParam(defaultValue = "0") int firstResult,
-            @RequestParam int maxResults
+            @RequestParam(defaultValue = "5") int maxResults
     ) {
-        List<Tag> tags;
-
+        List<Tag> returnObject;
         try {
-            tags = tagService.findAll(firstResult, maxResults);
+            returnObject = tagService.findAll(firstResult, maxResults);
         } catch (ServiceException e) {
             LOGGER.error("findAll error: " + e.getMessage());
             throw new RuntimeException();
         }
-        return tags;
+        List<EntityModel<Tag>> collect = returnObject.stream()
+                .map(e -> {
+                    WebMvcLinkBuilder linkToFindById = linkTo(methodOn(this.getClass()).findById(e.getId()));
+                    EntityModel<Tag> entityModel = EntityModel.of(e);
+                    entityModel.add(linkToFindById.withRel("byId"));
+                    return entityModel;
+                })
+                .collect(Collectors.toList());
+        return collect;
     }
 
     @GetMapping("/tags/{id}")

@@ -37,6 +37,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return giftCertificateDAO.findById(id);
     }
 
+    @Transactional
     @Override
     public List<GiftCertificate> findBy(SearchParametersHolder searchParametersHolder) throws ServiceException {
         return giftCertificateDAO.findBy(searchParametersHolder);
