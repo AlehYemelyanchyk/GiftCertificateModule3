@@ -1,11 +1,13 @@
 package com.epam.esm.giftcertificatemodule3.controller;
 
+import com.epam.esm.giftcertificatemodule3.entity.GiftCertificate;
 import com.epam.esm.giftcertificatemodule3.entity.Tag;
 import com.epam.esm.giftcertificatemodule3.services.TagService;
 import com.epam.esm.giftcertificatemodule3.services.exceptions.ServiceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.*;
@@ -30,8 +32,8 @@ public class TagController {
 
     @GetMapping("/tags")
     public List<Tag> findAll(
-            @PathVariable int firstResult,
-            @PathVariable int maxResults
+            @RequestParam(defaultValue = "0") int firstResult,
+            @RequestParam int maxResults
     ) {
         List<Tag> tags;
 
@@ -49,9 +51,21 @@ public class TagController {
         EntityModel<Tag> returnObject;
         try {
             returnObject = EntityModel.of(tagService.findById(id));
-            if (returnObject == null) {
-                throw new RuntimeException();
-            }
+        } catch (ServiceException e) {
+            LOGGER.error("findById error: " + e.getMessage());
+            throw new RuntimeException();
+        }
+        WebMvcLinkBuilder linkToFindAll = linkTo(methodOn(this.getClass()).findAll(0, 10));
+        returnObject.add(linkToFindAll.withRel("all-tags"));
+        return returnObject;
+    }
+
+    @GetMapping("/tags/findByName")
+    public CollectionModel<GiftCertificate> findByName(@RequestParam String name) {
+        CollectionModel<GiftCertificate> returnObject;
+        try {
+            List<GiftCertificate> certificates = tagService.findByName(name).getCertificates();
+            returnObject = CollectionModel.of(certificates);
         } catch (ServiceException e) {
             LOGGER.error("findById error: " + e.getMessage());
             throw new RuntimeException();

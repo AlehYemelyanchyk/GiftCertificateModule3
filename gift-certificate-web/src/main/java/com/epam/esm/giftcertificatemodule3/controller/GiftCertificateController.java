@@ -26,7 +26,7 @@ public class GiftCertificateController {
 
     @GetMapping("/certificates")
     public List<GiftCertificate> findAll(
-            @RequestParam int firstResult,
+            @RequestParam(defaultValue = "0") int firstResult,
             @RequestParam int maxResults
     ) {
         List<GiftCertificate> giftCertificates;
