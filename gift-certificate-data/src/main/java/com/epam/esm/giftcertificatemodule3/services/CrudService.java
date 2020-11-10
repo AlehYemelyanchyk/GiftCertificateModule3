@@ -1,7 +1,5 @@
 package com.epam.esm.giftcertificatemodule3.services;
 
-import com.epam.esm.giftcertificatemodule3.services.exceptions.ServiceException;
-
 import java.util.List;
 
 /**
@@ -16,48 +14,42 @@ public interface CrudService<T, ID> {
      * @param firstResult is the position of the first result in the datasource which should be returned.
      * @param maxResults is the number of the results by one page.
      * @return all entities
-     * @throws ServiceException if a DAOException is thrown from its invoked DAO level method.
      */
-    List<T> findAll(int firstResult, int maxResults) throws ServiceException;
+    List<T> findAll(int firstResult, int maxResults) ;
 
     /**
      * Returns whether an entity with the given id exists.
      *
      * @param id must not be {@literal null}.
      * @return the entity with the given id or {@literal Optional#empty()} if none found.
-     * @throws ServiceException if a DAOException is thrown from its invoked DAO level method.
      */
-    T findById(ID id) throws ServiceException;
+    T findById(ID id) ;
 
     /**
      * Saves a given entity.
      *
      * @param object must not be {@literal null}.
-     * @throws ServiceException if a DAOException is thrown from its invoked DAO level method.
      */
-    void save(T object) throws ServiceException;
+    void save(T object) ;
 
     /**
      * Updates a given entity.
      *
      * @param object must not be {@literal null}.
-     * @throws ServiceException if a DAOException is thrown from its invoked DAO level method.
      */
-    void update(T object) throws ServiceException;
+    void update(T object) ;
 
     /**
      * Deletes a given entity.
      *
      * @param object must not be {@literal null}.
-     * @throws ServiceException if a DAOException is thrown from its invoked DAO level method.
      */
-    void delete(T object) throws ServiceException;
+    void delete(T object) ;
 
     /**
      * Deletes the entity with the given id.
      *
      * @param id must not be {@literal null}.
-     * @throws ServiceException if a DAOException is thrown from its invoked DAO level method
      */
-    void deleteById(ID id) throws ServiceException;
+    void deleteById(ID id) ;
 }

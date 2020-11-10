@@ -1,4 +1,4 @@
-package com.epam.esm.giftcertificatemodule3.controller;
+package com.epam.esm.giftcertificatemodule3.rest.controller;
 
 import com.epam.esm.giftcertificatemodule3.entity.GiftCertificate;
 import com.epam.esm.giftcertificatemodule3.model.SearchParametersHolder;

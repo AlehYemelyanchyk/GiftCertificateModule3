@@ -6,7 +6,6 @@ import com.epam.esm.giftcertificatemodule3.entity.GiftCertificate;
 import com.epam.esm.giftcertificatemodule3.entity.Tag;
 import com.epam.esm.giftcertificatemodule3.model.SearchParametersHolder;
 import com.epam.esm.giftcertificatemodule3.services.GiftCertificateService;
-import com.epam.esm.giftcertificatemodule3.services.exceptions.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,45 +26,45 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Transactional
     @Override
-    public List<GiftCertificate> findAll(int firstResult, int maxResults) throws ServiceException {
+    public List<GiftCertificate> findAll(int firstResult, int maxResults) {
         return giftCertificateDAO.findAll(firstResult, maxResults);
     }
 
     @Transactional
     @Override
-    public GiftCertificate findById(Long id) throws ServiceException {
+    public GiftCertificate findById(Long id) {
         return giftCertificateDAO.findById(id);
     }
 
     @Transactional
     @Override
-    public List<GiftCertificate> findBy(SearchParametersHolder searchParametersHolder) throws ServiceException {
+    public List<GiftCertificate> findBy(SearchParametersHolder searchParametersHolder) {
         return giftCertificateDAO.findBy(searchParametersHolder);
     }
 
     @Transactional
     @Override
-    public void save(GiftCertificate giftCertificate) throws ServiceException {
+    public void save(GiftCertificate giftCertificate) {
         getTagsId(giftCertificate);
         giftCertificateDAO.save(giftCertificate);
     }
 
     @Transactional
     @Override
-    public void update(GiftCertificate giftCertificate) throws ServiceException {
+    public void update(GiftCertificate giftCertificate) {
         getTagsId(giftCertificate);
         giftCertificateDAO.update(giftCertificate);
     }
 
     @Transactional
     @Override
-    public void delete(GiftCertificate giftCertificate) throws ServiceException {
+    public void delete(GiftCertificate giftCertificate) {
         giftCertificateDAO.delete(giftCertificate);
     }
 
     @Transactional
     @Override
-    public void deleteById(Long id) throws ServiceException {
+    public void deleteById(Long id) {
         giftCertificateDAO.deleteById(id);
     }
 

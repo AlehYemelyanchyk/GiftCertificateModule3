@@ -2,7 +2,6 @@ package com.epam.esm.giftcertificatemodule3.services;
 
 
 import com.epam.esm.giftcertificatemodule3.entity.Tag;
-import com.epam.esm.giftcertificatemodule3.services.exceptions.ServiceException;
 
 /**
  * The interface provides methods to work with Tags information in
@@ -17,5 +16,5 @@ public interface TagService extends CrudService<Tag, Integer> {
      * @param name is a name of Tag.
      * @return the instance of Tag.
      */
-    Tag findByName(String name) throws ServiceException;
+    Tag findByName(String name) ;
 }
