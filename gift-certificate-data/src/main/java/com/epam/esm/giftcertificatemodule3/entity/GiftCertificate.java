@@ -11,7 +11,8 @@ import java.util.Objects;
 public class GiftCertificate implements Serializable {
     private static final Long serialVersionUID = 1724820758632935338L;
 
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.EAGER,
+            cascade = {CascadeType.ALL})
     @JoinTable(
             name = "tagged_certificates",
             joinColumns = @JoinColumn(name = "certificate_id"),

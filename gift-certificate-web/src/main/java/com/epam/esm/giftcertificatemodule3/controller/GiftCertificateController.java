@@ -7,9 +7,14 @@ import com.epam.esm.giftcertificatemodule3.services.exceptions.ServiceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/api")
@@ -40,17 +45,17 @@ public class GiftCertificateController {
     }
 
     @GetMapping("/certificates/{id}")
-    public GiftCertificate findById(@PathVariable Long id) {
-        GiftCertificate returnObject;
+    public EntityModel<GiftCertificate> findById(@PathVariable Long id) {
+        EntityModel<GiftCertificate> returnObject;
         try {
-            returnObject = giftCertificateService.findById(id);
-            if (returnObject == null) {
-                throw new RuntimeException();
-            }
+            GiftCertificate byId = giftCertificateService.findById(id);
+            returnObject = EntityModel.of(giftCertificateService.findById(id));
         } catch (ServiceException e) {
             LOGGER.error("findById error: " + e.getMessage());
             throw new RuntimeException();
         }
+        WebMvcLinkBuilder linkToFindAll = linkTo(methodOn(this.getClass()).findAll(0, 5));
+        returnObject.add(linkToFindAll.withRel("allGiftCertificates"));
         return returnObject;
     }
 

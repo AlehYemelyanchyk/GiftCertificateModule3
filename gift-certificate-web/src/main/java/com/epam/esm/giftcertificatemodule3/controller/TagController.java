@@ -7,7 +7,6 @@ import com.epam.esm.giftcertificatemodule3.services.exceptions.ServiceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.*;
@@ -47,7 +46,7 @@ public class TagController {
                 .map(e -> {
                     WebMvcLinkBuilder linkToFindById = linkTo(methodOn(this.getClass()).findById(e.getId()));
                     EntityModel<Tag> entityModel = EntityModel.of(e);
-                    entityModel.add(linkToFindById.withRel("byId"));
+                    entityModel.add(linkToFindById.withRel("tagsById"));
                     return entityModel;
                 })
                 .collect(Collectors.toList());
@@ -63,24 +62,29 @@ public class TagController {
             LOGGER.error("findById error: " + e.getMessage());
             throw new RuntimeException();
         }
-        WebMvcLinkBuilder linkToFindAll = linkTo(methodOn(this.getClass()).findAll(0, 10));
-        returnObject.add(linkToFindAll.withRel("all-tags"));
+        WebMvcLinkBuilder linkToFindAll = linkTo(methodOn(this.getClass()).findAll(0, 5));
+        returnObject.add(linkToFindAll.withRel("allTags"));
         return returnObject;
     }
 
     @GetMapping("/tags/findByName")
-    public CollectionModel<GiftCertificate> findByName(@RequestParam String name) {
-        CollectionModel<GiftCertificate> returnObject;
+    public List<EntityModel<GiftCertificate>> findByName(@RequestParam String name) {
+        List<GiftCertificate> certificates;
         try {
-            List<GiftCertificate> certificates = tagService.findByName(name).getCertificates();
-            returnObject = CollectionModel.of(certificates);
+            certificates = tagService.findByName(name).getCertificates();
         } catch (ServiceException e) {
             LOGGER.error("findById error: " + e.getMessage());
             throw new RuntimeException();
         }
-        WebMvcLinkBuilder linkToFindAll = linkTo(methodOn(this.getClass()).findAll(0, 10));
-        returnObject.add(linkToFindAll.withRel("all-tags"));
-        return returnObject;
+        List<EntityModel<GiftCertificate>> collect = certificates.stream()
+                .map(e -> {
+                    WebMvcLinkBuilder linkToFindById = linkTo(methodOn(GiftCertificateController.class).findById(e.getId()));
+                    EntityModel<GiftCertificate> entityModel = EntityModel.of(e);
+                    entityModel.add(linkToFindById.withRel("certificateById"));
+                    return entityModel;
+                })
+                .collect(Collectors.toList());
+        return collect;
     }
 
     @PostMapping("/tags")

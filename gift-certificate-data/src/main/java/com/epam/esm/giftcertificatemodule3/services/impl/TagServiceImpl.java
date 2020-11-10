@@ -35,7 +35,9 @@ public class TagServiceImpl implements TagService {
     @Transactional
     @Override
     public Tag findByName(String name) throws ServiceException {
-        return tagDAO.findByName(name);
+        Tag tag = tagDAO.findByName(name);
+        tag.getCertificates();
+        return tag;
     }
 
     @Transactional
