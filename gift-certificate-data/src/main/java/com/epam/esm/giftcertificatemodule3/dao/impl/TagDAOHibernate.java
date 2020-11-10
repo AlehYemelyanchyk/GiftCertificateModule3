@@ -42,7 +42,9 @@ public class TagDAOHibernate implements TagDAO {
         Query query = session.createQuery("from Tag where name=:name");
         query.setParameter("name", name);
         Tag tag = (Tag) query.uniqueResult();
-        Hibernate.initialize(tag.getCertificates());
+        if (tag != null) {
+            Hibernate.initialize(tag.getCertificates());
+        }
         return tag;
     }
 

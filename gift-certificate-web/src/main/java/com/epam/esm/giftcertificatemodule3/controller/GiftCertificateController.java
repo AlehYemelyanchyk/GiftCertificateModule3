@@ -48,7 +48,6 @@ public class GiftCertificateController {
     public EntityModel<GiftCertificate> findById(@PathVariable Long id) {
         EntityModel<GiftCertificate> returnObject;
         try {
-            GiftCertificate byId = giftCertificateService.findById(id);
             returnObject = EntityModel.of(giftCertificateService.findById(id));
         } catch (ServiceException e) {
             LOGGER.error("findById error: " + e.getMessage());

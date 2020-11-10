@@ -34,7 +34,7 @@ public class GiftCertificate implements Serializable {
     @Column(name = "price")
     private Double price;
 
-    @Column(name = "create_date")
+    @Column(name = "create_date", updatable=false)
     private OffsetDateTime createDate;
 
     @Column(name = "last_update_date")
