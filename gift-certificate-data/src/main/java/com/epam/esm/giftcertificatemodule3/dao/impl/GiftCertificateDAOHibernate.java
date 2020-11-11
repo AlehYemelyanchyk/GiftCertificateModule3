@@ -55,7 +55,6 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
 
     @Override
     public void update(GiftCertificate giftCertificate) {
-        giftCertificate.setLastUpdateDate(ZonedDateTime.now().toOffsetDateTime());
         Session session = sessionFactory.getCurrentSession();
         GiftCertificate oldGiftCertificate = findById(giftCertificate.getId());
         setUpdatedFields(giftCertificate, oldGiftCertificate);
@@ -112,6 +111,9 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
     }
 
     private void setUpdatedFields(GiftCertificate giftCertificate, GiftCertificate oldGiftCertificate) {
+        if (giftCertificate.getTags() == null) {
+            giftCertificate.setTags(oldGiftCertificate.getTags());
+        }
         if (giftCertificate.getName() == null) {
             giftCertificate.setName(oldGiftCertificate.getName());
         }
@@ -125,5 +127,6 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
             giftCertificate.setDuration(oldGiftCertificate.getDuration());
         }
         giftCertificate.setCreateDate(oldGiftCertificate.getCreateDate());
+        giftCertificate.setLastUpdateDate(ZonedDateTime.now().toOffsetDateTime());
     }
 }

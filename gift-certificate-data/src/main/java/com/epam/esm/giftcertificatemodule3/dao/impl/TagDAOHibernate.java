@@ -2,6 +2,7 @@ package com.epam.esm.giftcertificatemodule3.dao.impl;
 
 import com.epam.esm.giftcertificatemodule3.dao.TagDAO;
 import com.epam.esm.giftcertificatemodule3.entity.Tag;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -42,6 +43,9 @@ public class TagDAOHibernate implements TagDAO {
         Query query = session.createQuery("from Tag where name=:name");
         query.setParameter("name", name);
         Tag tag = (Tag) query.uniqueResult();
+        if (tag != null) {
+            Hibernate.initialize(tag.getCertificates());
+        }
         return tag;
     }
 
