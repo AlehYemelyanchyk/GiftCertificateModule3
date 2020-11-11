@@ -3,6 +3,7 @@ package com.epam.esm.giftcertificatemodule3.dao.impl;
 import com.epam.esm.giftcertificatemodule3.dao.GiftCertificateDAO;
 import com.epam.esm.giftcertificatemodule3.entity.GiftCertificate;
 import com.epam.esm.giftcertificatemodule3.model.SearchParametersHolder;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -28,20 +29,28 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
         Query<GiftCertificate> query = session.createQuery("from GiftCertificate", GiftCertificate.class);
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResults);
-        return query.getResultList();
+        List<GiftCertificate> certificates = query.getResultList();
+        certificates.forEach(e -> Hibernate.initialize(e.getTags()));
+        return certificates;
     }
 
     @Override
     public GiftCertificate findById(Long id) {
         Session session = sessionFactory.getCurrentSession();
-        return session.get(GiftCertificate.class, id);
+        GiftCertificate giftCertificate = session.get(GiftCertificate.class, id);
+        if (giftCertificate != null) {
+            Hibernate.initialize(giftCertificate.getTags());
+        }
+        return giftCertificate;
     }
 
     @Override
     public List<GiftCertificate> findBy(SearchParametersHolder searchParametersHolder) {
         Session session = sessionFactory.getCurrentSession();
         Query<GiftCertificate> query = searchByRequestBuilder(session, searchParametersHolder);
-        return query.getResultList();
+        List<GiftCertificate> certificates = query.getResultList();
+        certificates.forEach(e -> Hibernate.initialize(e.getTags()));
+        return certificates;
     }
 
     @Override
