@@ -12,7 +12,8 @@ import java.util.Objects;
 public class Tag implements Serializable {
     private static final long serialVersionUID = 8700472259924409409L;
 
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany(mappedBy = "tags",
+            cascade = CascadeType.ALL)
     @JsonBackReference
     private List<GiftCertificate> certificates;
 

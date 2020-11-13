@@ -29,6 +29,17 @@ public class GiftCertificateController {
         this.giftCertificateService = giftCertificateService;
     }
 
+    @PostMapping("/certificates")
+    public GiftCertificate save(@RequestBody GiftCertificate giftCertificate) {
+        try {
+            giftCertificateService.save(giftCertificate);
+        } catch (ServiceException e) {
+            LOGGER.error("save error: " + e.getMessage());
+            throw new RuntimeException();
+        }
+        return giftCertificate;
+    }
+
     @GetMapping("/certificates")
     public List<GiftCertificate> findAll(
             @RequestParam(defaultValue = "0") int firstResult,
@@ -85,17 +96,6 @@ public class GiftCertificateController {
             throw new RuntimeException("Certificates");
         }
         return returnObject;
-    }
-
-    @PostMapping("/certificates")
-    public GiftCertificate save(@RequestBody GiftCertificate giftCertificate) {
-        try {
-            giftCertificateService.save(giftCertificate);
-        } catch (ServiceException e) {
-            LOGGER.error("save error: " + e.getMessage());
-            throw new RuntimeException();
-        }
-        return giftCertificate;
     }
 
     @PutMapping("/certificates")

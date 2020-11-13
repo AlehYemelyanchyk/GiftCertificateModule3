@@ -28,7 +28,7 @@ public class HibernateConfig {
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/gift_certificate_spring");
+        dataSource.setUrl("jdbc:mysql://localhost:3306/gift_certificates_spring");
         dataSource.setUsername("root");
         dataSource.setPassword("root");
 
@@ -43,7 +43,7 @@ public class HibernateConfig {
         return transactionManager;
     }
 
-    private final Properties hibernateProperties() {
+    private Properties hibernateProperties() {
         Properties hibernateProperties = new Properties();
         hibernateProperties.setProperty(
                 "hibernate.hbm2ddl.auto", "none");

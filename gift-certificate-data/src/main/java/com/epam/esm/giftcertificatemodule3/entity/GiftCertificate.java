@@ -12,8 +12,7 @@ public class GiftCertificate implements Serializable {
     private static final Long serialVersionUID = 1724820758632935338L;
 
 
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name = "tagged_certificates",
             joinColumns = @JoinColumn(name = "certificate_id"),
@@ -21,14 +20,13 @@ public class GiftCertificate implements Serializable {
     )
     private List<Tag> tags;
 
-    @ManyToMany(fetch = FetchType.EAGER,
-            cascade = {CascadeType.ALL})
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
-            name = "users_certificates",
+            name = "orders_certificates",
             joinColumns = @JoinColumn(name = "certificate_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
+            inverseJoinColumns = @JoinColumn(name = "order_id")
     )
-    private List<User> users;
+    private List<Order> orders;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,14 +61,6 @@ public class GiftCertificate implements Serializable {
 
     public void setTags(List<Tag> tags) {
         this.tags = tags;
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
     }
 
     public Long getId() {
@@ -129,10 +119,20 @@ public class GiftCertificate implements Serializable {
         this.duration = duration;
     }
 
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
     @Override
     public String toString() {
         return "GiftCertificate{" +
-                "id=" + id +
+                "tags=" + tags +
+                ", orders=" + orders +
+                ", id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +

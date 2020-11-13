@@ -30,6 +30,17 @@ public class TagController {
         this.tagService = tagService;
     }
 
+    @PostMapping("/tags")
+    public Tag saveTag(@RequestBody Tag tag) {
+        try {
+            tagService.save(tag);
+        } catch (ServiceException e) {
+            LOGGER.error("save error: " + e.getMessage());
+            throw new RuntimeException();
+        }
+        return tag;
+    }
+
     @GetMapping("/tags")
     public List<EntityModel<Tag>> findAll(
             @RequestParam(defaultValue = "0") int firstResult,
@@ -85,17 +96,6 @@ public class TagController {
                 })
                 .collect(Collectors.toList());
         return collect;
-    }
-
-    @PostMapping("/tags")
-    public Tag saveTag(@RequestBody Tag tag) {
-        try {
-            tagService.save(tag);
-        } catch (ServiceException e) {
-            LOGGER.error("save error: " + e.getMessage());
-            throw new RuntimeException();
-        }
-        return tag;
     }
 
     @PutMapping("/tags")

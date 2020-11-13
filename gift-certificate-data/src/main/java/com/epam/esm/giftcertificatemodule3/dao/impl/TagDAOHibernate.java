@@ -22,6 +22,17 @@ public class TagDAOHibernate implements TagDAO {
     }
 
     @Override
+    public void save(Tag object) {
+        Session session = sessionFactory.getCurrentSession();
+        Tag savedTag = findByName(object.getName());
+        if (savedTag == null) {
+            session.save(object);
+        } else {
+            object.setId(savedTag.getId());
+        }
+    }
+
+    @Override
     public List<Tag> findAll(int firstResult, int maxResults) {
         Session session = sessionFactory.getCurrentSession();
         Query<Tag> query = session.createQuery("from Tag", Tag.class);
@@ -47,17 +58,6 @@ public class TagDAOHibernate implements TagDAO {
             Hibernate.initialize(tag.getCertificates());
         }
         return tag;
-    }
-
-    @Override
-    public void save(Tag object) {
-        Session session = sessionFactory.getCurrentSession();
-        Tag savedTag = findByName(object.getName());
-        if (savedTag == null) {
-            session.save(object);
-        } else {
-            object.setId(savedTag.getId());
-        }
     }
 
     @Override

@@ -1,9 +1,8 @@
 package com.epam.esm.giftcertificatemodule3.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,10 +10,6 @@ import java.util.Objects;
 @Table(name = "users")
 public class User implements Serializable {
     private static final long serialVersionUID = 4060654038230251833L;
-
-    @ManyToMany(mappedBy = "users")
-    @JsonBackReference
-    private List<GiftCertificate> certificates;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,16 +19,20 @@ public class User implements Serializable {
     @Column(name = "name")
     private String name;
 
+    @OneToMany(mappedBy = "user",
+            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    private List<Order> orders;
+
     // Required by Hibernate
     public User() {
     }
 
-    public List<GiftCertificate> getCertificates() {
-        return certificates;
-    }
-
-    public void setCertificates(List<GiftCertificate> certificates) {
-        this.certificates = certificates;
+    public void addOrder(Order order) {
+        if (orders == null) {
+            orders = new ArrayList<>();
+        }
+        orders.add(order);
+        order.setUser(this);
     }
 
     public Long getId() {

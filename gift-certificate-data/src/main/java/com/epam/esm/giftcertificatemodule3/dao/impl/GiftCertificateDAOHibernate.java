@@ -24,6 +24,15 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
     }
 
     @Override
+    public void save(GiftCertificate giftCertificate) {
+        giftCertificate.setCreateDate(ZonedDateTime.now().toOffsetDateTime());
+        giftCertificate.setLastUpdateDate(ZonedDateTime.now().toOffsetDateTime());
+        Session session = sessionFactory.getCurrentSession();
+        session.clear();
+        session.save(giftCertificate);
+    }
+
+    @Override
     public List<GiftCertificate> findAll(int firstResult, int maxResults) {
         Session session = sessionFactory.getCurrentSession();
         Query<GiftCertificate> query = session.createQuery("from GiftCertificate", GiftCertificate.class);
@@ -48,18 +57,10 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
     public List<GiftCertificate> findBy(SearchParametersHolder searchParametersHolder) {
         Session session = sessionFactory.getCurrentSession();
         Query<GiftCertificate> query = searchByRequestBuilder(session, searchParametersHolder);
+
         List<GiftCertificate> certificates = query.getResultList();
         certificates.forEach(e -> Hibernate.initialize(e.getTags()));
         return certificates;
-    }
-
-    @Override
-    public void save(GiftCertificate giftCertificate) {
-        giftCertificate.setCreateDate(ZonedDateTime.now().toOffsetDateTime());
-        giftCertificate.setLastUpdateDate(ZonedDateTime.now().toOffsetDateTime());
-        Session session = sessionFactory.getCurrentSession();
-        session.clear();
-        session.save(giftCertificate);
     }
 
     @Override
