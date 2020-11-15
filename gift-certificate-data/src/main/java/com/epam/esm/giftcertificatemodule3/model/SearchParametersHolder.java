@@ -77,7 +77,7 @@ public class SearchParametersHolder {
                 ", description='" + description + '\'' +
                 ", sortBy='" + sortBy + '\'' +
                 ", sortOrder='" + sortOrder + '\'' +
-                ", highestCost=" + highestPrice +
+                ", highestPrice=" + highestPrice +
                 '}';
     }
 }

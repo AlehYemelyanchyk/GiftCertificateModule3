@@ -45,25 +45,19 @@ public class OrderDAOHibernate implements OrderDAO {
     @Override
     public List<Order> findBy(SearchParametersHolder searchParametersHolder) {
         Session session = sessionFactory.getCurrentSession();
-        CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<Order> cr = cb.createQuery(Order.class);
-        Root<Order> root = cr.from(Order.class);
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
+        Root<Order> root = criteriaQuery.from(Order.class);
+        Subquery<Double> subQuery = criteriaQuery.subquery(Double.class);
+        Root<Order> subRoot = subQuery.from(Order.class);
 
-        if (searchParametersHolder.getId() != null) {
-            cr.select(root).where(cb.equal(root.get("user"), searchParametersHolder.getId()));
-        }
-        if (searchParametersHolder.getHighestPrice() != null && searchParametersHolder.getHighestPrice()) {
-            Path<Double> pathToPrice = root.get("price");
-            Subquery<Double> subQuery = cr.subquery(Double.class);
-            Root<Order> subRoot = subQuery.from(Order.class);
-            Path<Double> subPathToPrice = subRoot.get("price");
-            subQuery.select(cb.max(subPathToPrice));
-            cr.select(root).where(cb.equal(pathToPrice, subQuery));
-        }
+        subQuery.select(criteriaBuilder.max(subRoot.get("price")));
+        criteriaQuery.select(root)
+                .where(criteriaBuilder.equal(root.get("price"), subQuery));
 
-        Query<Order> query = session.createQuery(cr);
+        Query<Order> query = session.createQuery(criteriaQuery);
         List<Order> orders = query.getResultList();
-        orders.forEach(Hibernate::initialize);
+//        orders.forEach(Hibernate::initialize);
         return orders;
     }
 
