@@ -105,13 +105,15 @@ public class TagController {
         return collect;
     }
 
-    @GetMapping("/tags/findMostUsed")
-    public EntityModel<Tag> findMostUsed() {
+    @GetMapping("/tags/findBy")
+    public EntityModel<Tag> findMostUsed(@RequestParam(name = "userId") Long id,
+                                         @RequestParam(required = false) Boolean highestPrice) {
         List<Order> orders;
         Tag tag = null;
         int count = 0;
         SearchParametersHolder searchParametersHolder = new SearchParametersHolder();
-        searchParametersHolder.setHighestCost(true);
+        searchParametersHolder.setId(id);
+        searchParametersHolder.setHighestPrice(highestPrice);
         try {
             orders = orderService.findBy(searchParametersHolder);
             List<Tag> tags = orders.stream()

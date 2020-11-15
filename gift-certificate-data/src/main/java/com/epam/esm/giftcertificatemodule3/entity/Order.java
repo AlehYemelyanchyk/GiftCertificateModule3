@@ -14,7 +14,7 @@ public class Order implements Serializable {
     private static final Long serialVersionUID = 1324820937632935342L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_orders")
+    @Column(name = "id_order")
     private Long id;
 
     @Column(name = "date")

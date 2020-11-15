@@ -52,7 +52,7 @@ public class OrderDAOHibernate implements OrderDAO {
         if (searchParametersHolder.getId() != null) {
             cr.select(root).where(cb.equal(root.get("user"), searchParametersHolder.getId()));
         }
-        if (searchParametersHolder.getHighestCost() != null && searchParametersHolder.getHighestCost()) {
+        if (searchParametersHolder.getHighestPrice() != null && searchParametersHolder.getHighestPrice()) {
             Path<Double> pathToPrice = root.get("price");
             Subquery<Double> subQuery = cr.subquery(Double.class);
             Root<Order> subRoot = subQuery.from(Order.class);
@@ -61,6 +61,27 @@ public class OrderDAOHibernate implements OrderDAO {
             cr.select(root).where(cb.equal(pathToPrice, subQuery));
         }
 
+        Query<Order> query = session.createQuery(cr);
+        List<Order> orders = query.getResultList();
+        orders.forEach(Hibernate::initialize);
+        return orders;
+    }
+
+    @Override
+    public List<Order> findHighestSpendByUser(SearchParametersHolder searchParametersHolder) {
+        Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Order> cr = cb.createQuery(Order.class);
+        Root<Order> root = cr.from(Order.class);
+
+        if (searchParametersHolder.getHighestPrice() != null && searchParametersHolder.getHighestPrice()) {
+            Path<Double> pathToPrice = root.get("price");
+            Subquery<Double> subQuery = cr.subquery(Double.class);
+            Root<Order> subRoot = subQuery.from(Order.class);
+            Path<Double> subPathToPrice = subRoot.get("price");
+            subQuery.select(cb.max(subPathToPrice));
+            cr.select(root).where(cb.equal(pathToPrice, subQuery));
+        }
         Query<Order> query = session.createQuery(cr);
         List<Order> orders = query.getResultList();
         orders.forEach(Hibernate::initialize);
