@@ -34,8 +34,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public List<Order> findBy(SearchParametersHolder searchParametersHolder) {
-        return orderDAO.findBy(searchParametersHolder);
+    public List<Order> findHighestPriceByUser(SearchParametersHolder searchParametersHolder) {
+        return orderDAO.findHighestPriceByUser(searchParametersHolder);
     }
 
     @Transactional

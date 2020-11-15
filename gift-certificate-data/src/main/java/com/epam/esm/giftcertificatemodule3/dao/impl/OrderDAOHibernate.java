@@ -43,7 +43,7 @@ public class OrderDAOHibernate implements OrderDAO {
     }
 
     @Override
-    public List<Order> findBy(SearchParametersHolder searchParametersHolder) {
+    public List<Order> findHighestPriceByUser(SearchParametersHolder searchParametersHolder) {
         Session session = sessionFactory.getCurrentSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
@@ -57,7 +57,6 @@ public class OrderDAOHibernate implements OrderDAO {
 
         Query<Order> query = session.createQuery(criteriaQuery);
         List<Order> orders = query.getResultList();
-//        orders.forEach(Hibernate::initialize);
         return orders;
     }
 

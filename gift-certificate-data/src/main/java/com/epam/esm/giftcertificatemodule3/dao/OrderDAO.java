@@ -18,7 +18,7 @@ public interface OrderDAO extends CrudDAO<Order, Long> {
      * @param searchParametersHolder is an object which contains all the field used in a search.
      * @return List with all entities found with the search.
      */
-    List<Order> findBy(SearchParametersHolder searchParametersHolder);
+    List<Order> findHighestPriceByUser(SearchParametersHolder searchParametersHolder);
 
     /**
      * Returns all instances of the Order type.
