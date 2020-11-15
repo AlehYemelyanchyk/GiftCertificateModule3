@@ -14,7 +14,11 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -105,29 +109,24 @@ public class TagController {
     @GetMapping("/tags/findHighestPrice")
     public EntityModel<Tag> findMostUsed(@RequestParam(required = false, name = "userId") Long id,
                                          @RequestParam(required = false) Boolean highestPrice) {
-        Map<Tag, Integer> tagsMap;
+        Set<Map.Entry<Tag, Long>> entries = null;
         List<Order> orders;
         SearchParametersHolder searchParametersHolder = new SearchParametersHolder();
         searchParametersHolder.setId(id);
         searchParametersHolder.setHighestPrice(highestPrice);
         try {
             orders = orderService.findHighestPriceByUser(searchParametersHolder);
-            List<Tag> tags = orders.stream()
+            entries = orders.stream()
                     .flatMap(order -> order.getCertificates().stream())
                     .flatMap(giftCertificate -> giftCertificate.getTags().stream())
-                    .collect(Collectors.toList());
-            tagsMap = new HashMap<>();
-            tags.forEach(e -> {
-                Integer tagCount = (tagsMap.get(e) == null) ? 0 : tagsMap.get(e);
-                tagsMap.put(e, ++tagCount);
-            });
+                    .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                    .entrySet();
         } catch (ServiceException e) {
             LOGGER.error("findById error: " + e.getMessage());
             throw new RuntimeException();
         }
-        Set<Map.Entry<Tag, Integer>> entries = tagsMap.entrySet();
         return entries.stream()
-                .max(Comparator.comparingInt(Map.Entry::getValue))
+                .max(Comparator.comparingLong(Map.Entry::getValue))
                 .map(e -> {
                     WebMvcLinkBuilder linkToFindById =
                             linkTo(methodOn(TagController.class).findById(e.getKey().getId()));
