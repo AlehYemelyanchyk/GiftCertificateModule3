@@ -49,6 +49,8 @@ public class HibernateConfig {
                 "hibernate.hbm2ddl.auto", "none");
         hibernateProperties.setProperty(
                 "hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+        hibernateProperties.setProperty(
+                "hibernate.show_sql", "true");
 
         return hibernateProperties;
     }

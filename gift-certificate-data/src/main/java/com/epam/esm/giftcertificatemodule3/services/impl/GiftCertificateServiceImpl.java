@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class GiftCertificateServiceImpl implements GiftCertificateService {
@@ -69,7 +70,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     private void getTagsId(GiftCertificate giftCertificate) {
-        List<Tag> tags = giftCertificate.getTags();
+        Set<Tag> tags = giftCertificate.getTags();
         if (tags != null) {
             tags.forEach(tag -> {
                 Tag savedTag = tagDAO.findByName(tag.getName());

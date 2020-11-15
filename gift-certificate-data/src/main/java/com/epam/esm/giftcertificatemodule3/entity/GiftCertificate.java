@@ -3,8 +3,8 @@ package com.epam.esm.giftcertificatemodule3.entity;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "certificates")
@@ -12,21 +12,23 @@ public class GiftCertificate implements Serializable {
     private static final Long serialVersionUID = 1724820758632935338L;
 
 
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.EAGER,
+            cascade = {CascadeType.ALL})
     @JoinTable(
             name = "tagged_certificates",
             joinColumns = @JoinColumn(name = "certificate_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    private List<Tag> tags;
+    private Set<Tag> tags;
 
-    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.EAGER,
+            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "orders_certificates",
             joinColumns = @JoinColumn(name = "certificate_id"),
             inverseJoinColumns = @JoinColumn(name = "order_id")
     )
-    private List<Order> orders;
+    private Set<Order> orders;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,11 +57,11 @@ public class GiftCertificate implements Serializable {
     public GiftCertificate() {
     }
 
-    public List<Tag> getTags() {
+    public Set<Tag> getTags() {
         return tags;
     }
 
-    public void setTags(List<Tag> tags) {
+    public void setTags(Set<Tag> tags) {
         this.tags = tags;
     }
 
@@ -119,20 +121,18 @@ public class GiftCertificate implements Serializable {
         this.duration = duration;
     }
 
-    public List<Order> getOrders() {
+    public Set<Order> getOrders() {
         return orders;
     }
 
-    public void setOrders(List<Order> orders) {
+    public void setOrders(Set<Order> orders) {
         this.orders = orders;
     }
 
     @Override
     public String toString() {
         return "GiftCertificate{" +
-                "tags=" + tags +
-                ", orders=" + orders +
-                ", id=" + id +
+                "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +

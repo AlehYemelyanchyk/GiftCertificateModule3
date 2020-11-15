@@ -1,38 +1,22 @@
-package com.epam.esm.giftcertificatemodule3.entity;
+package com.epam.esm.giftcertificatemodule3.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.epam.esm.giftcertificatemodule3.entity.GiftCertificate;
+import com.epam.esm.giftcertificatemodule3.entity.User;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
-@Entity
-@Table(name = "orders")
-public class Order implements Serializable {
-    private static final Long serialVersionUID = 1324820937632935342L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_orders")
+public class OrderDTO implements Serializable{
+    private static final long serialVersionUID = 8847798917784559280L;
     private Long id;
-
-    @Column(name = "date")
     private OffsetDateTime date;
-
-    @Column(name = "price")
     private Double price;
-
-    @ManyToMany(fetch = FetchType.EAGER,
-            mappedBy = "orders")
-    @JsonBackReference
-    private Set<GiftCertificate> certificates;
-
-    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinColumn(name = "id_user")
+    private List<GiftCertificate> certificates;
     private User user;
 
-    public Order() {
+    public OrderDTO() {
     }
 
     public Long getId() {
@@ -59,11 +43,11 @@ public class Order implements Serializable {
         this.price = price;
     }
 
-    public Set<GiftCertificate> getCertificates() {
+    public List<GiftCertificate> getCertificates() {
         return certificates;
     }
 
-    public void setCertificates(Set<GiftCertificate> certificates) {
+    public void setCertificates(List<GiftCertificate> certificates) {
         this.certificates = certificates;
     }
 
@@ -79,7 +63,7 @@ public class Order implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Order order = (Order) o;
+        OrderDTO order = (OrderDTO) o;
         return Objects.equals(id, order.id);
     }
 

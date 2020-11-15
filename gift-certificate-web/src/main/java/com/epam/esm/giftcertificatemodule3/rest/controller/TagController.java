@@ -1,7 +1,10 @@
 package com.epam.esm.giftcertificatemodule3.rest.controller;
 
 import com.epam.esm.giftcertificatemodule3.entity.GiftCertificate;
+import com.epam.esm.giftcertificatemodule3.entity.Order;
 import com.epam.esm.giftcertificatemodule3.entity.Tag;
+import com.epam.esm.giftcertificatemodule3.model.SearchParametersHolder;
+import com.epam.esm.giftcertificatemodule3.services.OrderService;
 import com.epam.esm.giftcertificatemodule3.services.TagService;
 import com.epam.esm.giftcertificatemodule3.services.exceptions.ServiceException;
 import org.apache.logging.log4j.LogManager;
@@ -11,7 +14,9 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -24,14 +29,16 @@ public class TagController {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private TagService tagService;
+    private OrderService orderService;
 
     @Autowired
-    public TagController(TagService tagService) {
+    public TagController(TagService tagService, OrderService orderService) {
         this.tagService = tagService;
+        this.orderService = orderService;
     }
 
     @PostMapping("/tags")
-    public Tag saveTag(@RequestBody Tag tag) {
+    public Tag save(@RequestBody Tag tag) {
         try {
             tagService.save(tag);
         } catch (ServiceException e) {
@@ -96,6 +103,41 @@ public class TagController {
                 })
                 .collect(Collectors.toList());
         return collect;
+    }
+
+    @GetMapping("/tags/findMostUsed")
+    public EntityModel<Tag> findMostUsed() {
+        List<Order> orders;
+        Tag tag = null;
+        int count = 0;
+        SearchParametersHolder searchParametersHolder = new SearchParametersHolder();
+        searchParametersHolder.setHighestCost(true);
+        try {
+            orders = orderService.findBy(searchParametersHolder);
+            List<Tag> tags = orders.stream()
+                    .flatMap(order -> order.getCertificates().stream())
+                    .flatMap(giftCertificate -> giftCertificate.getTags().stream())
+                    .collect(Collectors.toList());
+            Map<Tag, Integer> tagsMap = new HashMap<>();
+            tags.forEach(e -> {
+                Integer tagCount = (tagsMap.get(e) == null) ? 0 : tagsMap.get(e);
+                tagsMap.put(e, ++tagCount);
+            });
+            for (Map.Entry<Tag, Integer> entry : tagsMap.entrySet()) {
+                Integer value = entry.getValue();
+                if (value > count) {
+                    count = value;
+                    tag = entry.getKey();
+                }
+            }
+        } catch (ServiceException e) {
+            LOGGER.error("findById error: " + e.getMessage());
+            throw new RuntimeException();
+        }
+        WebMvcLinkBuilder linkToFindById = linkTo(methodOn(TagController.class).findById(tag.getId()));
+        EntityModel<Tag> entityModel = EntityModel.of(tag);
+        entityModel.add(linkToFindById.withRel("certificateById"));
+        return entityModel;
     }
 
     @PutMapping("/tags")
