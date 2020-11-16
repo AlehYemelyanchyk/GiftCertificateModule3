@@ -2,6 +2,7 @@ package com.epam.esm.giftcertificatemodule3.dao.impl;
 
 import com.epam.esm.giftcertificatemodule3.dao.GiftCertificateDAO;
 import com.epam.esm.giftcertificatemodule3.entity.GiftCertificate;
+import com.epam.esm.giftcertificatemodule3.entity.Tag;
 import com.epam.esm.giftcertificatemodule3.model.SearchParametersHolder;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -10,14 +11,19 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
 public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
+
+    private final static String SORT_ORDER_DESC = "desc";
+    private final static String FIELD_NAME_TAGS = "tags";
+    private final static String FIELD_NAME_NAME = "name";
+    private final static String FIELD_NAME_DESCRIPTION = "description";
+    private final static String FIELD_NAME_ID_CERT = "id_cert";
 
     private SessionFactory sessionFactory;
 
@@ -61,37 +67,44 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
 
         boolean sortDesc = searchParametersHolder.getSortOrder() != null
                 && searchParametersHolder.getSortOrder().toLowerCase().equals(
-                "desc");
+                SORT_ORDER_DESC);
 
         Session session = sessionFactory.getCurrentSession();
-        CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<GiftCertificate> cr = cb.createQuery(GiftCertificate.class);
-        Root<GiftCertificate> root = cr.from(GiftCertificate.class);
-
-//        Root<Tag> answerRoot = cr.from(Tag.class);
-//        cr.where(cb.equal(answerRoot.get(Tag_.id),
-//                tagId));
-//        SetJoin<Tag, GiftCertificate> tags = answerRoot
-//                .join(Tag_.collaborators);
-//        CriteriaQuery<GiftCertificate> cq = cr.select(tags);
-//        TypedQuery<GiftCertificate> query = entityManager.createQuery(cq);
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<GiftCertificate> criteriaQuery = criteriaBuilder.createQuery(GiftCertificate.class);
+        Root<GiftCertificate> root = criteriaQuery.from(GiftCertificate.class);
 
         if (searchParametersHolder.getTagName() != null) {
-            cr.select(root).where(cb.like(root.get("tagName"), "%" + searchParametersHolder.getTagName() + "%"));
+            Fetch<GiftCertificate, Tag> fetch = root.fetch(FIELD_NAME_TAGS, JoinType.INNER);
+            Join<GiftCertificate, Tag> join = (Join<GiftCertificate, Tag>) fetch;
+
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(criteriaBuilder.equal(join.get(FIELD_NAME_NAME), searchParametersHolder.getTagName()));
+
+            criteriaQuery.where(
+                    criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]))
+            );
+            criteriaQuery
+                    .distinct(true)
+                    .select(root);
         }
         if (searchParametersHolder.getName() != null) {
-            cr.select(root).where(cb.like(root.get("name"), "%" + searchParametersHolder.getName() + "%"));
+            criteriaQuery.select(root)
+                    .where(criteriaBuilder.like(root.get(FIELD_NAME_NAME),
+                            "%" + searchParametersHolder.getName() + "%"));
         }
         if (searchParametersHolder.getDescription() != null) {
-            cr.select(root).where(cb.like(root.get("description"), "%" + searchParametersHolder.getDescription() + "%"));
+            criteriaQuery.select(root)
+                    .where(criteriaBuilder.like(root.get(FIELD_NAME_DESCRIPTION),
+                            "%" + searchParametersHolder.getDescription() + "%"));
         }
         if (searchParametersHolder.getSortBy() != null && sortDesc) {
-            cr.orderBy(cb.desc(root.get(searchParametersHolder.getSortBy())));
+            criteriaQuery.orderBy(criteriaBuilder.desc(root.get(searchParametersHolder.getSortBy())));
         } else if (searchParametersHolder.getSortBy() != null) {
-            cr.orderBy(cb.asc(root.get(searchParametersHolder.getSortBy())));
+            criteriaQuery.orderBy(criteriaBuilder.asc(root.get(searchParametersHolder.getSortBy())));
         }
 
-        Query<GiftCertificate> query = session.createQuery(cr);
+        Query<GiftCertificate> query = session.createQuery(criteriaQuery);
         List<GiftCertificate> certificates = query.getResultList();
         certificates.forEach(e -> Hibernate.initialize(e.getTags()));
         return certificates;
@@ -116,7 +129,7 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
     public void deleteById(Long id) {
         Session session = sessionFactory.getCurrentSession();
         Query query = session.createQuery("delete from GiftCertificate where id=:id_cert");
-        query.setParameter("id_cert", id);
+        query.setParameter(FIELD_NAME_ID_CERT, id);
         query.executeUpdate();
     }
 
