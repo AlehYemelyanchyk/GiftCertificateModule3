@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface OrderService extends CrudService<Order, Long> {
     /**
-     * Returns all instances of the GiftCertificate type.
+     * Returns all instances of the Order type.
      *
      * @param searchParametersHolder is an object which contains all the field used in a search.
      * @return List with all entities found with the search.

@@ -1,6 +1,5 @@
 package com.epam.esm.giftcertificatemodule3.rest.controller;
 
-import com.epam.esm.giftcertificatemodule3.entity.GiftCertificate;
 import com.epam.esm.giftcertificatemodule3.entity.Order;
 import com.epam.esm.giftcertificatemodule3.entity.Tag;
 import com.epam.esm.giftcertificatemodule3.model.SearchParametersHolder;
@@ -14,7 +13,10 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -26,6 +28,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class TagController {
 
     private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final int FIRST_RESULT = 0;
+    private static final int MAX_RESULTS = 5;
+    private static final String CERTIFICATES_BY_ID = "certificateById";
+    private static final String TAGS_BY_ID = "tagsById";
+    private static final String ALL_TAGS = "allTags";
 
     private TagService tagService;
     private OrderService orderService;
@@ -59,15 +67,14 @@ public class TagController {
             LOGGER.error("findAll error: " + e.getMessage());
             throw new RuntimeException();
         }
-        List<EntityModel<Tag>> collect = returnObject.stream()
+        return returnObject.stream()
                 .map(e -> {
                     WebMvcLinkBuilder linkToFindById = linkTo(methodOn(this.getClass()).findById(e.getId()));
                     EntityModel<Tag> entityModel = EntityModel.of(e);
-                    entityModel.add(linkToFindById.withRel("tagsById"));
+                    entityModel.add(linkToFindById.withRel(TAGS_BY_ID));
                     return entityModel;
                 })
                 .collect(Collectors.toList());
-        return collect;
     }
 
     @GetMapping("/tags/{id}")
@@ -79,48 +86,27 @@ public class TagController {
             LOGGER.error("findById error: " + e.getMessage());
             throw new RuntimeException();
         }
-        WebMvcLinkBuilder linkToFindAll = linkTo(methodOn(this.getClass()).findAll(0, 5));
-        returnObject.add(linkToFindAll.withRel("allTags"));
+        WebMvcLinkBuilder linkToFindAll = linkTo(methodOn(this.getClass()).findAll(FIRST_RESULT, MAX_RESULTS));
+        returnObject.add(linkToFindAll.withRel(ALL_TAGS));
         return returnObject;
-    }
-
-    @GetMapping("/tags/findByName")
-    public List<EntityModel<GiftCertificate>> findByName(@RequestParam String name) {
-        List<GiftCertificate> certificates;
-        try {
-            certificates = tagService.findByName(name).getCertificates();
-        } catch (ServiceException e) {
-            LOGGER.error("findById error: " + e.getMessage());
-            throw new RuntimeException();
-        }
-        return certificates.stream()
-                .map(e -> {
-                    WebMvcLinkBuilder linkToFindById = linkTo(methodOn(GiftCertificateController.class).findById(e.getId()));
-                    EntityModel<GiftCertificate> entityModel = EntityModel.of(e);
-                    entityModel.add(linkToFindById.withRel("certificateById"));
-                    return entityModel;
-                })
-                .collect(Collectors.toList());
     }
 
     @GetMapping("/tags/findHighestPrice")
     public List<EntityModel<Tag>> findMostUsed() {
-        List<Order> orders;
         List<Tag> tags;
         SearchParametersHolder searchParametersHolder = new SearchParametersHolder();
         try {
-            orders = orderService.findHighestPriceByUser(searchParametersHolder);
+            List<Order> orders = orderService.findHighestPriceByUser(searchParametersHolder);
             Set<Map.Entry<Tag, Long>> entries = orders.stream()
                     .flatMap(order -> order.getCertificates().stream())
                     .flatMap(giftCertificate -> giftCertificate.getTags().stream())
                     .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                     .entrySet();
-            Long value = entries.stream()
+            Long maxAmount = entries.stream()
                     .max(Comparator.comparingLong(Map.Entry::getValue))
                     .get().getValue();
-
             tags = entries.stream()
-                    .filter(e -> e.getValue().equals(value))
+                    .filter(e -> e.getValue().equals(maxAmount))
                     .map(e -> e.getKey())
                     .collect(Collectors.toList());
         } catch (ServiceException e) {
@@ -132,7 +118,7 @@ public class TagController {
                     WebMvcLinkBuilder linkToFindById =
                             linkTo(methodOn(TagController.class).findById(e.getId()));
                     EntityModel<Tag> entityModel = EntityModel.of(e);
-                    entityModel.add(linkToFindById.withRel("certificateById"));
+                    entityModel.add(linkToFindById.withRel(TAGS_BY_ID));
                     return entityModel;
                 })
                 .collect(Collectors.toList());

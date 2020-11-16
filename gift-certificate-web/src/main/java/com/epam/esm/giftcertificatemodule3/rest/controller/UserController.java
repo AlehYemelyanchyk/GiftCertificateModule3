@@ -22,6 +22,11 @@ public class UserController {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
+    private static final int FIRST_RESULT = 0;
+    private static final int MAX_RESULTS = 5;
+    private static final String USERS_BY_ID = "usersById";
+    private static final String ALL_USERS = "allUsers";
+
     private UserService userService;
 
     @Autowired
@@ -41,15 +46,14 @@ public class UserController {
             LOGGER.error("findAll error: " + e.getMessage());
             throw new RuntimeException();
         }
-        List<EntityModel<User>> collect = returnObject.stream()
+        return returnObject.stream()
                 .map(e -> {
                     WebMvcLinkBuilder linkToFindById = linkTo(methodOn(this.getClass()).findById(e.getId()));
                     EntityModel<User> entityModel = EntityModel.of(e);
-                    entityModel.add(linkToFindById.withRel("usersById"));
+                    entityModel.add(linkToFindById.withRel(USERS_BY_ID));
                     return entityModel;
                 })
                 .collect(Collectors.toList());
-        return collect;
     }
 
     @GetMapping("/users/{id}")
@@ -61,8 +65,8 @@ public class UserController {
             LOGGER.error("findById error: " + e.getMessage());
             throw new RuntimeException();
         }
-        WebMvcLinkBuilder linkToFindAll = linkTo(methodOn(this.getClass()).findAll(0, 5));
-        returnObject.add(linkToFindAll.withRel("allUsers"));
+        WebMvcLinkBuilder linkToFindAll = linkTo(methodOn(this.getClass()).findAll(FIRST_RESULT, MAX_RESULTS));
+        returnObject.add(linkToFindAll.withRel(ALL_USERS));
         return returnObject;
     }
 }

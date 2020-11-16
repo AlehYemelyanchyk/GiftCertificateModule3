@@ -12,6 +12,7 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -21,6 +22,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class GiftCertificateController {
 
     private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final int FIRST_RESULT = 0;
+    private static final int MAX_RESULTS = 5;
+    private static final String CERTIFICATES_BY_ID = "certificateById";
+    private static final String ALL_CERTIFICATES = "allCertificates";
 
     private GiftCertificateService giftCertificateService;
 
@@ -41,7 +47,7 @@ public class GiftCertificateController {
     }
 
     @GetMapping("/certificates")
-    public List<GiftCertificate> findAll(
+    public List<EntityModel<GiftCertificate>> findAll(
             @RequestParam(defaultValue = "0") int firstResult,
             @RequestParam(defaultValue = "5") int maxResults
     ) {
@@ -52,7 +58,8 @@ public class GiftCertificateController {
             LOGGER.error("findAll error: " + e.getMessage());
             throw new RuntimeException();
         }
-        return giftCertificates;
+
+        return getEntityModels(giftCertificates);
     }
 
     @GetMapping("/certificates/{id}")
@@ -64,13 +71,13 @@ public class GiftCertificateController {
             LOGGER.error("findById error: " + e.getMessage());
             throw new RuntimeException();
         }
-        WebMvcLinkBuilder linkToFindAll = linkTo(methodOn(this.getClass()).findAll(0, 5));
-        returnObject.add(linkToFindAll.withRel("allGiftCertificates"));
+        WebMvcLinkBuilder linkToFindAll = linkTo(methodOn(this.getClass()).findAll(FIRST_RESULT, MAX_RESULTS));
+        returnObject.add(linkToFindAll.withRel(ALL_CERTIFICATES));
         return returnObject;
     }
 
     @GetMapping("/certificates/findBy")
-    public List<GiftCertificate> findBy(@RequestParam(required = false) Long id,
+    public List<EntityModel<GiftCertificate>> findBy(@RequestParam(required = false) Long id,
                                         @RequestParam(required = false) String tagName,
                                         @RequestParam(required = false) String name,
                                         @RequestParam(required = false) String description,
@@ -95,7 +102,7 @@ public class GiftCertificateController {
         if (returnObject.isEmpty()) {
             throw new RuntimeException("Certificates");
         }
-        return returnObject;
+        return getEntityModels(returnObject);
     }
 
     @PutMapping("/certificates")
@@ -127,5 +134,16 @@ public class GiftCertificateController {
             LOGGER.error("delete error: " + e.getMessage());
             throw new RuntimeException("GiftCertificate (id = " + id + ")");
         }
+    }
+
+    private List<EntityModel<GiftCertificate>> getEntityModels(List<GiftCertificate> returnObject) {
+        return returnObject.stream()
+                .map(e -> {
+                    WebMvcLinkBuilder linkToFindById = linkTo(methodOn(this.getClass()).findById(e.getId()));
+                    EntityModel<GiftCertificate> entityModel = EntityModel.of(e);
+                    entityModel.add(linkToFindById.withRel(CERTIFICATES_BY_ID));
+                    return entityModel;
+                })
+                .collect(Collectors.toList());
     }
 }
