@@ -28,6 +28,7 @@ public class OrderDAOHibernate implements OrderDAO {
     public void save(Order order) {
         order.setDate(ZonedDateTime.now().toOffsetDateTime());
         Session session = sessionFactory.getCurrentSession();
+        session.clear();
         session.save(order);
     }
 

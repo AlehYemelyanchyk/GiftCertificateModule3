@@ -1,5 +1,7 @@
 package com.epam.esm.giftcertificatemodule3.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -22,12 +24,8 @@ public class GiftCertificate implements Serializable {
     private Set<Tag> tags;
 
     @ManyToMany(fetch = FetchType.EAGER,
-            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinTable(
-            name = "orders_certificates",
-            joinColumns = @JoinColumn(name = "certificate_id"),
-            inverseJoinColumns = @JoinColumn(name = "order_id")
-    )
+            mappedBy = "certificates")
+    @JsonBackReference
     private Set<Order> orders;
 
     @Id
