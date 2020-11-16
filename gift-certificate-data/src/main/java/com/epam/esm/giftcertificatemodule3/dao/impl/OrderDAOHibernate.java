@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.criteria.*;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Repository
@@ -24,7 +25,10 @@ public class OrderDAOHibernate implements OrderDAO {
     }
 
     @Override
-    public void save(Order object) {
+    public void save(Order order) {
+        order.setDate(ZonedDateTime.now().toOffsetDateTime());
+        Session session = sessionFactory.getCurrentSession();
+        session.save(order);
     }
 
     @Override
