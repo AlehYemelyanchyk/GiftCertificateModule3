@@ -1,5 +1,7 @@
 package com.epam.esm.giftcertificatemodule3.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -21,7 +23,8 @@ public class Order implements Serializable {
     @Column(name = "price")
     private Double price;
 
-    @ManyToMany(fetch = FetchType.EAGER,
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "orders_certificates",
@@ -30,7 +33,9 @@ public class Order implements Serializable {
     )
     private Set<GiftCertificate> certificates;
 
-    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY,
+            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "id_user")
     private User user;
 

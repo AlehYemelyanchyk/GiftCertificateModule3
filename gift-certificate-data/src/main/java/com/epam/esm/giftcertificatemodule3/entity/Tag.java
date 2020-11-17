@@ -12,7 +12,7 @@ import java.util.Objects;
 public class Tag implements Serializable {
     private static final long serialVersionUID = 8700472259924409409L;
 
-    @ManyToMany(fetch = FetchType.EAGER,
+    @ManyToMany(fetch = FetchType.LAZY,
             mappedBy = "tags",
             cascade = CascadeType.ALL)
     @JsonBackReference

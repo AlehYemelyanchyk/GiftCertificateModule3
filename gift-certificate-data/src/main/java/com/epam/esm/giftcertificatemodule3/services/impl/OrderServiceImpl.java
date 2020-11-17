@@ -2,7 +2,6 @@ package com.epam.esm.giftcertificatemodule3.services.impl;
 
 import com.epam.esm.giftcertificatemodule3.dao.OrderDAO;
 import com.epam.esm.giftcertificatemodule3.entity.Order;
-import com.epam.esm.giftcertificatemodule3.model.SearchParametersHolder;
 import com.epam.esm.giftcertificatemodule3.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,12 +29,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order findById(Long id) {
         return orderDAO.findById(id);
-    }
-
-    @Transactional
-    @Override
-    public List<Order> findHighestSpendByUser(SearchParametersHolder searchParametersHolder) {
-        return orderDAO.findHighestSpendByUser(searchParametersHolder);
     }
 
     @Transactional

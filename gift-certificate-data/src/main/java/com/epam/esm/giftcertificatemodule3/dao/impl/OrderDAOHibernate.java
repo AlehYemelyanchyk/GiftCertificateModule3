@@ -46,7 +46,7 @@ public class OrderDAOHibernate implements OrderDAO {
     }
 
     @Override
-    public List<Order> findHighestSpendByUser(SearchParametersHolder searchParametersHolder) {
+    public List<Order> findByHighestUserExpense(SearchParametersHolder searchParametersHolder) {
         Session session = sessionFactory.getCurrentSession();
 
         String hql =
