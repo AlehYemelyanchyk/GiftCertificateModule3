@@ -96,8 +96,15 @@ public class TagController {
         List<Tag> tags;
         SearchParametersHolder searchParametersHolder = new SearchParametersHolder();
         try {
-            List<Order> orders = orderService.findHighestPriceByUser(searchParametersHolder);
+            List<Order> orders = orderService.findHighestSpendByUser(searchParametersHolder);
+
+            double maxSpend = orders.stream()
+                    .mapToDouble(Order::getPrice)
+                    .max()
+                    .getAsDouble();
             Set<Map.Entry<Tag, Long>> entries = orders.stream()
+                    .filter(order -> order.getPrice() == maxSpend)
+                    .flatMap(order -> order.getUser().getOrders().stream())
                     .flatMap(order -> order.getCertificates().stream())
                     .flatMap(giftCertificate -> giftCertificate.getTags().stream())
                     .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))

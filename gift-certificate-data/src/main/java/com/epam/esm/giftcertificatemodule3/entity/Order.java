@@ -34,6 +34,13 @@ public class Order implements Serializable {
     @JoinColumn(name = "id_user")
     private User user;
 
+    public Order(Long id, OffsetDateTime date, Double price, User user) {
+        this.id = id;
+        this.date = date;
+        this.price = price;
+        this.user = user;
+    }
+
     public Order() {
     }
 

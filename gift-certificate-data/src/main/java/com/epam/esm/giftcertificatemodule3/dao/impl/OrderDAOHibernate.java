@@ -3,14 +3,12 @@ package com.epam.esm.giftcertificatemodule3.dao.impl;
 import com.epam.esm.giftcertificatemodule3.dao.OrderDAO;
 import com.epam.esm.giftcertificatemodule3.entity.Order;
 import com.epam.esm.giftcertificatemodule3.model.SearchParametersHolder;
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.criteria.*;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -48,41 +46,16 @@ public class OrderDAOHibernate implements OrderDAO {
     }
 
     @Override
-    public List<Order> findHighestPriceByUser(SearchParametersHolder searchParametersHolder) {
-        Session session = sessionFactory.getCurrentSession();
-        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-        CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
-        Root<Order> root = criteriaQuery.from(Order.class);
-        Subquery<Double> subQuery = criteriaQuery.subquery(Double.class);
-        Root<Order> subRoot = subQuery.from(Order.class);
-
-        subQuery.select(criteriaBuilder.max(subRoot.get("price")));
-        criteriaQuery.select(root)
-                .where(criteriaBuilder.equal(root.get("price"), subQuery));
-
-        Query<Order> query = session.createQuery(criteriaQuery);
-        List<Order> orders = query.getResultList();
-        return orders;
-    }
-
-    @Override
     public List<Order> findHighestSpendByUser(SearchParametersHolder searchParametersHolder) {
         Session session = sessionFactory.getCurrentSession();
-        CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<Order> cr = cb.createQuery(Order.class);
-        Root<Order> root = cr.from(Order.class);
 
-        if (searchParametersHolder.getHighestPrice() != null && searchParametersHolder.getHighestPrice()) {
-            Path<Double> pathToPrice = root.get("price");
-            Subquery<Double> subQuery = cr.subquery(Double.class);
-            Root<Order> subRoot = subQuery.from(Order.class);
-            Path<Double> subPathToPrice = subRoot.get("price");
-            subQuery.select(cb.max(subPathToPrice));
-            cr.select(root).where(cb.equal(pathToPrice, subQuery));
-        }
-        Query<Order> query = session.createQuery(cr);
+        String hql =
+                "SELECT NEW com.epam.esm.giftcertificatemodule3.entity.Order(id, date, sum(price), user) " +
+                        "from Order " +
+                        "group by id_user";
+
+        Query<Order> query = session.createQuery(hql, Order.class);
         List<Order> orders = query.getResultList();
-        orders.forEach(Hibernate::initialize);
         return orders;
     }
 

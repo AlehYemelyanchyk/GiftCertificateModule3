@@ -19,7 +19,8 @@ public class User implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "user",
+    @OneToMany(fetch = FetchType.EAGER,
+            mappedBy = "user",
             cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<Order> orders;
 
@@ -49,6 +50,14 @@ public class User implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
     }
 
     @Override
