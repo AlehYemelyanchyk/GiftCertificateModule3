@@ -46,7 +46,8 @@ public class OrderDAOHibernate implements OrderDAO {
     }
 
     @Override
-    public List<Order> findByHighestUserExpense(SearchParametersHolder searchParametersHolder) {
+    public List<Order> findByHighestUserExpense(SearchParametersHolder searchParametersHolder,
+                                                int firstResult, int maxResults) {
         Session session = sessionFactory.getCurrentSession();
 
         String hql =
@@ -55,8 +56,9 @@ public class OrderDAOHibernate implements OrderDAO {
                         "group by id_user";
 
         Query<Order> query = session.createQuery(hql, Order.class);
-        List<Order> orders = query.getResultList();
-        return orders;
+        query.setFirstResult(firstResult);
+        query.setMaxResults(maxResults);
+        return query.getResultList();
     }
 
     @Override

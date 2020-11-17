@@ -22,6 +22,8 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public List<Order> findAll(int firstResult, int maxResults) {
+        firstResult = Math.max(firstResult, 0);
+        maxResults = Math.max(firstResult, 1);
         return orderDAO.findAll(firstResult, maxResults);
     }
 

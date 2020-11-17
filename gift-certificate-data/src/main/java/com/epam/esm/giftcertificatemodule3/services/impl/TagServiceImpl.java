@@ -32,6 +32,8 @@ public class TagServiceImpl implements TagService {
     @Transactional
     @Override
     public List<Tag> findAll(int firstResult, int maxResults) {
+        firstResult = Math.max(firstResult, 0);
+        maxResults = Math.max(firstResult, 1);
         return tagDAO.findAll(firstResult, maxResults);
     }
 
@@ -49,8 +51,12 @@ public class TagServiceImpl implements TagService {
 
     @Transactional
     @Override
-    public List<Tag> findByHighestUserExpense(SearchParametersHolder searchParametersHolder) {
-        List<Order> orders = orderDAO.findByHighestUserExpense(searchParametersHolder);
+    public List<Tag> findByHighestUserExpense(SearchParametersHolder searchParametersHolder,
+                                              int firstResult, int maxResults) {
+        firstResult = Math.max(firstResult, 0);
+        firstResult = Math.min(firstResult, 0);
+        maxResults = Math.max(firstResult, 1);
+        List<Order> orders = orderDAO.findByHighestUserExpense(searchParametersHolder, firstResult, maxResults);
         double maxSpend = orders.stream()
                 .mapToDouble(Order::getPrice)
                 .max()

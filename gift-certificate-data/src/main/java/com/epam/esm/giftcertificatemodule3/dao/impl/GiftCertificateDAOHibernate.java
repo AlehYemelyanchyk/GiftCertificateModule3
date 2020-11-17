@@ -63,7 +63,8 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
     }
 
     @Override
-    public List<GiftCertificate> findBy(SearchParametersHolder searchParametersHolder) {
+    public List<GiftCertificate> findBy(SearchParametersHolder searchParametersHolder,
+                                        int firstResult, int maxResults) {
 
         boolean sortDesc = searchParametersHolder.getSortOrder() != null
                 && searchParametersHolder.getSortOrder().toLowerCase().equals(
@@ -105,6 +106,8 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
         }
 
         Query<GiftCertificate> query = session.createQuery(criteriaQuery);
+        query.setFirstResult(firstResult);
+        query.setMaxResults(maxResults);
         List<GiftCertificate> certificates = query.getResultList();
         certificates.forEach(e -> Hibernate.initialize(e.getTags()));
         return certificates;

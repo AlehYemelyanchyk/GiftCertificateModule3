@@ -28,6 +28,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Transactional
     @Override
     public List<GiftCertificate> findAll(int firstResult, int maxResults) {
+        firstResult = Math.max(firstResult, 0);
+        maxResults = Math.max(firstResult, 1);
         return giftCertificateDAO.findAll(firstResult, maxResults);
     }
 
@@ -39,8 +41,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Transactional
     @Override
-    public List<GiftCertificate> findBy(SearchParametersHolder searchParametersHolder) {
-        return giftCertificateDAO.findBy(searchParametersHolder);
+    public List<GiftCertificate> findBy(SearchParametersHolder searchParametersHolder,
+                                        int firstResult, int maxResults) {
+        firstResult = Math.max(firstResult, 0);
+        maxResults = Math.max(firstResult, 1);
+        return giftCertificateDAO.findBy(searchParametersHolder, firstResult, maxResults);
     }
 
     @Transactional

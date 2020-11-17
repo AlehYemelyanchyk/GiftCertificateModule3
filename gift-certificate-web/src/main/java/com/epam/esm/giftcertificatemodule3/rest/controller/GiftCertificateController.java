@@ -77,12 +77,14 @@ public class GiftCertificateController {
     }
 
     @GetMapping("/certificates/findBy")
-    public List<EntityModel<GiftCertificate>> findBy(@RequestParam(required = false) Long id,
-                                        @RequestParam(required = false) String tagName,
-                                        @RequestParam(required = false) String name,
-                                        @RequestParam(required = false) String description,
-                                        @RequestParam(required = false) String sortBy,
-                                        @RequestParam(required = false) String sortOrder) {
+    public List<EntityModel<GiftCertificate>> findBy(@RequestParam(defaultValue = "0") int firstResult,
+                                                     @RequestParam(defaultValue = "5") int maxResults,
+                                                     @RequestParam(required = false) Long id,
+                                                     @RequestParam(required = false) String tagName,
+                                                     @RequestParam(required = false) String name,
+                                                     @RequestParam(required = false) String description,
+                                                     @RequestParam(required = false) String sortBy,
+                                                     @RequestParam(required = false) String sortOrder) {
         List<GiftCertificate> returnObject;
 
         SearchParametersHolder searchParametersHolder = new SearchParametersHolder();
@@ -94,7 +96,7 @@ public class GiftCertificateController {
         searchParametersHolder.setSortOrder(sortOrder);
 
         try {
-            returnObject = giftCertificateService.findBy(searchParametersHolder);
+            returnObject = giftCertificateService.findBy(searchParametersHolder, firstResult, maxResults);
         } catch (ServiceException e) {
             LOGGER.error("searchBy error: " + e.getMessage());
             throw new RuntimeException();

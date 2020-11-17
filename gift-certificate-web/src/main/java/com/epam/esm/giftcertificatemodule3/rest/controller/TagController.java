@@ -87,11 +87,14 @@ public class TagController {
     }
 
     @GetMapping("/tags/findHighestPrice")
-    public List<EntityModel<Tag>> findByHighestUserExpense() {
+    public List<EntityModel<Tag>> findByHighestUserExpense(
+            @RequestParam(defaultValue = "0") int firstResult,
+            @RequestParam(defaultValue = "5") int maxResults
+    ) {
         List<Tag> tags;
         SearchParametersHolder searchParametersHolder = new SearchParametersHolder();
         try {
-            tags = tagService.findByHighestUserExpense(searchParametersHolder);
+            tags = tagService.findByHighestUserExpense(searchParametersHolder, firstResult, maxResults);
         } catch (ServiceException e) {
             LOGGER.error("findById error: " + e.getMessage());
             throw new RuntimeException();
