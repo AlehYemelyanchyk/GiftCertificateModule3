@@ -54,8 +54,7 @@ public class TagServiceImpl implements TagService {
     public List<Tag> findByHighestUserExpense(SearchParametersHolder searchParametersHolder,
                                               int firstResult, int maxResults) {
         firstResult = Math.max(firstResult, 0);
-        firstResult = Math.min(firstResult, 0);
-        maxResults = Math.max(firstResult, 1);
+        maxResults = Math.max(maxResults, 1);
         List<Order> orders = orderDAO.findByHighestUserExpense(searchParametersHolder, firstResult, maxResults);
         double maxSpend = orders.stream()
                 .mapToDouble(Order::getPrice)

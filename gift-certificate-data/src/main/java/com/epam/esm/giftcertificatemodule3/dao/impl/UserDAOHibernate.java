@@ -2,6 +2,7 @@ package com.epam.esm.giftcertificatemodule3.dao.impl;
 
 import com.epam.esm.giftcertificatemodule3.dao.UserDAO;
 import com.epam.esm.giftcertificatemodule3.entity.User;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -26,13 +27,17 @@ public class UserDAOHibernate implements UserDAO {
         Query<User> query = session.createQuery("from User", User.class);
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResults);
-        return query.getResultList();
+        List<User> resultList = query.getResultList();
+        resultList.forEach(user -> Hibernate.initialize(user.getOrders()));
+        return resultList;
     }
 
     @Override
     public User findById(Long id) {
         Session session = sessionFactory.getCurrentSession();
-        return session.get(User.class, id);
+        User user = session.get(User.class, id);
+        Hibernate.initialize(user.getOrders());
+        return user;
     }
 
     @Override

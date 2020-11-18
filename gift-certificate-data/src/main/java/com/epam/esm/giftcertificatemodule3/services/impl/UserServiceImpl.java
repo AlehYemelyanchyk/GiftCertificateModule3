@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findAll(int firstResult, int maxResults) {
         firstResult = Math.max(firstResult, 0);
-        maxResults = Math.max(firstResult, 1);
+        maxResults = Math.max(maxResults, 1);
         return userDAO.findAll(firstResult, maxResults);
     }
 
