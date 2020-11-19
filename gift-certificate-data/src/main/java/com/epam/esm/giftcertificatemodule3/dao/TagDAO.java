@@ -8,7 +8,7 @@ import com.epam.esm.giftcertificatemodule3.entity.Tag;
  *
  * @author Aleh Yemelyanchyk
  */
-public interface TagDAO extends CrudDAO<Tag, Integer> {
+public interface TagDAO extends CrudDAO<Tag, Long> {
     /**
      * Returns the instance of the Tag type.
      *

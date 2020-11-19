@@ -8,7 +8,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "users")
-public class User implements Serializable {
+public class User extends BaseEntity implements Serializable {
     private static final long serialVersionUID = 4060654038230251833L;
 
     @Id
@@ -72,7 +72,7 @@ public class User implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id == user.id;
+        return id.equals(user.id);
     }
 
     @Override

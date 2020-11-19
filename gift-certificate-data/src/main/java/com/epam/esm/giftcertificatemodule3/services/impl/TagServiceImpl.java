@@ -33,13 +33,13 @@ public class TagServiceImpl implements TagService {
     @Override
     public List<Tag> findAll(int firstResult, int maxResults) {
         firstResult = Math.max(firstResult, 0);
-        maxResults = Math.max(firstResult, 1);
+        maxResults = Math.max(maxResults, 1);
         return tagDAO.findAll(firstResult, maxResults);
     }
 
     @Transactional
     @Override
-    public Tag findById(Integer id) {
+    public Tag findById(Long id) {
         return tagDAO.findById(id);
     }
 
@@ -70,11 +70,10 @@ public class TagServiceImpl implements TagService {
         Long maxAmount = entries.stream()
                 .max(Comparator.comparingLong(Map.Entry::getValue))
                 .get().getValue();
-        List<Tag> tags = entries.stream()
+        return entries.stream()
                 .filter(e -> e.getValue().equals(maxAmount))
                 .map(e -> e.getKey())
                 .collect(Collectors.toList());
-        return tags;
     }
 
     @Transactional
@@ -97,7 +96,7 @@ public class TagServiceImpl implements TagService {
 
     @Transactional
     @Override
-    public void deleteById(Integer id) {
+    public void deleteById(Long id) {
         tagDAO.deleteById(id);
     }
 }

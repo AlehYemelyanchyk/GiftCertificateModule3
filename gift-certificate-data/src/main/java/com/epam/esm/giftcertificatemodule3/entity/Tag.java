@@ -9,7 +9,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "tags")
-public class Tag implements Serializable {
+public class Tag extends BaseEntity implements Serializable {
     private static final long serialVersionUID = 8700472259924409409L;
 
     @ManyToMany(fetch = FetchType.LAZY,
@@ -21,7 +21,7 @@ public class Tag implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Long id;
 
     @Column(name = "name")
     private String name;
@@ -38,11 +38,11 @@ public class Tag implements Serializable {
         this.certificates = certificates;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

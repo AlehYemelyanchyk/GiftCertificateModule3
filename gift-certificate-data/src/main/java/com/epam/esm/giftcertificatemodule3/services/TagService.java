@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author Aleh Yemelyanchyk
  */
-public interface TagService extends CrudService<Tag, Integer> {
+public interface TagService extends CrudService<Tag, Long> {
     /**
      * Returns the instance of the Tag type.
      *

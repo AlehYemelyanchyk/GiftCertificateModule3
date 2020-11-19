@@ -42,10 +42,9 @@ public class TagDAOHibernate implements TagDAO {
     }
 
     @Override
-    public Tag findById(Integer id) {
+    public Tag findById(Long id) {
         Session session = sessionFactory.getCurrentSession();
-        Tag tag = session.get(Tag.class, id);
-        return tag;
+        return session.get(Tag.class, id);
     }
 
     @Override
@@ -73,7 +72,7 @@ public class TagDAOHibernate implements TagDAO {
     }
 
     @Override
-    public void deleteById(Integer id) {
+    public void deleteById(Long id) {
         Session session = sessionFactory.getCurrentSession();
         Query query = session.createQuery("delete from Tag where id=:id");
         query.setParameter("id", id);

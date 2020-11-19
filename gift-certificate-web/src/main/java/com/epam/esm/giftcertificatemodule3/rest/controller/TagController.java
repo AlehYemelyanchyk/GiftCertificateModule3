@@ -2,7 +2,6 @@ package com.epam.esm.giftcertificatemodule3.rest.controller;
 
 import com.epam.esm.giftcertificatemodule3.entity.Tag;
 import com.epam.esm.giftcertificatemodule3.model.SearchParametersHolder;
-import com.epam.esm.giftcertificatemodule3.services.OrderService;
 import com.epam.esm.giftcertificatemodule3.services.TagService;
 import com.epam.esm.giftcertificatemodule3.services.exceptions.ServiceException;
 import org.apache.logging.log4j.LogManager;
@@ -26,17 +25,14 @@ public class TagController {
 
     private static final int FIRST_RESULT = 0;
     private static final int MAX_RESULTS = 5;
-    private static final String CERTIFICATES_BY_ID = "certificateById";
     private static final String TAGS_BY_ID = "tagsById";
     private static final String ALL_TAGS = "allTags";
 
     private TagService tagService;
-    private OrderService orderService;
 
     @Autowired
-    public TagController(TagService tagService, OrderService orderService) {
+    public TagController(TagService tagService) {
         this.tagService = tagService;
-        this.orderService = orderService;
     }
 
     @PostMapping("/tags")
@@ -73,7 +69,7 @@ public class TagController {
     }
 
     @GetMapping("/tags/{id}")
-    public EntityModel<Tag> findById(@PathVariable int id) {
+    public EntityModel<Tag> findById(@PathVariable Long id) {
         EntityModel<Tag> returnObject;
         try {
             returnObject = EntityModel.of(tagService.findById(id));
@@ -132,7 +128,7 @@ public class TagController {
     }
 
     @DeleteMapping("/tags/{id}")
-    public void deleteById(@PathVariable Integer id) {
+    public void deleteById(@PathVariable Long id) {
         try {
             tagService.deleteById(id);
         } catch (ServiceException e) {

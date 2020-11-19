@@ -10,8 +10,10 @@ import java.util.Set;
 
 @Entity
 @Table(name = "orders")
-public class Order implements Serializable {
-    private static final Long serialVersionUID = 1324820937632935342L;
+public class Order extends BaseEntity implements Serializable {
+
+    private static final long serialVersionUID = 1324820937632935342L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_order")
