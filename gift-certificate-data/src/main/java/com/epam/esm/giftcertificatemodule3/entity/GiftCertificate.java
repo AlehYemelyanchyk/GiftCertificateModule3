@@ -30,7 +30,7 @@ public class GiftCertificate extends BaseEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_cert")
+    @Column(name = "certificate_id")
     private Long id;
 
     @Column(name = "name")

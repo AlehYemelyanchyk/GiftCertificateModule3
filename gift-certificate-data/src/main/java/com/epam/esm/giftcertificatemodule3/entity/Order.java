@@ -16,7 +16,7 @@ public class Order extends BaseEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_order")
+    @Column(name = "order_id")
     private Long id;
 
     @Column(name = "date")
@@ -38,8 +38,17 @@ public class Order extends BaseEntity implements Serializable {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY,
             cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinColumn(name = "id_user")
+    @JoinColumn(name = "user_id")
     private User user;
+
+    public Order(User user) {
+        this.user = user;
+    }
+
+    public Order(Double price, User user) {
+        this.price = price;
+        this.user = user;
+    }
 
     public Order(Long id, OffsetDateTime date, Double price, User user) {
         this.id = id;

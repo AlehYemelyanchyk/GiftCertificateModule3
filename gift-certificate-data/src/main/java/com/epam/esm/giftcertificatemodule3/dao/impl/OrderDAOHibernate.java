@@ -2,7 +2,6 @@ package com.epam.esm.giftcertificatemodule3.dao.impl;
 
 import com.epam.esm.giftcertificatemodule3.dao.OrderDAO;
 import com.epam.esm.giftcertificatemodule3.entity.Order;
-import com.epam.esm.giftcertificatemodule3.model.SearchParametersHolder;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -43,22 +42,6 @@ public class OrderDAOHibernate implements OrderDAO {
     public Order findById(Long id) {
         Session session = sessionFactory.getCurrentSession();
         return session.get(Order.class, id);
-    }
-
-    @Override
-    public List<Order> findByHighestUserExpense(SearchParametersHolder searchParametersHolder,
-                                                int firstResult, int maxResults) {
-        Session session = sessionFactory.getCurrentSession();
-
-        String hql =
-                "SELECT NEW com.epam.esm.giftcertificatemodule3.entity.Order(id, date, sum(price), user) " +
-                        "from Order " +
-                        "group by id_user";
-
-        Query<Order> query = session.createQuery(hql, Order.class);
-        query.setFirstResult(firstResult);
-        query.setMaxResults(maxResults);
-        return query.getResultList();
     }
 
     @Override
