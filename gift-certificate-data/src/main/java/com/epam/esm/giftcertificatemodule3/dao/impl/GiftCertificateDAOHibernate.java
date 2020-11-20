@@ -19,12 +19,6 @@ import java.util.List;
 @Repository
 public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
 
-    private final static String SORT_ORDER_DESC = "desc";
-    private final static String FIELD_NAME_TAGS = "tags";
-    private final static String FIELD_NAME_NAME = "name";
-    private final static String FIELD_NAME_DESCRIPTION = "description";
-    private final static String FIELD_NAME_ID_CERT = "id_cert";
-
     private SessionFactory sessionFactory;
 
     @Autowired
@@ -67,8 +61,7 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
                                         int firstResult, int maxResults) {
 
         boolean sortDesc = searchParametersHolder.getSortOrder() != null
-                && searchParametersHolder.getSortOrder().toLowerCase().equals(
-                SORT_ORDER_DESC);
+                && searchParametersHolder.getSortOrder().toLowerCase().equals("desc");
 
         Session session = sessionFactory.getCurrentSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
@@ -76,11 +69,11 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
         Root<GiftCertificate> root = criteriaQuery.from(GiftCertificate.class);
 
         if (searchParametersHolder.getTagName() != null) {
-            Fetch<GiftCertificate, Tag> fetch = root.fetch(FIELD_NAME_TAGS, JoinType.INNER);
+            Fetch<GiftCertificate, Tag> fetch = root.fetch("tags", JoinType.INNER);
             Join<GiftCertificate, Tag> join = (Join<GiftCertificate, Tag>) fetch;
 
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(criteriaBuilder.equal(join.get(FIELD_NAME_NAME), searchParametersHolder.getTagName()));
+            predicates.add(criteriaBuilder.equal(join.get("name"), searchParametersHolder.getTagName()));
 
             criteriaQuery.where(
                     criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]))
@@ -91,12 +84,12 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
         }
         if (searchParametersHolder.getName() != null) {
             criteriaQuery.select(root)
-                    .where(criteriaBuilder.like(root.get(FIELD_NAME_NAME),
+                    .where(criteriaBuilder.like(root.get("name"),
                             "%" + searchParametersHolder.getName() + "%"));
         }
         if (searchParametersHolder.getDescription() != null) {
             criteriaQuery.select(root)
-                    .where(criteriaBuilder.like(root.get(FIELD_NAME_DESCRIPTION),
+                    .where(criteriaBuilder.like(root.get("description"),
                             "%" + searchParametersHolder.getDescription() + "%"));
         }
         if (searchParametersHolder.getSortBy() != null && sortDesc) {
@@ -132,7 +125,7 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
     public void deleteById(Long id) {
         Session session = sessionFactory.getCurrentSession();
         Query query = session.createQuery("delete from GiftCertificate where id=:id_cert");
-        query.setParameter(FIELD_NAME_ID_CERT, id);
+        query.setParameter("id_cert", id);
         query.executeUpdate();
     }
 

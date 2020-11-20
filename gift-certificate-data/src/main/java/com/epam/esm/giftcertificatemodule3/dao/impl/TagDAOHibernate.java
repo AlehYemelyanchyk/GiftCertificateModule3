@@ -14,12 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.criteria.*;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Repository
 public class TagDAOHibernate implements TagDAO {
@@ -78,15 +73,18 @@ public class TagDAOHibernate implements TagDAO {
         CriteriaQuery<Tag> cq = cb.createQuery(Tag.class);
         Root<Order> orderRoot = cq.from(Order.class);
 
-        Join<Order, GiftCertificate> certificates = orderRoot.join("certificates");
+        Join<Order, GiftCertificate> certificates = orderRoot.join("certificates", JoinType.INNER);
         Join<GiftCertificate, Tag> tags = certificates.join("tags", JoinType.INNER);
 
         cq.select(tags)
-                .where(cb.equal(orderRoot.get("user"), bestCustomerId));
+                .where(cb.equal(orderRoot.get("user"), bestCustomerId))
+                .groupBy(tags.get("name"))
+                .orderBy(cb.desc(cb.count(tags)));
 
         Query<Tag> query = session.createQuery(cq);
-        List<Tag> resultList = query.getResultList();
-        return takeMostPopularRags(resultList);
+        query.setFirstResult(firstResult);
+        query.setMaxResults(maxResults);
+        return query.getResultList();
     }
 
     @Override
@@ -109,24 +107,10 @@ public class TagDAOHibernate implements TagDAO {
         query.executeUpdate();
     }
 
-    private List<Tag> takeMostPopularRags(List<Tag> tags){
-        Set<Map.Entry<Tag, Long>> entries = tags.stream()
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-                .entrySet();
-        Long maxAmount = entries.stream()
-                .max(Comparator.comparingLong(Map.Entry::getValue))
-                .get().getValue();
-        List<Tag> collect = entries.stream()
-                .filter(e -> e.getValue().equals(maxAmount))
-                .map(e -> e.getKey())
-                .collect(Collectors.toList());
-        return collect;
-    }
-
     private Long findBestCustomerId() {
         Session session = sessionFactory.getCurrentSession();
         CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery cq = cb.createQuery();
+        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
 
         Root<User> user = cq.from(User.class);
         Join<User, Order> order = user.join("orders", JoinType.INNER);
@@ -135,11 +119,9 @@ public class TagDAOHibernate implements TagDAO {
 
 
         cq.orderBy(cb.desc(cb.sum(order.get("price"))));
-        Query query = session.createQuery(cq)
-                .setFirstResult(0)
-                .setMaxResults(1);
+        Query<Long> query = session.createQuery(cq);
 
         List<Long> resultList = query.getResultList();
-        return resultList.get(0);
+        return resultList.stream().findFirst().orElse(0L);
     }
 }
