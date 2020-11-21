@@ -78,7 +78,7 @@ public class TagDAOHibernate implements TagDAO {
 
         cq.select(tags)
                 .where(cb.equal(orderRoot.get("user"), bestCustomerId))
-                .groupBy(tags.get("name"))
+                .groupBy(tags)
                 .orderBy(cb.desc(cb.count(tags)));
 
         Query<Tag> query = session.createQuery(cq);
