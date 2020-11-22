@@ -9,5 +9,4 @@ class GiftCertificateModule3ApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }

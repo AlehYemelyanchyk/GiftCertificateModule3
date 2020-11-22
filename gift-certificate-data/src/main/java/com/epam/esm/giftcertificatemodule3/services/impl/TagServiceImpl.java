@@ -1,6 +1,5 @@
 package com.epam.esm.giftcertificatemodule3.services.impl;
 
-import com.epam.esm.giftcertificatemodule3.dao.OrderDAO;
 import com.epam.esm.giftcertificatemodule3.dao.TagDAO;
 import com.epam.esm.giftcertificatemodule3.entity.Tag;
 import com.epam.esm.giftcertificatemodule3.model.SearchParametersHolder;
@@ -15,12 +14,10 @@ import java.util.List;
 public class TagServiceImpl implements TagService {
 
     private final TagDAO tagDAO;
-    private final OrderDAO orderDAO;
 
     @Autowired
-    public TagServiceImpl(TagDAO tagDAO, OrderDAO orderDAO) {
+    public TagServiceImpl(TagDAO tagDAO) {
         this.tagDAO = tagDAO;
-        this.orderDAO = orderDAO;
     }
 
     @Transactional

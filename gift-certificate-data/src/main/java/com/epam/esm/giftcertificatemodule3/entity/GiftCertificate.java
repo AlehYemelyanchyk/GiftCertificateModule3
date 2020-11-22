@@ -16,7 +16,6 @@ public class GiftCertificate extends BaseEntity implements Serializable {
 
     @ManyToMany(fetch = FetchType.EAGER,
             cascade = {CascadeType.ALL})
-//            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "tagged_certificates",
             joinColumns = @JoinColumn(name = "certificate_id"),
