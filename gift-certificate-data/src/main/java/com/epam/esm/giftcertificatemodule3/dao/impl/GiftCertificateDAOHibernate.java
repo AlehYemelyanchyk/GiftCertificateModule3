@@ -10,14 +10,10 @@ import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
-import org.hibernate.stat.Statistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,13 +68,12 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
                 && searchParametersHolder.getSortOrder().toLowerCase().equals("desc");
 
         Session session = sessionFactory.getCurrentSession();
-        Statistics statistics = sessionFactory.getStatistics();
-        statistics.clear();
 
         CriteriaBuilder cb = session.getCriteriaBuilder();
         CriteriaQuery<GiftCertificate> cq = cb.createQuery(GiftCertificate.class);
         Root<Tag> tagRoot = cq.from(Tag.class);
-        Root<GiftCertificate> giftCertificateRoot = cq.from(GiftCertificate.class);
+
+        Join<Tag, GiftCertificate> tagGiftCertificateJoin = tagRoot.join("certificates", JoinType.INNER);
 
         final List<Predicate> andPredicates = new ArrayList<>();
 
@@ -86,20 +81,20 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
             andPredicates.add(cb.equal(tagRoot.get("name"), searchParametersHolder.getTagName()));
         }
         if (searchParametersHolder.getName() != null) {
-            andPredicates.add(cb.like(giftCertificateRoot.get("name"),
+            andPredicates.add(cb.like(tagGiftCertificateJoin.get("name"),
                     "%" + searchParametersHolder.getName() + "%"));
         }
         if (searchParametersHolder.getDescription() != null) {
-            andPredicates.add(cb.like(giftCertificateRoot.get("description"),
+            andPredicates.add(cb.like(tagGiftCertificateJoin.get("description"),
                     "%" + searchParametersHolder.getDescription() + "%"));
         }
         if (searchParametersHolder.getSortBy() != null && sortDesc) {
-            cb.desc(giftCertificateRoot.get(searchParametersHolder.getSortBy()));
+            cq.orderBy(cb.desc(tagGiftCertificateJoin.get(searchParametersHolder.getSortBy())));
         } else if (searchParametersHolder.getSortBy() != null) {
-            cq.orderBy(cb.asc(giftCertificateRoot.get(searchParametersHolder.getSortBy())));
+            cq.orderBy(cb.asc(tagGiftCertificateJoin.get(searchParametersHolder.getSortBy())));
         }
 
-        cq.select(giftCertificateRoot)
+        cq.select(tagGiftCertificateJoin)
                 .where(andPredicates.toArray(new Predicate[andPredicates.size()]))
                 .distinct(true);
 
@@ -108,10 +103,6 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
         query.setMaxResults(maxResults);
         List<GiftCertificate> certificates = query.getResultList();
         certificates.forEach(e -> Hibernate.initialize(e.getTags()));
-
-        for (String statQuery : statistics.getQueries()) {
-            LOGGER.info("//// Executed query: {}", statQuery);
-        }
 
         return certificates;
     }

@@ -102,7 +102,7 @@ public class GiftCertificateController {
             throw new RuntimeException();
         }
         if (returnObject.isEmpty()) {
-            throw new RuntimeException("Certificates");
+            throw new IllegalArgumentException("Certificates");
         }
         return getEntityModels(returnObject);
     }

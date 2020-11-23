@@ -22,7 +22,7 @@ public class RestExceptionHandler {
         ErrorResponse error = new ErrorResponse(
                 "HTTP Status: " + HttpStatus.NOT_FOUND.value(),
                 "response body",
-                exception.getMessage() + " " + translator.toLocale("notFound"),
+                exception.getMessage() + " " + translator.toLocale("not Found"),
                 String.valueOf(HttpStatus.NOT_FOUND.value()));
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
