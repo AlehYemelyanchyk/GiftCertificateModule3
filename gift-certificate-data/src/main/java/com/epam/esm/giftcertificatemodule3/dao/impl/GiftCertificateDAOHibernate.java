@@ -14,7 +14,10 @@ import org.hibernate.stat.Statistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,41 +75,35 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
         Statistics statistics = sessionFactory.getStatistics();
         statistics.clear();
 
-        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-        CriteriaQuery<GiftCertificate> criteriaQuery = criteriaBuilder.createQuery(GiftCertificate.class);
-        Root<GiftCertificate> root = criteriaQuery.from(GiftCertificate.class);
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<GiftCertificate> cq = cb.createQuery(GiftCertificate.class);
+        Root<Tag> tagRoot = cq.from(Tag.class);
+        Root<GiftCertificate> giftCertificateRoot = cq.from(GiftCertificate.class);
+
+        final List<Predicate> andPredicates = new ArrayList<>();
 
         if (searchParametersHolder.getTagName() != null) {
-            Fetch<GiftCertificate, Tag> fetch = root.fetch("tags", JoinType.INNER);
-            Join<GiftCertificate, Tag> join = (Join<GiftCertificate, Tag>) fetch;
-
-            List<Predicate> predicates = new ArrayList<>();
-            predicates.add(criteriaBuilder.equal(join.get("name"), searchParametersHolder.getTagName()));
-
-            criteriaQuery.where(
-                    criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]))
-            );
-            criteriaQuery
-                    .distinct(true)
-                    .select(root);
+            andPredicates.add(cb.equal(tagRoot.get("name"), searchParametersHolder.getTagName()));
         }
         if (searchParametersHolder.getName() != null) {
-            criteriaQuery.select(root)
-                    .where(criteriaBuilder.like(root.get("name"),
-                            "%" + searchParametersHolder.getName() + "%"));
+            andPredicates.add(cb.like(giftCertificateRoot.get("name"),
+                    "%" + searchParametersHolder.getName() + "%"));
         }
         if (searchParametersHolder.getDescription() != null) {
-            criteriaQuery.select(root)
-                    .where(criteriaBuilder.like(root.get("description"),
-                            "%" + searchParametersHolder.getDescription() + "%"));
+            andPredicates.add(cb.like(giftCertificateRoot.get("description"),
+                    "%" + searchParametersHolder.getDescription() + "%"));
         }
         if (searchParametersHolder.getSortBy() != null && sortDesc) {
-            criteriaQuery.orderBy(criteriaBuilder.desc(root.get(searchParametersHolder.getSortBy())));
+            cb.desc(giftCertificateRoot.get(searchParametersHolder.getSortBy()));
         } else if (searchParametersHolder.getSortBy() != null) {
-            criteriaQuery.orderBy(criteriaBuilder.asc(root.get(searchParametersHolder.getSortBy())));
+            cq.orderBy(cb.asc(giftCertificateRoot.get(searchParametersHolder.getSortBy())));
         }
 
-        Query<GiftCertificate> query = session.createQuery(criteriaQuery);
+        cq.select(giftCertificateRoot)
+                .where(andPredicates.toArray(new Predicate[andPredicates.size()]))
+                .distinct(true);
+
+        Query<GiftCertificate> query = session.createQuery(cq);
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResults);
         List<GiftCertificate> certificates = query.getResultList();
