@@ -42,17 +42,21 @@ public class UserDAOHibernate implements UserDAO {
 
     @Override
     public void save(User object) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void update(User object) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void delete(User object) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void deleteById(Long integer) {
+        throw new UnsupportedOperationException();
     }
 }

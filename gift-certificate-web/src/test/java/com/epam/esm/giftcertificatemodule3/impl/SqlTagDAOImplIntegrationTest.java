@@ -86,7 +86,7 @@ class SqlTagDAOImplIntegrationTest extends AbstractIntegrationTest {
     @Test
     void findMostPopularTagsTest() {
         List<Tag> actual = tagDAO.findMostPopularTags(TEST_SEARCH_PARAMETERS_HOLDER, FIRST_RESULT, MAX_RESULTS);
-        assertEquals(2, actual.get(0).getId());
+        assertEquals(4, actual.get(0).getId());
     }
 
     @Test

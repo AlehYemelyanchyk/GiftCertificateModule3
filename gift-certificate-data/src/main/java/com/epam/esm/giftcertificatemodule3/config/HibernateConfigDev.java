@@ -62,6 +62,8 @@ public class HibernateConfigDev {
                 "hibernate.dialect", env.getProperty("hibernate.dialect"));
         hibernateProperties.setProperty(
                 "hibernate.show_sql", env.getProperty("hibernate.show_sql"));
+        hibernateProperties.setProperty(
+                "hibernate.generate_statistics", env.getProperty("hibernate.generate_statistics"));
         return hibernateProperties;
     }
 }

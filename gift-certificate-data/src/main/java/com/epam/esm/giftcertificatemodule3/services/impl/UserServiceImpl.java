@@ -35,17 +35,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void save(User object) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void update(User object) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void delete(User object) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void deleteById(Long aLong) {
+        throw new UnsupportedOperationException();
     }
 }

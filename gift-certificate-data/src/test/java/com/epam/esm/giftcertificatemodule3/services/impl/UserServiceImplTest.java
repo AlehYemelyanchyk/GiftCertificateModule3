@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
@@ -22,10 +23,10 @@ class UserServiceImplTest {
     private User expectedUser = new User();
     private User expectedUser2 = new User();
     private static final Long TEST_ID = 1L;
-    private static final Long TEST_ID2 = 2L;
     private static final int FIRST_RESULT = 0;
     private static final int MAX_RESULTS = 5;
     private List<User> expectedList = new ArrayList<>();
+    private Exception expectedException = new UnsupportedOperationException();
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -54,5 +55,53 @@ class UserServiceImplTest {
         Mockito.when(userDAO.findById(TEST_ID)).thenReturn(expectedUser);
         User actualUser = userService.findById(TEST_ID);
         assertEquals(expectedUser, actualUser);
+    }
+
+    @Test
+    void saveExceptionTest() {
+        Exception actual = null;
+        try {
+            userService.save(expectedUser);
+        } catch (Exception e) {
+            actual = e;
+        }
+        assertNotNull(actual);
+        assertEquals(expectedException.getClass(), actual.getClass());
+    }
+
+    @Test
+    void updateExceptionTest() {
+        Exception actual = null;
+        try {
+            userService.update(expectedUser);
+        } catch (Exception e) {
+            actual = e;
+        }
+        assertNotNull(actual);
+        assertEquals(expectedException.getClass(), actual.getClass());
+    }
+
+    @Test
+    void deleteExceptionTest() {
+        Exception actual = null;
+        try {
+            userService.delete(expectedUser);
+        } catch (Exception e) {
+            actual = e;
+        }
+        assertNotNull(actual);
+        assertEquals(expectedException.getClass(), actual.getClass());
+    }
+
+    @Test
+    void deleteByIdExceptionTest() {
+        Exception actual = null;
+        try {
+            userService.deleteById(TEST_ID);
+        } catch (Exception e) {
+            actual = e;
+        }
+        assertNotNull(actual);
+        assertEquals(expectedException.getClass(), actual.getClass());
     }
 }

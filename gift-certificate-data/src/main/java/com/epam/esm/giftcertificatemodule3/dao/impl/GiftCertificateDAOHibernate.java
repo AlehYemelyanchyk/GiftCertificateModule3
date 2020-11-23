@@ -4,10 +4,13 @@ import com.epam.esm.giftcertificatemodule3.dao.GiftCertificateDAO;
 import com.epam.esm.giftcertificatemodule3.entity.GiftCertificate;
 import com.epam.esm.giftcertificatemodule3.entity.Tag;
 import com.epam.esm.giftcertificatemodule3.model.SearchParametersHolder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
+import org.hibernate.stat.Statistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -18,6 +21,8 @@ import java.util.List;
 
 @Repository
 public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private SessionFactory sessionFactory;
 
@@ -64,6 +69,9 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
                 && searchParametersHolder.getSortOrder().toLowerCase().equals("desc");
 
         Session session = sessionFactory.getCurrentSession();
+        Statistics statistics = sessionFactory.getStatistics();
+        statistics.clear();
+
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<GiftCertificate> criteriaQuery = criteriaBuilder.createQuery(GiftCertificate.class);
         Root<GiftCertificate> root = criteriaQuery.from(GiftCertificate.class);
@@ -103,6 +111,11 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
         query.setMaxResults(maxResults);
         List<GiftCertificate> certificates = query.getResultList();
         certificates.forEach(e -> Hibernate.initialize(e.getTags()));
+
+        for (String statQuery : statistics.getQueries()) {
+            LOGGER.info("//// Executed query: {}", statQuery);
+        }
+
         return certificates;
     }
 
