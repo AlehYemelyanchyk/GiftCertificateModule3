@@ -1,7 +1,7 @@
 package com.epam.esm.giftcertificatemodule3.config;
 
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -14,14 +14,14 @@ import javax.sql.DataSource;
 import java.util.Objects;
 import java.util.Properties;
 
-@Profile("dev")
-@Configuration
+@Profile("prod")
+@SpringBootConfiguration
 @EnableTransactionManagement
-public class HibernateConfig {
+public class HibernateConfigProd {
 
     private Environment env;
 
-    public HibernateConfig(Environment env) {
+    public HibernateConfigProd(Environment env) {
         this.env = env;
     }
 

@@ -29,6 +29,7 @@ public class TagDAOHibernate implements TagDAO {
     @Override
     public void save(Tag object) {
         Session session = sessionFactory.getCurrentSession();
+        session.clear();
         Tag savedTag = findByName(object.getName());
         if (savedTag == null) {
             session.save(object);
@@ -90,6 +91,7 @@ public class TagDAOHibernate implements TagDAO {
     @Override
     public void update(Tag object) {
         Session session = sessionFactory.getCurrentSession();
+        session.clear();
         session.update(object);
     }
 

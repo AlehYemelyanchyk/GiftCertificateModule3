@@ -47,6 +47,7 @@ public class OrderDAOHibernate implements OrderDAO {
     @Override
     public void update(Order object) {
         Session session = sessionFactory.getCurrentSession();
+        session.clear();
         session.update(object);
     }
 

@@ -10,16 +10,32 @@
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
-        <jackson.version>2.11.3</jackson.version>
+        <h2.version>1.4.200</h2.version>
+        <commons.dbcp.version>1.2.2</commons.dbcp.version>
     </properties>
 
     <artifactId>gift-certificate-web</artifactId>
 
     <dependencies>
+        <!-- In-memory DBs  -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+        </dependency>
+
         <dependency>
             <artifactId>gift-certificate-data</artifactId>
             <groupId>com.epam.esm</groupId>
             <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <!-- Database connection pooling -->
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>${commons.dbcp.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

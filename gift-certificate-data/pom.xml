@@ -13,10 +13,5 @@
 
     <properties>
         <spring.version>5.2.9.RELEASE</spring.version>
-        <hibernate.core.version>5.4.23.Final</hibernate.core.version>
     </properties>
-
-    <dependencies>
-
-    </dependencies>
 </project>

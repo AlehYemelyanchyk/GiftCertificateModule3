@@ -26,7 +26,7 @@ class TagServiceImplTest {
 
     @BeforeEach
     public void init() {
-        expectedTag.setName("blue");
+        expectedTag.setName(TEST_NAME);
     }
 
     @InjectMocks
