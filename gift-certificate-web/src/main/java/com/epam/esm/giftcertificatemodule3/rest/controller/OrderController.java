@@ -62,7 +62,7 @@ public class OrderController {
                 GiftCertificate giftCertificate = giftCertificateService.findById(id);
                 if (giftCertificate == null) {
                     LOGGER.error("GiftCertificate id=: " + id);
-                    throw new IllegalArgumentException("Certificates");
+                    throw new IllegalArgumentException("Gift Certificate " + id);
                 }
                 price += giftCertificate.getPrice();
                 certificates.add(giftCertificate);
@@ -71,8 +71,6 @@ public class OrderController {
             order.setUser(user);
             order.setCertificates(certificates);
             orderService.save(order);
-        } catch (IllegalArgumentException e) {
-            throw e;
         } catch (ServiceException e) {
             LOGGER.error("save error: " + e.getMessage());
             throw new RuntimeException();
@@ -104,7 +102,7 @@ public class OrderController {
         try {
             Order order = orderService.findById(id);
             if (order == null) {
-                throw new IllegalArgumentException("Order");
+                throw new IllegalArgumentException("Order " + id);
             }
             returnObject = EntityModel.of(order);
         } catch (ServiceException e) {

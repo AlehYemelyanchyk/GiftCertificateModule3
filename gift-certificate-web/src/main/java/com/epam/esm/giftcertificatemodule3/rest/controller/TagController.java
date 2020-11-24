@@ -70,7 +70,7 @@ public class TagController {
         try {
             Tag tag = tagService.findById(id);
             if (tag == null) {
-                throw new IllegalArgumentException("Tag");
+                throw new IllegalArgumentException("Tag " + id);
             }
             returnObject = EntityModel.of(tag);
         } catch (ServiceException e) {

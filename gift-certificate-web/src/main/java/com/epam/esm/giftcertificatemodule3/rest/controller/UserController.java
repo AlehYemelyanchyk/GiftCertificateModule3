@@ -58,7 +58,7 @@ public class UserController {
         try {
             User user = userService.findById(id);
             if (user == null) {
-                throw new IllegalArgumentException("User");
+                throw new IllegalArgumentException("User " + id);
             }
             returnObject = EntityModel.of(user);
         } catch (ServiceException e) {

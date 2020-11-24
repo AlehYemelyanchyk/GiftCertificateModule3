@@ -71,7 +71,7 @@ public class GiftCertificateController {
         try {
             GiftCertificate giftCertificate = giftCertificateService.findById(id);
             if (giftCertificate == null) {
-                throw new IllegalArgumentException("Gift Certificate");
+                throw new IllegalArgumentException("Gift Certificate " + id);
             }
             returnObject = EntityModel.of(giftCertificate);
         } catch (ServiceException e) {
@@ -107,7 +107,7 @@ public class GiftCertificateController {
             throw new RuntimeException();
         }
         if (returnObject.isEmpty()) {
-            throw new IllegalArgumentException("Certificates");
+            throw new IllegalArgumentException("Gift Certificates");
         }
         return getEntityModels(returnObject);
     }
