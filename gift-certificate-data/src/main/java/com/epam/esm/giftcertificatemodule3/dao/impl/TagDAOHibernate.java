@@ -12,7 +12,6 @@ import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
-import org.hibernate.stat.Statistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -75,8 +74,6 @@ public class TagDAOHibernate implements TagDAO {
         Long bestCustomerId = findBestCustomerId();
 
         Session session = sessionFactory.getCurrentSession();
-        Statistics statistics = sessionFactory.getStatistics();
-        statistics.clear();
 
         CriteriaBuilder cb = session.getCriteriaBuilder();
         CriteriaQuery<Tag> cq = cb.createQuery(Tag.class);
@@ -93,10 +90,6 @@ public class TagDAOHibernate implements TagDAO {
         Query<Tag> query = session.createQuery(cq);
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResults);
-
-        for (String statQuery : statistics.getQueries()) {
-            LOGGER.info("//// Executed query: {}", statQuery);
-        }
 
         return query.getResultList();
     }
@@ -124,8 +117,7 @@ public class TagDAOHibernate implements TagDAO {
 
     private Long findBestCustomerId() {
         Session session = sessionFactory.getCurrentSession();
-        Statistics statistics = sessionFactory.getStatistics();
-        statistics.clear();
+
         CriteriaBuilder cb = session.getCriteriaBuilder();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
 
@@ -134,16 +126,10 @@ public class TagDAOHibernate implements TagDAO {
         cq.select(user.get("id"));
         cq.groupBy(user.get("id"));
 
-
         cq.orderBy(cb.desc(cb.sum(order.get("price"))));
         Query<Long> query = session.createQuery(cq);
 
         List<Long> resultList = query.getResultList();
-
-        for (String statQuery : statistics.getQueries()) {
-            LOGGER.info("//// Executed query: {}", statQuery);
-        }
-
         return resultList.stream().findFirst().orElse(0L);
     }
 }

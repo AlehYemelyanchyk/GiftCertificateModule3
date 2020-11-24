@@ -28,7 +28,9 @@ public class UserDAOHibernate implements UserDAO {
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResults);
         List<User> resultList = query.getResultList();
-        resultList.forEach(user -> Hibernate.initialize(user.getOrders()));
+        if (resultList != null && !resultList.isEmpty()) {
+            resultList.forEach(user -> Hibernate.initialize(user.getOrders()));
+        }
         return resultList;
     }
 
@@ -36,7 +38,9 @@ public class UserDAOHibernate implements UserDAO {
     public User findById(Long id) {
         Session session = sessionFactory.getCurrentSession();
         User user = session.get(User.class, id);
-        Hibernate.initialize(user.getOrders());
+        if (user != null) {
+            Hibernate.initialize(user.getOrders());
+        }
         return user;
     }
 

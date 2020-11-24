@@ -46,7 +46,9 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResults);
         List<GiftCertificate> certificates = query.getResultList();
-        certificates.forEach(e -> Hibernate.initialize(e.getTags()));
+        if (certificates != null && !certificates.isEmpty()) {
+            certificates.forEach(e -> Hibernate.initialize(e.getTags()));
+        }
         return certificates;
     }
 
@@ -102,7 +104,9 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResults);
         List<GiftCertificate> certificates = query.getResultList();
-        certificates.forEach(e -> Hibernate.initialize(e.getTags()));
+        if (certificates != null && !certificates.isEmpty()) {
+            certificates.forEach(e -> Hibernate.initialize(e.getTags()));
+        }
 
         return certificates;
     }

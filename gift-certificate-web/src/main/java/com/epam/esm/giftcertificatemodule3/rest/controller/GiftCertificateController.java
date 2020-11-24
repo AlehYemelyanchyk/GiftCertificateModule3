@@ -51,29 +51,34 @@ public class GiftCertificateController {
             @RequestParam(defaultValue = "0") int firstResult,
             @RequestParam(defaultValue = "5") int maxResults
     ) {
-        List<GiftCertificate> giftCertificates;
+        List<GiftCertificate> returnObject;
         try {
-            giftCertificates = giftCertificateService.findAll(firstResult, maxResults);
+            returnObject = giftCertificateService.findAll(firstResult, maxResults);
+            if (returnObject == null || returnObject.isEmpty()) {
+                throw new IllegalArgumentException("Gift Certificates");
+            }
         } catch (ServiceException e) {
             LOGGER.error("findAll error: " + e.getMessage());
             throw new RuntimeException();
         }
 
-        return getEntityModels(giftCertificates);
+        return getEntityModels(returnObject);
     }
 
     @GetMapping("/certificates/{id}")
     public EntityModel<GiftCertificate> findById(@PathVariable Long id) {
         EntityModel<GiftCertificate> returnObject;
         try {
-            returnObject = EntityModel.of(giftCertificateService.findById(id));
+            GiftCertificate giftCertificate = giftCertificateService.findById(id);
+            if (giftCertificate == null) {
+                throw new IllegalArgumentException("Gift Certificate");
+            }
+            returnObject = EntityModel.of(giftCertificate);
         } catch (ServiceException e) {
             LOGGER.error("findById error: " + e.getMessage());
             throw new RuntimeException();
         }
-        WebMvcLinkBuilder linkToFindAll = linkTo(methodOn(this.getClass()).findAll(FIRST_RESULT, MAX_RESULTS));
-        returnObject.add(linkToFindAll.withRel(ALL_CERTIFICATES));
-        return returnObject;
+        return getEntityModel(returnObject);
     }
 
     @GetMapping("/certificates/findBy")
@@ -147,5 +152,10 @@ public class GiftCertificateController {
                     return entityModel;
                 })
                 .collect(Collectors.toList());
+    }
+
+    private EntityModel<GiftCertificate> getEntityModel(EntityModel<GiftCertificate> returnObject) {
+        WebMvcLinkBuilder linkToFindAll = linkTo(methodOn(this.getClass()).findAll(FIRST_RESULT, MAX_RESULTS));
+        return returnObject.add(linkToFindAll.withRel(ALL_CERTIFICATES));
     }
 }

@@ -24,7 +24,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public List<Tag> findAll(int firstResult, int maxResults) {
         firstResult = Math.max(firstResult, 0);
-        maxResults = Math.max(maxResults, 1);
+        maxResults = Math.max(maxResults, 5);
         return tagDAO.findAll(firstResult, maxResults);
     }
 
@@ -45,7 +45,7 @@ public class TagServiceImpl implements TagService {
     public List<Tag> findByHighestUserExpense(SearchParametersHolder searchParametersHolder,
                                               int firstResult, int maxResults) {
         firstResult = Math.max(firstResult, 0);
-        maxResults = Math.max(maxResults, 1);
+        maxResults = Math.max(maxResults, 5);
         return tagDAO.findMostPopularTags(searchParametersHolder, firstResult, maxResults);
     }
 

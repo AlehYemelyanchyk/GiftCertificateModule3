@@ -54,32 +54,30 @@ public class TagController {
         List<Tag> returnObject;
         try {
             returnObject = tagService.findAll(firstResult, maxResults);
+            if (returnObject == null || returnObject.isEmpty()) {
+                throw new IllegalArgumentException("Tags");
+            }
         } catch (ServiceException e) {
             LOGGER.error("findAll error: " + e.getMessage());
             throw new RuntimeException();
         }
-        return returnObject.stream()
-                .map(e -> {
-                    WebMvcLinkBuilder linkToFindById = linkTo(methodOn(this.getClass()).findById(e.getId()));
-                    EntityModel<Tag> entityModel = EntityModel.of(e);
-                    entityModel.add(linkToFindById.withRel(TAGS_BY_ID));
-                    return entityModel;
-                })
-                .collect(Collectors.toList());
+        return getEntityModels(returnObject);
     }
 
     @GetMapping("/tags/{id}")
     public EntityModel<Tag> findById(@PathVariable Long id) {
         EntityModel<Tag> returnObject;
         try {
-            returnObject = EntityModel.of(tagService.findById(id));
+            Tag tag = tagService.findById(id);
+            if (tag == null) {
+                throw new IllegalArgumentException("Tag");
+            }
+            returnObject = EntityModel.of(tag);
         } catch (ServiceException e) {
             LOGGER.error("findById error: " + e.getMessage());
             throw new RuntimeException();
         }
-        WebMvcLinkBuilder linkToFindAll = linkTo(methodOn(this.getClass()).findAll(FIRST_RESULT, MAX_RESULTS));
-        returnObject.add(linkToFindAll.withRel(ALL_TAGS));
-        return returnObject;
+        return getEntityModel(returnObject);
     }
 
     @GetMapping("/tags/findHighestPrice")
@@ -87,23 +85,18 @@ public class TagController {
             @RequestParam(defaultValue = "0") int firstResult,
             @RequestParam(defaultValue = "5") int maxResults
     ) {
-        List<Tag> tags;
         SearchParametersHolder searchParametersHolder = new SearchParametersHolder();
+        List<Tag> returnObject;
         try {
-            tags = tagService.findByHighestUserExpense(searchParametersHolder, firstResult, maxResults);
+            returnObject = tagService.findByHighestUserExpense(searchParametersHolder, firstResult, maxResults);
+            if (returnObject == null || returnObject.isEmpty()) {
+                throw new IllegalArgumentException("Tags");
+            }
         } catch (ServiceException e) {
             LOGGER.error("findById error: " + e.getMessage());
             throw new RuntimeException();
         }
-        return tags.stream()
-                .map(e -> {
-                    WebMvcLinkBuilder linkToFindById =
-                            linkTo(methodOn(TagController.class).findById(e.getId()));
-                    EntityModel<Tag> entityModel = EntityModel.of(e);
-                    entityModel.add(linkToFindById.withRel(TAGS_BY_ID));
-                    return entityModel;
-                })
-                .collect(Collectors.toList());
+        return getEntityModels(returnObject);
     }
 
     @PutMapping("/tags")
@@ -135,5 +128,21 @@ public class TagController {
             LOGGER.error("delete error: " + e.getMessage());
             throw new RuntimeException("Tag (id = " + id + ")");
         }
+    }
+
+    private List<EntityModel<Tag>> getEntityModels(List<Tag> returnObject) {
+        return returnObject.stream()
+                .map(e -> {
+                    WebMvcLinkBuilder linkToFindById = linkTo(methodOn(this.getClass()).findById(e.getId()));
+                    EntityModel<Tag> entityModel = EntityModel.of(e);
+                    entityModel.add(linkToFindById.withRel(TAGS_BY_ID));
+                    return entityModel;
+                })
+                .collect(Collectors.toList());
+    }
+
+    private EntityModel<Tag> getEntityModel(EntityModel<Tag> returnObject) {
+        WebMvcLinkBuilder linkToFindAll = linkTo(methodOn(this.getClass()).findAll(FIRST_RESULT, MAX_RESULTS));
+        return returnObject.add(linkToFindAll.withRel(ALL_TAGS));
     }
 }

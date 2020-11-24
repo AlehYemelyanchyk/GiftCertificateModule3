@@ -42,10 +42,32 @@ public class UserController {
         List<User> returnObject;
         try {
             returnObject = userService.findAll(firstResult, maxResults);
+            if (returnObject == null || returnObject.isEmpty()) {
+                throw new IllegalArgumentException("Users");
+            }
         } catch (ServiceException e) {
             LOGGER.error("findAll error: " + e.getMessage());
             throw new RuntimeException();
         }
+        return getEntityModels(returnObject);
+    }
+
+    @GetMapping("/users/{id}")
+    public EntityModel<User> findById(@PathVariable long id) {
+        EntityModel<User> returnObject = null;
+        try {
+            User user = userService.findById(id);
+            if (user == null) {
+                throw new IllegalArgumentException("User");
+            }
+            returnObject = EntityModel.of(user);
+        } catch (ServiceException e) {
+            LOGGER.error("findById error: " + e.getMessage());
+        }
+        return getEntityModel(returnObject);
+    }
+
+    private List<EntityModel<User>> getEntityModels(List<User> returnObject) {
         return returnObject.stream()
                 .map(e -> {
                     WebMvcLinkBuilder linkToFindById = linkTo(methodOn(this.getClass()).findById(e.getId()));
@@ -56,17 +78,8 @@ public class UserController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/users/{id}")
-    public EntityModel<User> findById(@PathVariable long id) {
-        EntityModel<User> returnObject;
-        try {
-            returnObject = EntityModel.of(userService.findById(id));
-        } catch (ServiceException e) {
-            LOGGER.error("findById error: " + e.getMessage());
-            throw new RuntimeException();
-        }
+    private EntityModel<User> getEntityModel(EntityModel<User> returnObject) {
         WebMvcLinkBuilder linkToFindAll = linkTo(methodOn(this.getClass()).findAll(FIRST_RESULT, MAX_RESULTS));
-        returnObject.add(linkToFindAll.withRel(ALL_USERS));
-        return returnObject;
+        return returnObject.add(linkToFindAll.withRel(ALL_USERS));
     }
 }

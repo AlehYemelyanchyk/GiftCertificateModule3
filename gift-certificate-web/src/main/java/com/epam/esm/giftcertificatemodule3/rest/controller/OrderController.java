@@ -62,7 +62,7 @@ public class OrderController {
                 GiftCertificate giftCertificate = giftCertificateService.findById(id);
                 if (giftCertificate == null) {
                     LOGGER.error("GiftCertificate id=: " + id);
-                    throw new IllegalArgumentException("GiftCertificate");
+                    throw new IllegalArgumentException("Certificates");
                 }
                 price += giftCertificate.getPrice();
                 certificates.add(giftCertificate);
@@ -88,10 +88,33 @@ public class OrderController {
         List<Order> returnObject;
         try {
             returnObject = orderService.findAll(firstResult, maxResults);
+            if (returnObject == null || returnObject.isEmpty()) {
+                throw new IllegalArgumentException("Orders");
+            }
         } catch (ServiceException e) {
             LOGGER.error("findAll error: " + e.getMessage());
             throw new RuntimeException();
         }
+        return getEntityModels(returnObject);
+    }
+
+    @GetMapping("/orders/{id}")
+    public EntityModel<Order> findById(@PathVariable Long id) {
+        EntityModel<Order> returnObject;
+        try {
+            Order order = orderService.findById(id);
+            if (order == null) {
+                throw new IllegalArgumentException("Order");
+            }
+            returnObject = EntityModel.of(order);
+        } catch (ServiceException e) {
+            LOGGER.error("findById error: " + e.getMessage());
+            throw new RuntimeException();
+        }
+        return getEntityModel(returnObject);
+    }
+
+    private List<EntityModel<Order>> getEntityModels(List<Order> returnObject) {
         return returnObject.stream()
                 .map(e -> {
                     WebMvcLinkBuilder linkToFindById = linkTo(methodOn(this.getClass()).findById(e.getId()));
@@ -102,17 +125,8 @@ public class OrderController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/orders/{id}")
-    public EntityModel<Order> findById(@PathVariable Long id) {
-        EntityModel<Order> returnObject;
-        try {
-            returnObject = EntityModel.of(orderService.findById(id));
-        } catch (ServiceException e) {
-            LOGGER.error("findById error: " + e.getMessage());
-            throw new RuntimeException();
-        }
+    private EntityModel<Order> getEntityModel(EntityModel<Order> returnObject) {
         WebMvcLinkBuilder linkToFindAll = linkTo(methodOn(this.getClass()).findAll(FIRST_RESULT, MAX_RESULTS));
-        returnObject.add(linkToFindAll.withRel(ALL_ORDERS));
-        return returnObject;
+        return returnObject.add(linkToFindAll.withRel(ALL_ORDERS));
     }
 }

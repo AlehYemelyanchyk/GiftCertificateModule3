@@ -22,9 +22,19 @@ public class RestExceptionHandler {
         ErrorResponse error = new ErrorResponse(
                 "HTTP Status: " + HttpStatus.NOT_FOUND.value(),
                 "response body",
-                exception.getMessage() + " " + translator.toLocale("not Found"),
+                exception.getMessage() + " " + translator.toLocale("notFound"),
                 String.valueOf(HttpStatus.NOT_FOUND.value()));
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleException(NullPointerException exception) {
+        ErrorResponse error = new ErrorResponse(
+                "HTTP Status: " + HttpStatus.BAD_REQUEST.value(),
+                "response body",
+                translator.toLocale("incorrectValue"),
+                String.valueOf(HttpStatus.BAD_REQUEST.value()));
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
