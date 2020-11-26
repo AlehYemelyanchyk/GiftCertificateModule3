@@ -2,7 +2,6 @@ package com.epam.esm.giftcertificatemodule3.impl;
 
 import com.epam.esm.giftcertificatemodule3.dao.TagDAO;
 import com.epam.esm.giftcertificatemodule3.entity.Tag;
-import com.epam.esm.giftcertificatemodule3.model.SearchParametersHolder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +24,6 @@ class SqlTagDAOImplIntegrationTest extends AbstractIntegrationTest {
     @Autowired
     TagDAO tagDAO;
 
-    private static final SearchParametersHolder TEST_SEARCH_PARAMETERS_HOLDER = new SearchParametersHolder();
     private static final Tag TEST_TAG = new Tag();
     private static final Tag EXPECTED_TAG = new Tag();
     private static final Long TEST_ID = 6L;
@@ -35,12 +33,6 @@ class SqlTagDAOImplIntegrationTest extends AbstractIntegrationTest {
 
     @BeforeEach
     void create() throws SQLException {
-        TEST_SEARCH_PARAMETERS_HOLDER.setTagName("red");
-        TEST_SEARCH_PARAMETERS_HOLDER.setName("ABC");
-        TEST_SEARCH_PARAMETERS_HOLDER.setDescription("New Year gift certificate");
-        TEST_SEARCH_PARAMETERS_HOLDER.setSortBy("name");
-        TEST_SEARCH_PARAMETERS_HOLDER.setSortOrder("desc");
-
         EXPECTED_TAG.setName("tag1");
         EXPECTED_TAG.setId(1L);
         TEST_TAG.setName(TEST_NAME);
@@ -85,7 +77,7 @@ class SqlTagDAOImplIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void findMostPopularTagsTest() {
-        List<Tag> actual = tagDAO.findMostPopularTags(TEST_SEARCH_PARAMETERS_HOLDER, FIRST_RESULT, MAX_RESULTS);
+        List<Tag> actual = tagDAO.findMostPopularTags(FIRST_RESULT, MAX_RESULTS);
         assertEquals(4, actual.get(0).getId());
     }
 

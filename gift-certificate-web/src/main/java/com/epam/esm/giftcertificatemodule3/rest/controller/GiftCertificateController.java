@@ -8,25 +8,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/api")
-public class GiftCertificateController {
+public class GiftCertificateController extends AbstractController<GiftCertificate> {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final int FIRST_RESULT = 0;
-    private static final int MAX_RESULTS = 5;
-    private static final String CERTIFICATES_BY_ID = "certificateById";
-    private static final String ALL_CERTIFICATES = "allCertificates";
+    private static final String RESULT_BY_ID = "certificateById";
+    private static final String ALL_RESULTS = "allCertificates";
 
     private GiftCertificateService giftCertificateService;
 
@@ -67,13 +60,12 @@ public class GiftCertificateController {
 
     @GetMapping("/certificates/{id}")
     public EntityModel<GiftCertificate> findById(@PathVariable Long id) {
-        EntityModel<GiftCertificate> returnObject;
+        GiftCertificate returnObject;
         try {
-            GiftCertificate giftCertificate = giftCertificateService.findById(id);
-            if (giftCertificate == null) {
+            returnObject = giftCertificateService.findById(id);
+            if (returnObject == null) {
                 throw new IllegalArgumentException("Gift Certificate " + id);
             }
-            returnObject = EntityModel.of(giftCertificate);
         } catch (ServiceException e) {
             LOGGER.error("findById error: " + e.getMessage());
             throw new RuntimeException();
@@ -143,19 +135,13 @@ public class GiftCertificateController {
         }
     }
 
-    private List<EntityModel<GiftCertificate>> getEntityModels(List<GiftCertificate> returnObject) {
-        return returnObject.stream()
-                .map(e -> {
-                    WebMvcLinkBuilder linkToFindById = linkTo(methodOn(this.getClass()).findById(e.getId()));
-                    EntityModel<GiftCertificate> entityModel = EntityModel.of(e);
-                    entityModel.add(linkToFindById.withRel(CERTIFICATES_BY_ID));
-                    return entityModel;
-                })
-                .collect(Collectors.toList());
+    @Override
+    public String getResultById() {
+        return RESULT_BY_ID;
     }
 
-    private EntityModel<GiftCertificate> getEntityModel(EntityModel<GiftCertificate> returnObject) {
-        WebMvcLinkBuilder linkToFindAll = linkTo(methodOn(this.getClass()).findAll(FIRST_RESULT, MAX_RESULTS));
-        return returnObject.add(linkToFindAll.withRel(ALL_CERTIFICATES));
+    @Override
+    public String getAllResults() {
+        return ALL_RESULTS;
     }
 }

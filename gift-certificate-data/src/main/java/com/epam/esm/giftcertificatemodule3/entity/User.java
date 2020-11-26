@@ -35,6 +35,7 @@ public class User extends BaseEntity implements Serializable {
         order.setUser(this);
     }
 
+    @Override
     public Long getId() {
         return id;
     }

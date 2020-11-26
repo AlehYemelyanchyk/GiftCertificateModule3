@@ -60,6 +60,7 @@ public class Order extends BaseEntity implements Serializable {
     public Order() {
     }
 
+    @Override
     public Long getId() {
         return id;
     }

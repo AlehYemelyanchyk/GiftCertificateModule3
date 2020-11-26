@@ -2,7 +2,6 @@ package com.epam.esm.giftcertificatemodule3.services.impl;
 
 import com.epam.esm.giftcertificatemodule3.dao.TagDAO;
 import com.epam.esm.giftcertificatemodule3.entity.Tag;
-import com.epam.esm.giftcertificatemodule3.model.SearchParametersHolder;
 import com.epam.esm.giftcertificatemodule3.services.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,11 +41,10 @@ public class TagServiceImpl implements TagService {
 
     @Transactional
     @Override
-    public List<Tag> findByHighestUserExpense(SearchParametersHolder searchParametersHolder,
-                                              int firstResult, int maxResults) {
+    public List<Tag> findMostPopularTags(int firstResult, int maxResults) {
         firstResult = Math.max(firstResult, 0);
-        maxResults = Math.max(maxResults, 5);
-        return tagDAO.findMostPopularTags(searchParametersHolder, firstResult, maxResults);
+        maxResults = Math.max(maxResults, 1);
+        return tagDAO.findMostPopularTags(firstResult, maxResults);
     }
 
     @Transactional

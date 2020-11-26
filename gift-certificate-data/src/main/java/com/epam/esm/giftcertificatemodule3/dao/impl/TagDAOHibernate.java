@@ -5,7 +5,6 @@ import com.epam.esm.giftcertificatemodule3.entity.GiftCertificate;
 import com.epam.esm.giftcertificatemodule3.entity.Order;
 import com.epam.esm.giftcertificatemodule3.entity.Tag;
 import com.epam.esm.giftcertificatemodule3.entity.User;
-import com.epam.esm.giftcertificatemodule3.model.SearchParametersHolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
@@ -70,7 +69,7 @@ public class TagDAOHibernate implements TagDAO {
     }
 
     @Override
-    public List<Tag> findMostPopularTags(SearchParametersHolder searchParametersHolder, int firstResult, int maxResults) {
+    public List<Tag> findMostPopularTags(int firstResult, int maxResults) {
         Long bestCustomerId = findBestCustomerId();
 
         Session session = sessionFactory.getCurrentSession();
@@ -116,6 +115,7 @@ public class TagDAOHibernate implements TagDAO {
     }
 
     private Long findBestCustomerId() {
+        long zeroId = 0L;
         Session session = sessionFactory.getCurrentSession();
 
         CriteriaBuilder cb = session.getCriteriaBuilder();
@@ -130,6 +130,6 @@ public class TagDAOHibernate implements TagDAO {
         Query<Long> query = session.createQuery(cq);
 
         List<Long> resultList = query.getResultList();
-        return resultList.stream().findFirst().orElse(0L);
+        return resultList.stream().findFirst().orElse(zeroId);
     }
 }

@@ -6,9 +6,9 @@ import javax.persistence.*;
 import java.util.Date;
 
 @MappedSuperclass
-public class BaseEntity {
+public abstract class BaseEntity {
 
-    private static final long serialVersionUID = 7497478299465838381L;
+    private static final long serialVersionUID = 1517105344257334586L;
 
     @JsonIgnore
     @Column(name = "operation")
@@ -21,11 +21,13 @@ public class BaseEntity {
     public BaseEntity() {
     }
 
+    public abstract Long getId();
+
     public String getOperation() {
         return operation;
     }
 
-    public void setOperation(String operation) {
+    private void setOperation(String operation) {
         this.operation = operation;
     }
 
@@ -33,7 +35,7 @@ public class BaseEntity {
         return timestamp;
     }
 
-    public void setTimestamp(Long timestamp) {
+    private void setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
     }
 

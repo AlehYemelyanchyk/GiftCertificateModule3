@@ -11,32 +11,25 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/api")
-public class OrderController {
+public class OrderController extends AbstractController<Order> {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final int FIRST_RESULT = 0;
-    private static final int MAX_RESULTS = 5;
-    private static final String ORDERS_BY_ID = "ordersById";
-    private static final String ALL_ORDERS = "allOrders";
+    private static final String RESULT_BY_ID = "ordersById";
+    private static final String ALL_RESULTS = "allOrders";
 
     private OrderService orderService;
+
     private UserService userService;
     private GiftCertificateService giftCertificateService;
-
     @Autowired
     public OrderController(OrderService orderService, UserService userService, GiftCertificateService giftCertificateService) {
         this.orderService = orderService;
@@ -98,13 +91,12 @@ public class OrderController {
 
     @GetMapping("/orders/{id}")
     public EntityModel<Order> findById(@PathVariable Long id) {
-        EntityModel<Order> returnObject;
+        Order returnObject;
         try {
-            Order order = orderService.findById(id);
-            if (order == null) {
+            returnObject = orderService.findById(id);
+            if (returnObject == null) {
                 throw new IllegalArgumentException("Order " + id);
             }
-            returnObject = EntityModel.of(order);
         } catch (ServiceException e) {
             LOGGER.error("findById error: " + e.getMessage());
             throw new RuntimeException();
@@ -112,19 +104,13 @@ public class OrderController {
         return getEntityModel(returnObject);
     }
 
-    private List<EntityModel<Order>> getEntityModels(List<Order> returnObject) {
-        return returnObject.stream()
-                .map(e -> {
-                    WebMvcLinkBuilder linkToFindById = linkTo(methodOn(this.getClass()).findById(e.getId()));
-                    EntityModel<Order> entityModel = EntityModel.of(e);
-                    entityModel.add(linkToFindById.withRel(ORDERS_BY_ID));
-                    return entityModel;
-                })
-                .collect(Collectors.toList());
+    @Override
+    public String getResultById() {
+        return RESULT_BY_ID;
     }
 
-    private EntityModel<Order> getEntityModel(EntityModel<Order> returnObject) {
-        WebMvcLinkBuilder linkToFindAll = linkTo(methodOn(this.getClass()).findAll(FIRST_RESULT, MAX_RESULTS));
-        return returnObject.add(linkToFindAll.withRel(ALL_ORDERS));
+    @Override
+    public String getAllResults() {
+        return ALL_RESULTS;
     }
 }

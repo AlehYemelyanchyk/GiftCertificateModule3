@@ -1,32 +1,24 @@
 package com.epam.esm.giftcertificatemodule3.rest.controller;
 
 import com.epam.esm.giftcertificatemodule3.entity.Tag;
-import com.epam.esm.giftcertificatemodule3.model.SearchParametersHolder;
 import com.epam.esm.giftcertificatemodule3.services.TagService;
 import com.epam.esm.giftcertificatemodule3.services.exceptions.ServiceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/api")
-public class TagController {
+public class TagController extends AbstractController<Tag> {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final int FIRST_RESULT = 0;
-    private static final int MAX_RESULTS = 5;
-    private static final String TAGS_BY_ID = "tagsById";
-    private static final String ALL_TAGS = "allTags";
+    private static final String RESULT_BY_ID = "tagsById";
+    private static final String ALL_RESULTS = "allTags";
 
     private TagService tagService;
 
@@ -66,13 +58,12 @@ public class TagController {
 
     @GetMapping("/tags/{id}")
     public EntityModel<Tag> findById(@PathVariable Long id) {
-        EntityModel<Tag> returnObject;
+        Tag returnObject;
         try {
-            Tag tag = tagService.findById(id);
-            if (tag == null) {
+            returnObject = tagService.findById(id);
+            if (returnObject == null) {
                 throw new IllegalArgumentException("Tag " + id);
             }
-            returnObject = EntityModel.of(tag);
         } catch (ServiceException e) {
             LOGGER.error("findById error: " + e.getMessage());
             throw new RuntimeException();
@@ -80,15 +71,14 @@ public class TagController {
         return getEntityModel(returnObject);
     }
 
-    @GetMapping("/tags/findHighestPrice")
-    public List<EntityModel<Tag>> findByHighestUserExpense(
+    @GetMapping("/tags/mostPopularTags")
+    public List<EntityModel<Tag>> findMostPopularTags(
             @RequestParam(defaultValue = "0") int firstResult,
-            @RequestParam(defaultValue = "5") int maxResults
+            @RequestParam(defaultValue = "1") int maxResults
     ) {
-        SearchParametersHolder searchParametersHolder = new SearchParametersHolder();
         List<Tag> returnObject;
         try {
-            returnObject = tagService.findByHighestUserExpense(searchParametersHolder, firstResult, maxResults);
+            returnObject = tagService.findMostPopularTags(firstResult, maxResults);
             if (returnObject == null || returnObject.isEmpty()) {
                 throw new IllegalArgumentException("Tags");
             }
@@ -130,19 +120,13 @@ public class TagController {
         }
     }
 
-    private List<EntityModel<Tag>> getEntityModels(List<Tag> returnObject) {
-        return returnObject.stream()
-                .map(e -> {
-                    WebMvcLinkBuilder linkToFindById = linkTo(methodOn(this.getClass()).findById(e.getId()));
-                    EntityModel<Tag> entityModel = EntityModel.of(e);
-                    entityModel.add(linkToFindById.withRel(TAGS_BY_ID));
-                    return entityModel;
-                })
-                .collect(Collectors.toList());
+    @Override
+    public String getResultById() {
+        return RESULT_BY_ID;
     }
 
-    private EntityModel<Tag> getEntityModel(EntityModel<Tag> returnObject) {
-        WebMvcLinkBuilder linkToFindAll = linkTo(methodOn(this.getClass()).findAll(FIRST_RESULT, MAX_RESULTS));
-        return returnObject.add(linkToFindAll.withRel(ALL_TAGS));
+    @Override
+    public String getAllResults() {
+        return ALL_RESULTS;
     }
 }

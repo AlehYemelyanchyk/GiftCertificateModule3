@@ -38,6 +38,7 @@ public class Tag extends BaseEntity implements Serializable {
         this.certificates = certificates;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
