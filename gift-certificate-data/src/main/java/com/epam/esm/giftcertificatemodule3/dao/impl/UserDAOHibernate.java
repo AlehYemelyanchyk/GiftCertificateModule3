@@ -2,45 +2,39 @@ package com.epam.esm.giftcertificatemodule3.dao.impl;
 
 import com.epam.esm.giftcertificatemodule3.dao.UserDAO;
 import com.epam.esm.giftcertificatemodule3.entity.User;
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Repository
 public class UserDAOHibernate implements UserDAO {
 
-    private SessionFactory sessionFactory;
+    private final EntityManagerFactory emf;
 
     @Autowired
-    public UserDAOHibernate(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
+    public UserDAOHibernate(@Qualifier("factory") EntityManagerFactory emf) {
+        this.emf = emf;
     }
 
     @Override
     public List<User> findAll(int firstResult, int maxResults) {
-        Session session = sessionFactory.getCurrentSession();
-        Query<User> query = session.createQuery("from User", User.class);
+        EntityManager em = emf.createEntityManager();
+        TypedQuery<User> query = em.createQuery("select u from User u", User.class);
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResults);
         List<User> resultList = query.getResultList();
-        if (resultList != null && !resultList.isEmpty()) {
-            resultList.forEach(user -> Hibernate.initialize(user.getOrders()));
-        }
         return resultList;
     }
 
     @Override
     public User findById(Long id) {
-        Session session = sessionFactory.getCurrentSession();
-        User user = session.get(User.class, id);
-        if (user != null) {
-            Hibernate.initialize(user.getOrders());
-        }
+        EntityManager em = emf.createEntityManager();
+        User user = em.find(User.class, id);
         return user;
     }
 

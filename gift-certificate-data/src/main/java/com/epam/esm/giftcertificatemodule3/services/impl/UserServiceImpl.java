@@ -19,7 +19,6 @@ public class UserServiceImpl implements UserService {
         this.userDAO = userDAO;
     }
 
-    @Transactional
     @Override
     public List<User> findAll(int firstResult, int maxResults) {
         firstResult = Math.max(firstResult, 0);
@@ -27,22 +26,24 @@ public class UserServiceImpl implements UserService {
         return userDAO.findAll(firstResult, maxResults);
     }
 
-    @Transactional
     @Override
     public User findById(Long id) {
         return userDAO.findById(id);
     }
 
+    @Transactional
     @Override
     public void save(User object) {
         throw new UnsupportedOperationException();
     }
 
+    @Transactional
     @Override
     public void update(User object) {
         throw new UnsupportedOperationException();
     }
 
+    @Transactional
     @Override
     public void delete(User object) {
         throw new UnsupportedOperationException();

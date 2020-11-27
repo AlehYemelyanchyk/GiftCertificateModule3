@@ -3,9 +3,12 @@ package com.epam.esm.giftcertificatemodule3.config;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
+import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.orm.hibernate5.HibernateTransactionManager;
-import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -15,22 +18,26 @@ import java.util.Properties;
 
 @SpringBootConfiguration
 @EnableTransactionManagement
-public class HibernateConfig {
+public class PersistenceJPAConfig {
 
     private Environment env;
 
-    public HibernateConfig(Environment env) {
+    public PersistenceJPAConfig(Environment env) {
         this.env = env;
     }
 
-    @Bean
-    public LocalSessionFactoryBean sessionFactory() {
-        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
-        sessionFactory.setDataSource(dataSource());
-        sessionFactory.setPackagesToScan("com.epam.esm");
-        sessionFactory.setHibernateProperties(hibernateProperties());
+    @Bean("factory")
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        LocalContainerEntityManagerFactoryBean em
+                = new LocalContainerEntityManagerFactoryBean();
+        em.setDataSource(dataSource());
+        em.setPackagesToScan("com.epam.esm");
 
-        return sessionFactory;
+        JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        em.setJpaVendorAdapter(vendorAdapter);
+        em.setJpaProperties(hibernateProperties());
+
+        return em;
     }
 
     @Bean
@@ -45,11 +52,16 @@ public class HibernateConfig {
     }
 
     @Bean
-    public PlatformTransactionManager hibernateTransactionManager() {
-        HibernateTransactionManager transactionManager
-                = new HibernateTransactionManager();
-        transactionManager.setSessionFactory(sessionFactory().getObject());
+    public PlatformTransactionManager transactionManager() {
+        JpaTransactionManager transactionManager = new JpaTransactionManager();
+        transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
+
         return transactionManager;
+    }
+
+    @Bean
+    public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
+        return new PersistenceExceptionTranslationPostProcessor();
     }
 
     private Properties hibernateProperties() {
@@ -58,6 +70,8 @@ public class HibernateConfig {
                 "hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
         hibernateProperties.setProperty(
                 "hibernate.dialect", env.getProperty("hibernate.dialect"));
+        hibernateProperties.setProperty(
+                "hibernate.format_sql", env.getProperty("hibernate.format_sql"));
         hibernateProperties.setProperty(
                 "hibernate.show_sql", env.getProperty("hibernate.show_sql"));
         hibernateProperties.setProperty(

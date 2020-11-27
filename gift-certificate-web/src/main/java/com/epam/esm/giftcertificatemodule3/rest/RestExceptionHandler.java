@@ -44,6 +44,6 @@ public class RestExceptionHandler {
                 "response body",
                 translator.toLocale("errorMessage"),
                 String.valueOf(HttpStatus.BAD_REQUEST.value()));
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 }

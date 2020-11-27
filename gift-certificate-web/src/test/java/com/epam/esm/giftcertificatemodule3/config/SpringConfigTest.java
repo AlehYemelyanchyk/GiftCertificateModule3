@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 
 @Profile("test")
-public class SpringConfigTest extends HibernateConfig {
+public class SpringConfigTest extends PersistenceJPAConfig {
     public SpringConfigTest(Environment env) {
         super(env);
     }

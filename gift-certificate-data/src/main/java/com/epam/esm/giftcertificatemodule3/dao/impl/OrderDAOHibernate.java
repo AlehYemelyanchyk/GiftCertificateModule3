@@ -2,37 +2,39 @@ package com.epam.esm.giftcertificatemodule3.dao.impl;
 
 import com.epam.esm.giftcertificatemodule3.dao.OrderDAO;
 import com.epam.esm.giftcertificatemodule3.entity.Order;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.time.ZonedDateTime;
 import java.util.List;
 
 @Repository
 public class OrderDAOHibernate implements OrderDAO {
 
-    private SessionFactory sessionFactory;
+    private final EntityManagerFactory emf;
 
     @Autowired
-    public OrderDAOHibernate(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
+    public OrderDAOHibernate(@Qualifier("factory") EntityManagerFactory emf) {
+        this.emf = emf;
     }
 
     @Override
     public void save(Order order) {
+        EntityManager em = emf.createEntityManager();
+        em.joinTransaction();
         order.setDate(ZonedDateTime.now().toOffsetDateTime());
-        Session session = sessionFactory.getCurrentSession();
-        session.clear();
-        session.save(order);
+        em.persist(order);
     }
 
     @Override
     public List<Order> findAll(int firstResult, int maxResults) {
-        Session session = sessionFactory.getCurrentSession();
-        Query<Order> query = session.createQuery("from Order", Order.class);
+        EntityManager em = emf.createEntityManager();
+        TypedQuery<Order> query = em.createQuery("select o from Order o", Order.class);
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResults);
         return query.getResultList();
@@ -40,27 +42,29 @@ public class OrderDAOHibernate implements OrderDAO {
 
     @Override
     public Order findById(Long id) {
-        Session session = sessionFactory.getCurrentSession();
-        return session.get(Order.class, id);
+        EntityManager em = emf.createEntityManager();
+        return em.find(Order.class, id);
     }
 
     @Override
     public void update(Order object) {
-        Session session = sessionFactory.getCurrentSession();
-        session.clear();
-        session.update(object);
+        EntityManager em = emf.createEntityManager();
+        em.joinTransaction();
+        em.merge(object);
     }
 
     @Override
     public void delete(Order object) {
-        Session session = sessionFactory.getCurrentSession();
-        session.delete(object);
+        EntityManager em = emf.createEntityManager();
+        em.joinTransaction();
+        em.remove(object);
     }
 
     @Override
     public void deleteById(Long id) {
-        Session session = sessionFactory.getCurrentSession();
-        Query query = session.createQuery("delete from Order where id=:id");
+        EntityManager em = emf.createEntityManager();
+        em.joinTransaction();
+        Query query = em.createQuery("delete from Order o where o.id=:id");
         query.setParameter("id", id);
         query.executeUpdate();
     }
