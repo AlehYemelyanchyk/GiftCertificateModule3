@@ -13,8 +13,7 @@ public class Tag extends BaseEntity implements Serializable {
     private static final long serialVersionUID = 8700472259924409409L;
 
     @ManyToMany(fetch = FetchType.LAZY,
-            mappedBy = "tags",
-            cascade = CascadeType.ALL)
+            mappedBy = "tags")
     @JsonBackReference
     private List<GiftCertificate> certificates;
 

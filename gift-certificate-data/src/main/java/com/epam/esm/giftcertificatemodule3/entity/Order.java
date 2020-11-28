@@ -26,8 +26,7 @@ public class Order extends BaseEntity implements Serializable {
     private Double price;
 
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "orders_certificates",
             joinColumns = @JoinColumn(name = "order_id"),
@@ -36,8 +35,7 @@ public class Order extends BaseEntity implements Serializable {
     private Set<GiftCertificate> certificates;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY,
-            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

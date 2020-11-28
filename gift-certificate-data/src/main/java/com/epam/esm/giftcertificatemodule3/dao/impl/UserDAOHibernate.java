@@ -14,28 +14,26 @@ import java.util.List;
 @Repository
 public class UserDAOHibernate implements UserDAO {
 
-    private final EntityManagerFactory emf;
+    private final EntityManagerFactory entityManagerFactory;
 
     @Autowired
-    public UserDAOHibernate(@Qualifier("factory") EntityManagerFactory emf) {
-        this.emf = emf;
+    public UserDAOHibernate(@Qualifier("factory") EntityManagerFactory entityManagerFactory) {
+        this.entityManagerFactory = entityManagerFactory;
     }
 
     @Override
     public List<User> findAll(int firstResult, int maxResults) {
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = entityManagerFactory.createEntityManager();
         TypedQuery<User> query = em.createQuery("select u from User u", User.class);
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResults);
-        List<User> resultList = query.getResultList();
-        return resultList;
+        return query.getResultList();
     }
 
     @Override
     public User findById(Long id) {
-        EntityManager em = emf.createEntityManager();
-        User user = em.find(User.class, id);
-        return user;
+        EntityManager em = entityManagerFactory.createEntityManager();
+        return em.find(User.class, id);
     }
 
     @Override

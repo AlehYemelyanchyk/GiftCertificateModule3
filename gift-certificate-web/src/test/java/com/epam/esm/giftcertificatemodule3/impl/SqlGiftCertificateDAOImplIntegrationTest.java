@@ -16,7 +16,8 @@ import java.sql.SQLException;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Transactional
 @ActiveProfiles("test")
@@ -24,14 +25,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class SqlGiftCertificateDAOImplIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
-    GiftCertificateDAO sqlGiftCertificateDAO;
+    private GiftCertificateDAO sqlGiftCertificateDAO;
 
     private static final GiftCertificate EXPECTED_GIFT_CERTIFICATE = new GiftCertificate();
-    private static final GiftCertificate TEST_GIFT_CERTIFICATE = new GiftCertificate();
+    private static final GiftCertificate NEW_GIFT_CERTIFICATE = new GiftCertificate();
     private static final SearchParametersHolder TEST_SEARCH_PARAMETERS_HOLDER = new SearchParametersHolder();
     private static final long TEST_ID = 1L;
     private static final int FIRST_RESULT = 0;
-    private static final int MAX_RESULTS = 5;
+    private static final int MAX_RESULTS = 20;
 
     @BeforeEach
     void create() throws SQLException {
@@ -43,13 +44,10 @@ class SqlGiftCertificateDAOImplIntegrationTest extends AbstractIntegrationTest {
         EXPECTED_GIFT_CERTIFICATE.setLastUpdateDate(ZonedDateTime.now().toOffsetDateTime());
         EXPECTED_GIFT_CERTIFICATE.setDuration(1);
 
-        TEST_GIFT_CERTIFICATE.setId(11L);
-        TEST_GIFT_CERTIFICATE.setName("Test");
-        TEST_GIFT_CERTIFICATE.setDescription("Test special offer");
-        TEST_GIFT_CERTIFICATE.setPrice(99.99);
-        TEST_GIFT_CERTIFICATE.setCreateDate(ZonedDateTime.now().toOffsetDateTime());
-        TEST_GIFT_CERTIFICATE.setLastUpdateDate(ZonedDateTime.now().toOffsetDateTime());
-        TEST_GIFT_CERTIFICATE.setDuration(0);
+        NEW_GIFT_CERTIFICATE.setName("Test");
+        NEW_GIFT_CERTIFICATE.setDescription("Test special offer");
+        NEW_GIFT_CERTIFICATE.setPrice(99.99);
+        NEW_GIFT_CERTIFICATE.setDuration(10);
 
         TEST_SEARCH_PARAMETERS_HOLDER.setTagName("red");
         TEST_SEARCH_PARAMETERS_HOLDER.setName("ABC");
@@ -80,41 +78,28 @@ class SqlGiftCertificateDAOImplIntegrationTest extends AbstractIntegrationTest {
     @Test
     void saveTest() throws SQLException{
         Connection connection = getConnection();
-        List<GiftCertificate> listBefore = sqlGiftCertificateDAO.findAll(FIRST_RESULT, 12);
-        sqlGiftCertificateDAO.save(TEST_GIFT_CERTIFICATE);
-        List<GiftCertificate> listAfter = sqlGiftCertificateDAO.findAll(FIRST_RESULT, 12);
-        assertNotNull(listBefore);
-        assertNotNull(listAfter);
-        assertNotEquals(listBefore, listAfter);
+        sqlGiftCertificateDAO.save(NEW_GIFT_CERTIFICATE);
         connection.close();
     }
 
     @Test
     void updateTest() throws SQLException{
         Connection connection = getConnection();
-        GiftCertificate beforeUpdate = sqlGiftCertificateDAO.findById(EXPECTED_GIFT_CERTIFICATE.getId());
-        EXPECTED_GIFT_CERTIFICATE.setName("New name");
         sqlGiftCertificateDAO.update(EXPECTED_GIFT_CERTIFICATE);
-        GiftCertificate afterUpdate = sqlGiftCertificateDAO.findById(EXPECTED_GIFT_CERTIFICATE.getId());
-        assertNotNull(beforeUpdate);
-        assertNotNull(afterUpdate);
-        assertNotEquals(beforeUpdate.getName(), afterUpdate.getName());
         connection.close();
     }
 
     @Test
-    void deleteTest() {
-        sqlGiftCertificateDAO.save(TEST_GIFT_CERTIFICATE);
-        GiftCertificate beforeDelete = sqlGiftCertificateDAO.findById(TEST_GIFT_CERTIFICATE.getId());
-        sqlGiftCertificateDAO.delete(TEST_GIFT_CERTIFICATE);
-        GiftCertificate afterDelete = sqlGiftCertificateDAO.findById(TEST_GIFT_CERTIFICATE.getId());
-        assertNotEquals(beforeDelete, afterDelete);
+    void deleteTest() throws SQLException {
+        Connection connection = getConnection();
+        sqlGiftCertificateDAO.delete(NEW_GIFT_CERTIFICATE);
+        connection.close();
     }
 
     @Test
-    void deleteByIdTest() {
+    void deleteByIdTest() throws SQLException {
+        Connection connection = getConnection();
         sqlGiftCertificateDAO.deleteById(TEST_ID);
-        GiftCertificate actual = sqlGiftCertificateDAO.findById(EXPECTED_GIFT_CERTIFICATE.getId());
-        assertNull(actual);
+        connection.close();
     }
 }

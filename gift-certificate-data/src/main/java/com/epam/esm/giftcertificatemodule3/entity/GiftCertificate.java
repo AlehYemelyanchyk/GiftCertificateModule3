@@ -14,8 +14,7 @@ public class GiftCertificate extends BaseEntity implements Serializable {
     private static final Long serialVersionUID = 1724820758632935338L;
 
 
-    @ManyToMany(fetch = FetchType.EAGER,
-            cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     @JoinTable(
             name = "tagged_certificates",
             joinColumns = @JoinColumn(name = "certificate_id"),
@@ -23,7 +22,7 @@ public class GiftCertificate extends BaseEntity implements Serializable {
     )
     private Set<Tag> tags;
 
-    @ManyToMany(fetch = FetchType.EAGER,
+    @ManyToMany(fetch = FetchType.LAZY,
             mappedBy = "certificates")
     @JsonBackReference
     private Set<Order> orders;

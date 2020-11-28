@@ -78,7 +78,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         Set<Tag> tags = giftCertificate.getTags();
         if (tags != null) {
             tags.forEach(tag -> {
-                Tag savedTag = tagDAO.findByName(tag.getName());
+                Tag savedTag = null;
+                try {
+                    savedTag = tagDAO.findByName(tag.getName());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // this tag will be saved later.
+                }
                 if (savedTag != null) {
                     tag.setId(savedTag.getId());
                 }

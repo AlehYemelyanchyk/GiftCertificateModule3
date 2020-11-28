@@ -9,38 +9,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.util.List;
 
 @Repository
 public class TagDAOHibernate implements TagDAO {
 
-    private final EntityManagerFactory emf;
+    private final EntityManagerFactory entityManagerFactory;
 
     @Autowired
-    public TagDAOHibernate(@Qualifier("factory") EntityManagerFactory emf) {
-        this.emf = emf;
+    public TagDAOHibernate(@Qualifier("factory") EntityManagerFactory entityManagerFactory) {
+        this.entityManagerFactory = entityManagerFactory;
     }
 
     @Override
     public void save(Tag object) {
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = entityManagerFactory.createEntityManager();
         em.joinTransaction();
-        Tag savedTag = null;
-        try {
-            savedTag = findByName(object.getName());
-        } catch (NoResultException e) {
-            em.persist(object);
-        }
-        if (savedTag != null) {
-            object.setId(savedTag.getId());
-        }
+        em.persist(object);
     }
 
     @Override
     public List<Tag> findAll(int firstResult, int maxResults) {
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = entityManagerFactory.createEntityManager();
         TypedQuery<Tag> query = em.createQuery("select t from Tag t", Tag.class);
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResults);
@@ -49,13 +44,13 @@ public class TagDAOHibernate implements TagDAO {
 
     @Override
     public Tag findById(Long id) {
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = entityManagerFactory.createEntityManager();
         return em.find(Tag.class, id);
     }
 
     @Override
     public Tag findByName(String name) {
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = entityManagerFactory.createEntityManager();
         TypedQuery<Tag> query = em.createQuery("select t from Tag t where t.name = :name", Tag.class);
         query.setParameter("name", name);
         return query.getSingleResult();
@@ -65,7 +60,7 @@ public class TagDAOHibernate implements TagDAO {
     public List<Tag> findMostPopularTags(int firstResult, int maxResults) {
         Long bestCustomerId = findBestCustomerId();
 
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = entityManagerFactory.createEntityManager();
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Tag> cq = cb.createQuery(Tag.class);
         Root<Order> orderRoot = cq.from(Order.class);
@@ -87,21 +82,21 @@ public class TagDAOHibernate implements TagDAO {
 
     @Override
     public void update(Tag object) {
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = entityManagerFactory.createEntityManager();
         em.joinTransaction();
         em.merge(object);
     }
 
     @Override
     public void delete(Tag object) {
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = entityManagerFactory.createEntityManager();
         em.joinTransaction();
         em.remove(object);
     }
 
     @Override
     public void deleteById(Long id) {
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = entityManagerFactory.createEntityManager();
         em.joinTransaction();
         Query query = em.createQuery("delete from Tag t where t.id=:id");
         query.setParameter("id", id);
@@ -110,7 +105,7 @@ public class TagDAOHibernate implements TagDAO {
 
     private Long findBestCustomerId() {
         long zeroId = 0L;
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = entityManagerFactory.createEntityManager();
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);

@@ -20,25 +20,27 @@ import java.util.List;
 @Repository
 public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
 
-    private final EntityManagerFactory emf;
+    private final EntityManagerFactory entityManagerFactory;
 
     @Autowired
-    public GiftCertificateDAOHibernate(@Qualifier("factory") EntityManagerFactory emf) {
-        this.emf = emf;
+    public GiftCertificateDAOHibernate(@Qualifier("factory") EntityManagerFactory entityManagerFactory) {
+        this.entityManagerFactory = entityManagerFactory;
     }
 
     @Override
     public void save(GiftCertificate giftCertificate) {
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = entityManagerFactory.createEntityManager();
         em.joinTransaction();
         giftCertificate.setCreateDate(ZonedDateTime.now().toOffsetDateTime());
         giftCertificate.setLastUpdateDate(ZonedDateTime.now().toOffsetDateTime());
-        em.persist(giftCertificate);
+        GiftCertificate merged = em.merge(giftCertificate);
+        giftCertificate.setId(merged.getId());
+        giftCertificate.setTags(merged.getTags());
     }
 
     @Override
     public List<GiftCertificate> findAll(int firstResult, int maxResults) {
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = entityManagerFactory.createEntityManager();
         TypedQuery<GiftCertificate> query = em.createQuery("select c from GiftCertificate c", GiftCertificate.class);
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResults);
@@ -47,7 +49,7 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
 
     @Override
     public GiftCertificate findById(Long id) {
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = entityManagerFactory.createEntityManager();
         return em.find(GiftCertificate.class, id);
     }
 
@@ -58,7 +60,7 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
         boolean sortDesc = searchParametersHolder.getSortOrder() != null
                 && searchParametersHolder.getSortOrder().toLowerCase().equals("desc");
 
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = entityManagerFactory.createEntityManager();
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<GiftCertificate> cq = cb.createQuery(GiftCertificate.class);
@@ -99,45 +101,48 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
 
     @Override
     public void update(GiftCertificate giftCertificate) {
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = entityManagerFactory.createEntityManager();
         em.joinTransaction();
-        GiftCertificate oldGiftCertificate = findById(giftCertificate.getId());
-        setUpdatedFields(giftCertificate, oldGiftCertificate);
+        GiftCertificate persistedGiftCertificate = findById(giftCertificate.getId());
+        setUpdatedFields(giftCertificate, persistedGiftCertificate);
+        em.merge(giftCertificate);
+        persistedGiftCertificate = findById(giftCertificate.getId());
+        giftCertificate.setTags(persistedGiftCertificate.getTags());
     }
 
     @Override
     public void delete(GiftCertificate object) {
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = entityManagerFactory.createEntityManager();
         em.joinTransaction();
         em.remove(object);
     }
 
     @Override
     public void deleteById(Long id) {
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = entityManagerFactory.createEntityManager();
         em.joinTransaction();
         Query query = em.createQuery("delete from GiftCertificate c where c.id=:id");
         query.setParameter("id", id);
         query.executeUpdate();
     }
 
-    private void setUpdatedFields(GiftCertificate giftCertificate, GiftCertificate oldGiftCertificate) {
+    private void setUpdatedFields(GiftCertificate giftCertificate, GiftCertificate persistedGiftCertificate) {
         if (giftCertificate.getTags() == null) {
-            giftCertificate.setTags(oldGiftCertificate.getTags());
+            giftCertificate.setTags(persistedGiftCertificate.getTags());
         }
         if (giftCertificate.getName() == null) {
-            giftCertificate.setName(oldGiftCertificate.getName());
+            giftCertificate.setName(persistedGiftCertificate.getName());
         }
         if (giftCertificate.getDescription() == null) {
-            giftCertificate.setDescription(oldGiftCertificate.getDescription());
+            giftCertificate.setDescription(persistedGiftCertificate.getDescription());
         }
         if (giftCertificate.getPrice() == null) {
-            giftCertificate.setPrice(oldGiftCertificate.getPrice());
+            giftCertificate.setPrice(persistedGiftCertificate.getPrice());
         }
         if (giftCertificate.getDuration() == null) {
-            giftCertificate.setDuration(oldGiftCertificate.getDuration());
+            giftCertificate.setDuration(persistedGiftCertificate.getDuration());
         }
-        giftCertificate.setCreateDate(oldGiftCertificate.getCreateDate());
+        giftCertificate.setCreateDate(persistedGiftCertificate.getCreateDate());
         giftCertificate.setLastUpdateDate(ZonedDateTime.now().toOffsetDateTime());
     }
 }
