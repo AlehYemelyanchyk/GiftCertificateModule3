@@ -15,13 +15,15 @@ public class AbstractIntegrationTest {
     @Autowired
     private DataSource dataSource;
 
-    public void executeSqlScript(String script) throws SQLException {
+    public Connection executeSqlStartScript() throws SQLException {
         Connection connection = dataSource.getConnection();
-        ScriptUtils.executeSqlScript(connection, new ClassPathResource(script));
-        connection.close();
+        ScriptUtils.executeSqlScript(connection, new ClassPathResource("/create_schema.sql"));
+        ScriptUtils.executeSqlScript(connection, new ClassPathResource("/import_data.sql"));
+        return connection;
     }
 
-    public Connection getConnection() throws SQLException {
-        return dataSource.getConnection();
+    public void executeSqlEndScript(Connection connection) throws SQLException {
+        ScriptUtils.executeSqlScript(connection, new ClassPathResource("/drop_schema.sql"));
+        connection.close();
     }
 }

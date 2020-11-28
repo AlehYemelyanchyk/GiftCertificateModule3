@@ -1,14 +1,13 @@
 package com.epam.esm.giftcertificatemodule3.impl;
 
-import com.epam.esm.giftcertificatemodule3.dao.TagDAO;
 import com.epam.esm.giftcertificatemodule3.entity.Tag;
+import com.epam.esm.giftcertificatemodule3.services.TagService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -16,18 +15,16 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Transactional
 @ActiveProfiles("test")
 @SpringBootTest
 class SqlTagDAOImplIntegrationTest extends AbstractIntegrationTest {
 
-    @Autowired
-    TagDAO tagDAO;
+    private Connection connection;
 
-    private static final Tag TEST_TAG = new Tag();
+    @Autowired
+    TagService tagService;
+
     private static final Tag EXPECTED_TAG = new Tag();
-    private static final Long TEST_ID = 6L;
-    private static final String TEST_NAME = "blue";
     private static final int FIRST_RESULT = 0;
     private static final int MAX_RESULTS = 5;
 
@@ -35,73 +32,70 @@ class SqlTagDAOImplIntegrationTest extends AbstractIntegrationTest {
     void create() throws SQLException {
         EXPECTED_TAG.setName("tag1");
         EXPECTED_TAG.setId(1L);
-        TEST_TAG.setName(TEST_NAME);
-        executeSqlScript("/create_schema.sql");
-        executeSqlScript("/import_data.sql");
+        connection = executeSqlStartScript();
     }
 
     @AfterEach
     void clean() throws SQLException {
-        executeSqlScript("/drop_schema.sql");
+        executeSqlEndScript(connection);
     }
 
     @Test
-    void saveTest() throws SQLException {
-        Connection connection = getConnection();
-        tagDAO.save(TEST_TAG);
-        connection.close();
+    void saveTest() {
+        List<Tag> beforeTest = tagService.findAll(FIRST_RESULT, MAX_RESULTS);
+        Tag newTag = new Tag();
+        newTag.setName("NewTag");
+        tagService.save(newTag);
+        List<Tag> afterTest = tagService.findAll(FIRST_RESULT, MAX_RESULTS);
+        assertNotNull(beforeTest);
+        assertNotNull(afterTest);
+        assertEquals(beforeTest.size(), afterTest.size());
     }
 
     @Test
     void findAllTest() {
-        List<Tag> actualList = tagDAO.findAll(FIRST_RESULT, MAX_RESULTS);
+        List<Tag> actualList = tagService.findAll(FIRST_RESULT, MAX_RESULTS);
         assertNotNull(actualList);
     }
 
     @Test
     void findByIdTest() {
-        Tag actual = tagDAO.findById(EXPECTED_TAG.getId());
+        Tag actual = tagService.findById(EXPECTED_TAG.getId());
         assertEquals(EXPECTED_TAG.getId(), actual.getId());
     }
 
     @Test
     void findByNameTest() {
-        Tag actual = tagDAO.findByName(EXPECTED_TAG.getName());
+        Tag actual = tagService.findByName(EXPECTED_TAG.getName());
         assertEquals(EXPECTED_TAG.getId(), actual.getId());
     }
 
     @Test
     void findMostPopularTagsTest() {
-        List<Tag> actual = tagDAO.findMostPopularTags(FIRST_RESULT, MAX_RESULTS);
+        List<Tag> actual = tagService.findMostPopularTags(FIRST_RESULT, MAX_RESULTS);
         assertEquals(4, actual.get(0).getId());
     }
 
     @Test
-    void updateTest() throws SQLException {
-        Connection connection = getConnection();
-        Tag beforeUpdate = tagDAO.findById(EXPECTED_TAG.getId());
+    void updateTest() {
+        Tag beforeUpdate = tagService.findById(EXPECTED_TAG.getId());
         EXPECTED_TAG.setName("New name");
-        tagDAO.update(EXPECTED_TAG);
-        Tag afterUpdate = tagDAO.findById(EXPECTED_TAG.getId());
+        tagService.update(EXPECTED_TAG);
+        Tag afterUpdate = tagService.findById(EXPECTED_TAG.getId());
         assertNotNull(beforeUpdate);
         assertNotNull(afterUpdate);
         assertNotEquals(beforeUpdate.getName(), afterUpdate.getName());
-        connection.close();
     }
 
     @Test
     void deleteTest() {
-        tagDAO.save(TEST_TAG);
-        Tag beforeDelete = tagDAO.findById(TEST_TAG.getId());
-        tagDAO.delete(TEST_TAG);
-        Tag afterDelete = tagDAO.findById(TEST_TAG.getId());
-        assertNotEquals(beforeDelete, afterDelete);
+       // Method not used
     }
 
     @Test
     void deleteByIdTest() {
-        tagDAO.deleteById(TEST_ID);
-        Tag actual = tagDAO.findById(TEST_TAG.getId());
+        tagService.deleteById(EXPECTED_TAG.getId());
+        Tag actual = tagService.findById(EXPECTED_TAG.getId());
         assertNull(actual);
     }
 }

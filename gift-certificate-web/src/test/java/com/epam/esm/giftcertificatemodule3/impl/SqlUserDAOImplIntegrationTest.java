@@ -8,18 +8,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@Transactional
 @ActiveProfiles("test")
 @SpringBootTest
 class SqlUserDAOImplIntegrationTest extends AbstractIntegrationTest {
+
+    private Connection connection;
 
     @Autowired
     UserDAO userDAO;
@@ -34,13 +35,12 @@ class SqlUserDAOImplIntegrationTest extends AbstractIntegrationTest {
     void create() throws SQLException {
         TEST_USER.setId(TEST_ID);
         TEST_USER.setName(TEST_NAME);
-        executeSqlScript("/create_schema.sql");
-        executeSqlScript("/import_data.sql");
+        connection = executeSqlStartScript();
     }
 
     @AfterEach
     void clean() throws SQLException {
-        executeSqlScript("/drop_schema.sql");
+        executeSqlEndScript(connection);
     }
 
     @Test
