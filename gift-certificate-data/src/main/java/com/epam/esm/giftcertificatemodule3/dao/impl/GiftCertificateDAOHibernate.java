@@ -4,12 +4,10 @@ import com.epam.esm.giftcertificatemodule3.dao.GiftCertificateDAO;
 import com.epam.esm.giftcertificatemodule3.entity.GiftCertificate;
 import com.epam.esm.giftcertificatemodule3.entity.Tag;
 import com.epam.esm.giftcertificatemodule3.model.SearchParametersHolder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
@@ -20,28 +18,21 @@ import java.util.List;
 @Repository
 public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
 
-    private final EntityManagerFactory entityManagerFactory;
-
-    @Autowired
-    public GiftCertificateDAOHibernate(@Qualifier("factory") EntityManagerFactory entityManagerFactory) {
-        this.entityManagerFactory = entityManagerFactory;
-    }
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public void save(GiftCertificate giftCertificate) {
-        EntityManager em = entityManagerFactory.createEntityManager();
-        em.joinTransaction();
         giftCertificate.setCreateDate(ZonedDateTime.now().toOffsetDateTime());
         giftCertificate.setLastUpdateDate(ZonedDateTime.now().toOffsetDateTime());
-        GiftCertificate merged = em.merge(giftCertificate);
+        GiftCertificate merged = entityManager.merge(giftCertificate);
         giftCertificate.setId(merged.getId());
         giftCertificate.setTags(merged.getTags());
     }
 
     @Override
     public List<GiftCertificate> findAll(int firstResult, int maxResults) {
-        EntityManager em = entityManagerFactory.createEntityManager();
-        TypedQuery<GiftCertificate> query = em.createQuery("select c from GiftCertificate c", GiftCertificate.class);
+        TypedQuery<GiftCertificate> query = entityManager.createQuery("select c from GiftCertificate c", GiftCertificate.class);
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResults);
         return query.getResultList();
@@ -49,8 +40,7 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
 
     @Override
     public GiftCertificate findById(Long id) {
-        EntityManager em = entityManagerFactory.createEntityManager();
-        return em.find(GiftCertificate.class, id);
+        return entityManager.find(GiftCertificate.class, id);
     }
 
     @Override
@@ -60,9 +50,7 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
         boolean sortDesc = searchParametersHolder.getSortOrder() != null
                 && searchParametersHolder.getSortOrder().toLowerCase().equals("desc");
 
-        EntityManager em = entityManagerFactory.createEntityManager();
-
-        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<GiftCertificate> cq = cb.createQuery(GiftCertificate.class);
         Root<Tag> tagRoot = cq.from(Tag.class);
 
@@ -91,37 +79,30 @@ public class GiftCertificateDAOHibernate implements GiftCertificateDAO {
                 .where(andPredicates.toArray(new Predicate[andPredicates.size()]))
                 .distinct(true);
 
-        TypedQuery<GiftCertificate> query = em.createQuery(cq);
+        TypedQuery<GiftCertificate> query = entityManager.createQuery(cq);
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResults);
-        List<GiftCertificate> certificates = query.getResultList();
 
-        return certificates;
+        return query.getResultList();
     }
 
     @Override
     public void update(GiftCertificate giftCertificate) {
-        EntityManager em = entityManagerFactory.createEntityManager();
-        em.joinTransaction();
         GiftCertificate persistedGiftCertificate = findById(giftCertificate.getId());
         setUpdatedFields(giftCertificate, persistedGiftCertificate);
-        em.merge(giftCertificate);
+        entityManager.merge(giftCertificate);
         persistedGiftCertificate = findById(giftCertificate.getId());
         giftCertificate.setTags(persistedGiftCertificate.getTags());
     }
 
     @Override
     public void delete(GiftCertificate object) {
-        EntityManager em = entityManagerFactory.createEntityManager();
-        em.joinTransaction();
-        em.remove(object);
+        entityManager.remove(object);
     }
 
     @Override
     public void deleteById(Long id) {
-        EntityManager em = entityManagerFactory.createEntityManager();
-        em.joinTransaction();
-        Query query = em.createQuery("delete from GiftCertificate c where c.id=:id");
+        Query query = entityManager.createQuery("delete from GiftCertificate c where c.id=:id");
         query.setParameter("id", id);
         query.executeUpdate();
     }

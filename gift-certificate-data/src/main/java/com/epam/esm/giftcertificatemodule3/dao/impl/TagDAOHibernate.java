@@ -5,12 +5,10 @@ import com.epam.esm.giftcertificatemodule3.entity.GiftCertificate;
 import com.epam.esm.giftcertificatemodule3.entity.Order;
 import com.epam.esm.giftcertificatemodule3.entity.Tag;
 import com.epam.esm.giftcertificatemodule3.entity.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
@@ -19,24 +17,17 @@ import java.util.List;
 @Repository
 public class TagDAOHibernate implements TagDAO {
 
-    private final EntityManagerFactory entityManagerFactory;
-
-    @Autowired
-    public TagDAOHibernate(@Qualifier("factory") EntityManagerFactory entityManagerFactory) {
-        this.entityManagerFactory = entityManagerFactory;
-    }
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public void save(Tag object) {
-        EntityManager em = entityManagerFactory.createEntityManager();
-        em.joinTransaction();
-        em.persist(object);
+        entityManager.persist(object);
     }
 
     @Override
     public List<Tag> findAll(int firstResult, int maxResults) {
-        EntityManager em = entityManagerFactory.createEntityManager();
-        TypedQuery<Tag> query = em.createQuery("select t from Tag t", Tag.class);
+        TypedQuery<Tag> query = entityManager.createQuery("select t from Tag t", Tag.class);
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResults);
         return query.getResultList();
@@ -44,14 +35,12 @@ public class TagDAOHibernate implements TagDAO {
 
     @Override
     public Tag findById(Long id) {
-        EntityManager em = entityManagerFactory.createEntityManager();
-        return em.find(Tag.class, id);
+        return entityManager.find(Tag.class, id);
     }
 
     @Override
     public Tag findByName(String name) {
-        EntityManager em = entityManagerFactory.createEntityManager();
-        TypedQuery<Tag> query = em.createQuery("select t from Tag t where t.name = :name", Tag.class);
+        TypedQuery<Tag> query = entityManager.createQuery("select t from Tag t where t.name = :name", Tag.class);
         query.setParameter("name", name);
         return query.getSingleResult();
     }
@@ -60,8 +49,7 @@ public class TagDAOHibernate implements TagDAO {
     public List<Tag> findMostPopularTags(int firstResult, int maxResults) {
         Long bestCustomerId = findBestCustomerId();
 
-        EntityManager em = entityManagerFactory.createEntityManager();
-        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tag> cq = cb.createQuery(Tag.class);
         Root<Order> orderRoot = cq.from(Order.class);
 
@@ -73,7 +61,7 @@ public class TagDAOHibernate implements TagDAO {
                 .groupBy(tags)
                 .orderBy(cb.desc(cb.count(tags)));
 
-        TypedQuery<Tag> query = em.createQuery(cq);
+        TypedQuery<Tag> query = entityManager.createQuery(cq);
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResults);
 
@@ -82,32 +70,25 @@ public class TagDAOHibernate implements TagDAO {
 
     @Override
     public void update(Tag object) {
-        EntityManager em = entityManagerFactory.createEntityManager();
-        em.joinTransaction();
-        em.merge(object);
+        entityManager.merge(object);
     }
 
     @Override
     public void delete(Tag object) {
-        EntityManager em = entityManagerFactory.createEntityManager();
-        em.joinTransaction();
-        em.remove(object);
+        entityManager.remove(object);
     }
 
     @Override
     public void deleteById(Long id) {
-        EntityManager em = entityManagerFactory.createEntityManager();
-        em.joinTransaction();
-        Query query = em.createQuery("delete from Tag t where t.id=:id");
+        Query query = entityManager.createQuery("delete from Tag t where t.id=:id");
         query.setParameter("id", id);
         query.executeUpdate();
     }
 
     private Long findBestCustomerId() {
         long zeroId = 0L;
-        EntityManager em = entityManagerFactory.createEntityManager();
 
-        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
 
         Root<User> user = cq.from(User.class);
@@ -116,7 +97,7 @@ public class TagDAOHibernate implements TagDAO {
         cq.groupBy(user.get("id"));
 
         cq.orderBy(cb.desc(cb.sum(order.get("price"))));
-        TypedQuery<Long> query = em.createQuery(cq);
+        TypedQuery<Long> query = entityManager.createQuery(cq);
 
         List<Long> resultList = query.getResultList();
         return resultList.stream().findFirst().orElse(zeroId);
