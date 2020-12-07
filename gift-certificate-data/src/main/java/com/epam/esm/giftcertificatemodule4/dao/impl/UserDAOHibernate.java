@@ -36,10 +36,17 @@ public class UserDAOHibernate implements UserDAO {
     }
 
     @Override
-    public User findByEmail(String email) {
+    public Boolean existsByName(String name) {
+        TypedQuery<User> query = entityManager.createQuery("select t from User t where t.name = :name", User.class);
+        query.setParameter("name", name);
+        return query.getSingleResult() != null;
+    }
+
+    @Override
+    public Boolean existsByEmail(String email) {
         TypedQuery<User> query = entityManager.createQuery("select t from User t where t.email = :email", User.class);
         query.setParameter("email", email);
-        return query.getSingleResult();
+        return query.getSingleResult() != null;
     }
 
     @Override

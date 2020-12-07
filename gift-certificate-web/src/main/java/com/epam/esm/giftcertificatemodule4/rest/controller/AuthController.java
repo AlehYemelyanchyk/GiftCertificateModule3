@@ -10,6 +10,8 @@ import com.epam.esm.giftcertificatemodule4.payload.response.MessageResponse;
 import com.epam.esm.giftcertificatemodule4.security.jwt.JwtUtils;
 import com.epam.esm.giftcertificatemodule4.security.services.UserDetailsImpl;
 import com.epam.esm.giftcertificatemodule4.services.UserService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,6 +31,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
@@ -71,22 +75,25 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody SignupRequest signUpRequest) {
-//        try {
-//            User byName = userDAO.findByName(signUpRequest.getUsername());
-//            if (byName != null) {
-//                return ResponseEntity
-//                        .badRequest()
-//                        .body(new MessageResponse("Error: Username is already taken!"));
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        if (userDAO.findByEmail(signUpRequest.getEmail()) != null) {
-//            return ResponseEntity
-//                    .badRequest()
-//                    .body(new MessageResponse("Error: Email is already in use!"));
-//        }
+        try {
+            if (userService.existsByName(signUpRequest.getUsername())) {
+                return ResponseEntity
+                        .badRequest()
+                        .body(new MessageResponse("Error: Username is already taken!"));
+            }
+        } catch (Exception e) {
+            LOGGER.info("The name doesn't exist. Registered successfully");
+        }
+
+        try {
+            if (userService.existsByEmail(signUpRequest.getEmail())) {
+                return ResponseEntity
+                        .badRequest()
+                        .body(new MessageResponse("Error: Email is already in use!"));
+            }
+        } catch (Exception e) {
+            LOGGER.info("The email doesn't exist. Registered successfully");
+        }
 
         // Create new user's account
         User user = new User();
@@ -97,41 +104,29 @@ public class AuthController {
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
 
-        if (strRoles == null) {
-            Role userRole = roleService.findByName("ROLE_USER");
+        if (strRoles == null || strRoles.size() == 0) {
+            Role userRole = roleService.findByName("ROLE_GUEST");
             if (userRole == null) {
                 throw new RuntimeException("Error: Role is not found.");
             }
             roles.add(userRole);
         } else {
             strRoles.forEach(role -> {
-                switch (role) {
-                    case "admin":
-                        Role adminRole = roleService.findByName("ROLE_ADMIN");
-                        if (adminRole == null) {
-                            throw new RuntimeException("Error: Role is not found.");
-                        }
-                        roles.add(adminRole);
-
-                        break;
-                    case "mod":
-                        Role modRole = this.roleService.findByName("ROLE_MODERATOR");
-                        if (modRole == null) {
-                            throw new RuntimeException("Error: Role is not found.");
-                        }
-                        roles.add(modRole);
-
-                        break;
-                    default:
-                        Role userRole = this.roleService.findByName("ROLE_USER");
-                        if (userRole == null) {
-                            throw new RuntimeException("Error: Role is not found.");
-                        }
-                        roles.add(userRole);
+                if ("user".equals(role)) {
+                    Role modRole = this.roleService.findByName("ROLE_USER");
+                    if (modRole == null) {
+                        throw new RuntimeException("Error: Role is not found.");
+                    }
+                    roles.add(modRole);
+                } else {
+                    Role guestRole = this.roleService.findByName("ROLE_GUEST");
+                    if (guestRole == null) {
+                        throw new RuntimeException("Error: Role is not found.");
+                    }
+                    roles.add(guestRole);
                 }
             });
         }
-
         user.setRoles(roles);
         userService.save(user);
 

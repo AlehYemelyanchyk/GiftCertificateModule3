@@ -4,6 +4,7 @@ import com.epam.esm.giftcertificatemodule4.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -35,6 +36,16 @@ public class RestExceptionHandler {
                 translator.toLocale("incorrectValue"),
                 String.valueOf(HttpStatus.BAD_REQUEST.value()));
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleException(AccessDeniedException exception) {
+        ErrorResponse error = new ErrorResponse(
+                "HTTP Status: " + HttpStatus.FORBIDDEN.value(),
+                "response body",
+                translator.toLocale("denied"),
+                String.valueOf(HttpStatus.FORBIDDEN.value()));
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler

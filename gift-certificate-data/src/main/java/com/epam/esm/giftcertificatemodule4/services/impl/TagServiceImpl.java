@@ -14,7 +14,6 @@ public class TagServiceImpl implements TagService {
 
     private final TagDAO tagDAO;
 
-    @Autowired
     public TagServiceImpl(TagDAO tagDAO) {
         this.tagDAO = tagDAO;
     }

@@ -6,12 +6,13 @@ import com.epam.esm.giftcertificatemodule4.services.GiftCertificateService;
 import com.epam.esm.giftcertificatemodule4.services.exceptions.ServiceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@PreAuthorize("hasRole('ADMIN')")
 @RestController
 @RequestMapping("/api")
 public class GiftCertificateController extends AbstractController<GiftCertificate> {
@@ -23,7 +24,6 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
 
     private GiftCertificateService giftCertificateService;
 
-    @Autowired
     public GiftCertificateController(GiftCertificateService giftCertificateService) {
         this.giftCertificateService = giftCertificateService;
     }
@@ -39,6 +39,7 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
         return giftCertificate;
     }
 
+    @PreAuthorize("hasRole('GUEST') or hasRole('USER')")
     @GetMapping("/certificates")
     public List<EntityModel<GiftCertificate>> findAll(
             @RequestParam(defaultValue = "0") int firstResult,
@@ -58,6 +59,7 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
         return getEntityModels(returnObject);
     }
 
+    @PreAuthorize("hasRole('GUEST') or hasRole('USER')")
     @GetMapping("/certificates/{id}")
     public EntityModel<GiftCertificate> findById(@PathVariable Long id) {
         GiftCertificate returnObject;
@@ -73,6 +75,7 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
         return getEntityModel(returnObject);
     }
 
+    @PreAuthorize("hasRole('GUEST') or hasRole('USER')")
     @GetMapping("/certificates/findBy")
     public List<EntityModel<GiftCertificate>> findBy(@RequestParam(defaultValue = "0") int firstResult,
                                                      @RequestParam(defaultValue = "5") int maxResults,

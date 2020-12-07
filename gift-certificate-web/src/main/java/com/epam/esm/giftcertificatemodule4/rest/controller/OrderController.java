@@ -9,14 +9,15 @@ import com.epam.esm.giftcertificatemodule4.services.UserService;
 import com.epam.esm.giftcertificatemodule4.services.exceptions.ServiceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@PreAuthorize("hasRole('ADMIN')")
 @RestController
 @RequestMapping("/api")
 public class OrderController extends AbstractController<Order> {
@@ -27,16 +28,16 @@ public class OrderController extends AbstractController<Order> {
     private static final String ALL_RESULTS = "allOrders";
 
     private OrderService orderService;
-
     private UserService userService;
     private GiftCertificateService giftCertificateService;
-    @Autowired
+
     public OrderController(OrderService orderService, UserService userService, GiftCertificateService giftCertificateService) {
         this.orderService = orderService;
         this.userService = userService;
         this.giftCertificateService = giftCertificateService;
     }
 
+    @PreAuthorize("hasRole('USER')")
     @PostMapping("/orders")
     public Order save(
             @RequestParam(name = "userId") Long userId,
@@ -71,6 +72,7 @@ public class OrderController extends AbstractController<Order> {
         return order;
     }
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/orders")
     public List<EntityModel<Order>> findAll(
             @RequestParam(defaultValue = "0") int firstResult,
@@ -89,6 +91,7 @@ public class OrderController extends AbstractController<Order> {
         return getEntityModels(returnObject);
     }
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/orders/{id}")
     public EntityModel<Order> findById(@PathVariable Long id) {
         Order returnObject;

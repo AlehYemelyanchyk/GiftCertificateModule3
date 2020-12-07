@@ -3,7 +3,6 @@ package com.epam.esm.giftcertificatemodule4.services.impl;
 import com.epam.esm.giftcertificatemodule4.dao.UserDAO;
 import com.epam.esm.giftcertificatemodule4.entity.User;
 import com.epam.esm.giftcertificatemodule4.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +13,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserDAO userDAO;
 
-    @Autowired
     public UserServiceImpl(UserDAO userDAO) {
         this.userDAO = userDAO;
     }
@@ -29,6 +27,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findById(Long id) {
         return userDAO.findById(id);
+    }
+
+    @Override
+    public User findByName(String name) {
+        return userDAO.findByName(name);
+    }
+
+    @Override
+    public Boolean existsByName(String name) {
+        return userDAO.existsByName(name);
+    }
+
+    @Override
+    public Boolean existsByEmail(String email) {
+        return userDAO.existsByEmail(email);
     }
 
     @Transactional

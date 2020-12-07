@@ -6,7 +6,6 @@ import com.epam.esm.giftcertificatemodule4.entity.GiftCertificate;
 import com.epam.esm.giftcertificatemodule4.entity.Tag;
 import com.epam.esm.giftcertificatemodule4.model.SearchParametersHolder;
 import com.epam.esm.giftcertificatemodule4.services.GiftCertificateService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +18,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private final GiftCertificateDAO giftCertificateDAO;
     private final TagDAO tagDAO;
 
-    @Autowired
     public GiftCertificateServiceImpl(GiftCertificateDAO giftCertificateDAO, TagDAO tagDAO) {
         this.giftCertificateDAO = giftCertificateDAO;
         this.tagDAO = tagDAO;

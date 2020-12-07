@@ -18,10 +18,18 @@ public interface UserDAO extends CrudDAO<User, Long> {
     User findByName(String name);
 
     /**
-     * Returns the instance of the User type.
+     * Returns true if a User with the given name exists.
      *
-     * @param email is a name of User.
-     * @return the instance of User.
+     * @param name is a name of User.
+     * @return true or false.
      */
-    User findByEmail(String email);
+    Boolean existsByName(String name);
+
+    /**
+     * Returns true if a User with the given email exists.
+     *
+     * @param email is an email of User.
+     * @return true or false.
+     */
+    Boolean existsByEmail(String email);
 }

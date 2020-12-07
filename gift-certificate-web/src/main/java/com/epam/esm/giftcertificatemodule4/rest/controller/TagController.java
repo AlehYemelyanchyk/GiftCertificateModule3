@@ -5,12 +5,13 @@ import com.epam.esm.giftcertificatemodule4.services.TagService;
 import com.epam.esm.giftcertificatemodule4.services.exceptions.ServiceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@PreAuthorize("hasRole('ADMIN')")
 @RestController
 @RequestMapping("/api")
 public class TagController extends AbstractController<Tag> {
@@ -22,7 +23,6 @@ public class TagController extends AbstractController<Tag> {
 
     private TagService tagService;
 
-    @Autowired
     public TagController(TagService tagService) {
         this.tagService = tagService;
     }
@@ -38,6 +38,7 @@ public class TagController extends AbstractController<Tag> {
         return tag;
     }
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/tags")
     public List<EntityModel<Tag>> findAll(
             @RequestParam(defaultValue = "0") int firstResult,
@@ -56,6 +57,7 @@ public class TagController extends AbstractController<Tag> {
         return getEntityModels(returnObject);
     }
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/tags/{id}")
     public EntityModel<Tag> findById(@PathVariable Long id) {
         Tag returnObject;

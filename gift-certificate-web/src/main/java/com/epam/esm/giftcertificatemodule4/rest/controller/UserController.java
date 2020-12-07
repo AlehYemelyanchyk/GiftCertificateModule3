@@ -5,15 +5,15 @@ import com.epam.esm.giftcertificatemodule4.services.UserService;
 import com.epam.esm.giftcertificatemodule4.services.exceptions.ServiceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@PreAuthorize("hasRole('ADMIN')")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 public class UserController extends AbstractController<User> {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -23,13 +23,12 @@ public class UserController extends AbstractController<User> {
 
     private UserService userService;
 
-    @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/users")
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/")
     public List<EntityModel<User>> findAll(
             @RequestParam(defaultValue = "0") int firstResult,
             @RequestParam(defaultValue = "5") int maxResults
@@ -47,8 +46,8 @@ public class UserController extends AbstractController<User> {
         return getEntityModels(returnObject);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/users/{id}")
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/{id}")
     public EntityModel<User> findById(@PathVariable Long id) {
         User returnObject = null;
         try {

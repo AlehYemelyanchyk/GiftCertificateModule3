@@ -3,7 +3,6 @@ package com.epam.esm.giftcertificatemodule4.services.impl;
 import com.epam.esm.giftcertificatemodule4.dao.OrderDAO;
 import com.epam.esm.giftcertificatemodule4.entity.Order;
 import com.epam.esm.giftcertificatemodule4.services.OrderService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +13,6 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderDAO orderDAO;
 
-    @Autowired
     public OrderServiceImpl(OrderDAO orderDAO) {
         this.orderDAO = orderDAO;
     }
