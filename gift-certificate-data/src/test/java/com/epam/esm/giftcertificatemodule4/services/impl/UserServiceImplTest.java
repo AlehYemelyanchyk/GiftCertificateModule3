@@ -58,15 +58,9 @@ class UserServiceImplTest {
     }
 
     @Test
-    void saveExceptionTest() {
-        Exception actual = null;
-        try {
-            userService.save(expectedUser);
-        } catch (Exception e) {
-            actual = e;
-        }
-        assertNotNull(actual);
-        assertEquals(expectedException.getClass(), actual.getClass());
+    void saveInvocationTest() {
+        userService.save(expectedUser);
+        Mockito.verify(userDAO).save(expectedUser);
     }
 
     @Test

@@ -11,9 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@PreAuthorize("hasRole('ADMIN')")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/tags")
 public class TagController extends AbstractController<Tag> {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -27,7 +26,8 @@ public class TagController extends AbstractController<Tag> {
         this.tagService = tagService;
     }
 
-    @PostMapping("/tags")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("")
     public Tag save(@RequestBody Tag tag) {
         try {
             tagService.save(tag);
@@ -38,8 +38,8 @@ public class TagController extends AbstractController<Tag> {
         return tag;
     }
 
-    @PreAuthorize("hasRole('USER')")
-    @GetMapping("/tags")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @GetMapping("")
     public List<EntityModel<Tag>> findAll(
             @RequestParam(defaultValue = "0") int firstResult,
             @RequestParam(defaultValue = "5") int maxResults
@@ -57,8 +57,8 @@ public class TagController extends AbstractController<Tag> {
         return getEntityModels(returnObject);
     }
 
-    @PreAuthorize("hasRole('USER')")
-    @GetMapping("/tags/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @GetMapping("/{id}")
     public EntityModel<Tag> findById(@PathVariable Long id) {
         Tag returnObject;
         try {
@@ -73,7 +73,8 @@ public class TagController extends AbstractController<Tag> {
         return getEntityModel(returnObject);
     }
 
-    @GetMapping("/tags/mostPopularTags")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/mostPopularTags")
     public List<EntityModel<Tag>> findMostPopularTags(
             @RequestParam(defaultValue = "0") int firstResult,
             @RequestParam(defaultValue = "1") int maxResults
@@ -91,7 +92,8 @@ public class TagController extends AbstractController<Tag> {
         return getEntityModels(returnObject);
     }
 
-    @PutMapping("/tags")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("")
     public Tag update(@RequestBody Tag tag) {
         try {
             tagService.update(tag);
@@ -102,7 +104,8 @@ public class TagController extends AbstractController<Tag> {
         return tag;
     }
 
-    @DeleteMapping("/tags")
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("")
     public void delete(@RequestBody Tag tag) {
         try {
             tagService.delete(tag);
@@ -112,7 +115,8 @@ public class TagController extends AbstractController<Tag> {
         }
     }
 
-    @DeleteMapping("/tags/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Long id) {
         try {
             tagService.deleteById(id);

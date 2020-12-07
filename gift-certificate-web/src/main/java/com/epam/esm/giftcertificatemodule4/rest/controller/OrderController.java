@@ -17,9 +17,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@PreAuthorize("hasRole('ADMIN')")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/orders")
 public class OrderController extends AbstractController<Order> {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -37,8 +36,8 @@ public class OrderController extends AbstractController<Order> {
         this.giftCertificateService = giftCertificateService;
     }
 
-    @PreAuthorize("hasRole('USER')")
-    @PostMapping("/orders")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PostMapping("")
     public Order save(
             @RequestParam(name = "userId") Long userId,
             @RequestParam(name = "certificateId") List<Long> giftCertificateId
@@ -72,8 +71,8 @@ public class OrderController extends AbstractController<Order> {
         return order;
     }
 
-    @PreAuthorize("hasRole('USER')")
-    @GetMapping("/orders")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @GetMapping("")
     public List<EntityModel<Order>> findAll(
             @RequestParam(defaultValue = "0") int firstResult,
             @RequestParam(defaultValue = "5") int maxResults
@@ -91,8 +90,8 @@ public class OrderController extends AbstractController<Order> {
         return getEntityModels(returnObject);
     }
 
-    @PreAuthorize("hasRole('USER')")
-    @GetMapping("/orders/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @GetMapping("/{id}")
     public EntityModel<Order> findById(@PathVariable Long id) {
         Order returnObject;
         try {

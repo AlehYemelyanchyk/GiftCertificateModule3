@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@PreAuthorize("hasRole('ADMIN')")
 @RestController
 @RequestMapping("/api/users")
 public class UserController extends AbstractController<User> {
@@ -27,7 +26,7 @@ public class UserController extends AbstractController<User> {
         this.userService = userService;
     }
 
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping("/")
     public List<EntityModel<User>> findAll(
             @RequestParam(defaultValue = "0") int firstResult,
@@ -46,7 +45,7 @@ public class UserController extends AbstractController<User> {
         return getEntityModels(returnObject);
     }
 
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping("/{id}")
     public EntityModel<User> findById(@PathVariable Long id) {
         User returnObject = null;

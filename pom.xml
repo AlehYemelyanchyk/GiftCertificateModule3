@@ -15,7 +15,7 @@
     <groupId>com.epam.esm</groupId>
     <artifactId>GiftCertificateModule3</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>pom</packaging>
 
     <name>GiftCertificateModule3</name>
     <description>Module 3 project</description>

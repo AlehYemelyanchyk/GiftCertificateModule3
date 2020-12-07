@@ -11,12 +11,12 @@ import java.util.Set;
 @Entity
 @Table(name = "certificates")
 public class GiftCertificate extends BaseEntity implements Serializable {
-    private static final Long serialVersionUID = 1724820758632935338L;
 
+    private static final Long serialVersionUID = 1724820758632935338L;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     @JoinTable(
-            name = "tagged_certificates",
+            name = "tags_certificates",
             joinColumns = @JoinColumn(name = "certificate_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
