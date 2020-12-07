@@ -7,6 +7,7 @@ public class SearchParametersHolder {
     String description;
     String sortBy;
     String sortOrder;
+    Boolean highestPrice;
 
     public SearchParametersHolder() {
     }
@@ -59,6 +60,14 @@ public class SearchParametersHolder {
         this.sortOrder = sortOrder;
     }
 
+    public Boolean getHighestPrice() {
+        return highestPrice;
+    }
+
+    public void setHighestPrice(Boolean highestPrice) {
+        this.highestPrice = highestPrice;
+    }
+
     @Override
     public String toString() {
         return "SearchParametersHolder{" +
@@ -68,6 +77,7 @@ public class SearchParametersHolder {
                 ", description='" + description + '\'' +
                 ", sortBy='" + sortBy + '\'' +
                 ", sortOrder='" + sortOrder + '\'' +
+                ", highestPrice=" + highestPrice +
                 '}';
     }
 }

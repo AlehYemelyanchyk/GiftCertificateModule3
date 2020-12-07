@@ -1,18 +1,35 @@
 package com.epam.esm.giftcertificatemodule3.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "certificates")
-public class GiftCertificate implements Serializable {
+public class GiftCertificate extends BaseEntity implements Serializable {
     private static final Long serialVersionUID = 1724820758632935338L;
+
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+    @JoinTable(
+            name = "tagged_certificates",
+            joinColumns = @JoinColumn(name = "certificate_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private Set<Tag> tags;
+
+    @ManyToMany(fetch = FetchType.LAZY,
+            mappedBy = "certificates")
+    @JsonBackReference
+    private Set<Order> orders;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_cert")
+    @Column(name = "certificate_id")
     private Long id;
 
     @Column(name = "name")
@@ -24,11 +41,11 @@ public class GiftCertificate implements Serializable {
     @Column(name = "price")
     private Double price;
 
-    @Column(name = "create_date")
-    private LocalDateTime createDate;
+    @Column(name = "create_date", updatable=false)
+    private OffsetDateTime createDate;
 
     @Column(name = "last_update_date")
-    private LocalDateTime lastUpdateDate;
+    private OffsetDateTime lastUpdateDate;
 
     @Column(name = "duration")
     private Integer duration;
@@ -37,6 +54,15 @@ public class GiftCertificate implements Serializable {
     public GiftCertificate() {
     }
 
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
+    }
+
+    @Override
     public Long getId() {
         return id;
     }
@@ -69,19 +95,19 @@ public class GiftCertificate implements Serializable {
         this.price = price;
     }
 
-    public LocalDateTime getCreateDate() {
+    public OffsetDateTime getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(LocalDateTime createDate) {
+    public void setCreateDate(OffsetDateTime createDate) {
         this.createDate = createDate;
     }
 
-    public LocalDateTime getLastUpdateDate() {
+    public OffsetDateTime getLastUpdateDate() {
         return lastUpdateDate;
     }
 
-    public void setLastUpdateDate(LocalDateTime lastUpdateDate) {
+    public void setLastUpdateDate(OffsetDateTime lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
 
@@ -91,6 +117,14 @@ public class GiftCertificate implements Serializable {
 
     public void setDuration(Integer duration) {
         this.duration = duration;
+    }
+
+    public Set<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(Set<Order> orders) {
+        this.orders = orders;
     }
 
     @Override

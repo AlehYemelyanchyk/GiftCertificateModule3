@@ -12,9 +12,11 @@ public interface CrudDAO<T, ID> {
     /**
      * Returns all instances of the type.
      *
+     * @param firstResult is the position of the first result in the datasource which should be returned.
+     * @param maxResults is the number of the results by one page.
      * @return all entities.
      */
-    List<T> findAll();
+    List<T> findAll(int firstResult, int maxResults);
 
     /**
      * Returns whether an entity with the given id exists.
@@ -25,12 +27,18 @@ public interface CrudDAO<T, ID> {
     T findById(ID id);
 
     /**
-     * Saves a given entity if id is equals to 0.
-     * Updates a given entity if id is not equals to 0.
+     * Saves a given entity.
      *
      * @param object must not be {@literal null}.
      */
     void save(T object);
+
+    /**
+     * Updates a given entity.
+     *
+     * @param object must not be {@literal null}.
+     */
+    void update(T object);
 
     /**
      * Deletes a given entity.

@@ -1,40 +1,38 @@
 package com.epam.esm.giftcertificatemodule3.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "tags")
-public class Tag extends BaseEntity implements Serializable {
-    private static final long serialVersionUID = 8700472259924409409L;
-
-    @ManyToMany(fetch = FetchType.LAZY,
-            mappedBy = "tags")
-    @JsonBackReference
-    private List<GiftCertificate> certificates;
+@Table(name = "users")
+public class User extends BaseEntity implements Serializable {
+    private static final long serialVersionUID = 4060654038230251833L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "tag_id")
+    @Column(name = "user_id")
     private Long id;
 
     @Column(name = "name")
     private String name;
 
+    @OneToMany(mappedBy = "user",
+            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    private List<Order> orders;
+
     // Required by Hibernate
-    public Tag() {
+    public User() {
     }
 
-    public List<GiftCertificate> getCertificates() {
-        return certificates;
-    }
-
-    public void setCertificates(List<GiftCertificate> certificates) {
-        this.certificates = certificates;
+    public void addOrder(Order order) {
+        if (orders == null) {
+            orders = new ArrayList<>();
+        }
+        orders.add(order);
+        order.setUser(this);
     }
 
     @Override
@@ -54,9 +52,17 @@ public class Tag extends BaseEntity implements Serializable {
         this.name = name;
     }
 
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
     @Override
     public String toString() {
-        return "Tag{" +
+        return "User{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 '}';
@@ -66,8 +72,8 @@ public class Tag extends BaseEntity implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Tag tag = (Tag) o;
-        return Objects.equals(name, tag.name);
+        User user = (User) o;
+        return id.equals(user.id);
     }
 
     @Override
