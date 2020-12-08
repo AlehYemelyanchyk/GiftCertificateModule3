@@ -1,6 +1,5 @@
 package com.epam.esm.giftcertificatemodule4.security;
 
-import com.epam.esm.giftcertificatemodule4.security.jwt.AuthEntryPointJwt;
 import com.epam.esm.giftcertificatemodule4.security.jwt.AuthTokenFilter;
 import com.epam.esm.giftcertificatemodule4.security.jwt.JwtUtils;
 import com.epam.esm.giftcertificatemodule4.security.services.UserDetailsServiceImpl;
@@ -23,14 +22,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsServiceImpl userDetailsService;
-    private final AuthEntryPointJwt unauthorizedHandler;
     private final JwtUtils jwtUtils;
 
     public WebSecurityConfig(UserDetailsServiceImpl userDetailsService,
-                             AuthEntryPointJwt unauthorizedHandler,
                              JwtUtils jwtUtils) {
         this.userDetailsService = userDetailsService;
-        this.unauthorizedHandler = unauthorizedHandler;
         this.jwtUtils = jwtUtils;
     }
 
@@ -45,20 +41,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
-                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/api/auth/**").permitAll()
                 .anyRequest().authenticated();

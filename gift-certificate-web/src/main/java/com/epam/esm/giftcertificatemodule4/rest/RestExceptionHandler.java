@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -46,6 +47,16 @@ public class RestExceptionHandler {
                 translator.toLocale("denied"),
                 String.valueOf(HttpStatus.FORBIDDEN.value()));
         return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleException(BadCredentialsException exception) {
+        ErrorResponse error = new ErrorResponse(
+                "HTTP Status: " + HttpStatus.NOT_FOUND.value(),
+                "response body",
+                translator.toLocale("notFound"),
+                String.valueOf(HttpStatus.NOT_FOUND.value()));
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler

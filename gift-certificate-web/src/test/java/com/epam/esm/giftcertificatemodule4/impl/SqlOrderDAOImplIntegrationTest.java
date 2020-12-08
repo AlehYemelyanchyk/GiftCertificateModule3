@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.ZonedDateTime;
@@ -35,7 +36,7 @@ class SqlOrderDAOImplIntegrationTest extends AbstractIntegrationTest {
 
     @BeforeEach
     void create() throws SQLException {
-        TEST_ORDER.setPrice(10.99);
+        TEST_ORDER.setPrice(new BigDecimal(10.99));
         TEST_ORDER.setDate(ZonedDateTime.now().toOffsetDateTime());
         TEST_ORDER.setUser(TEST_USER);
 
@@ -75,7 +76,7 @@ class SqlOrderDAOImplIntegrationTest extends AbstractIntegrationTest {
     void updateTest() {
         Order beforeUpdate = orderService.findById(TEST_ID);
         TEST_ORDER.setId(TEST_ID);
-        TEST_ORDER.setPrice(0.99d);
+        TEST_ORDER.setPrice(new BigDecimal(0.99));
         orderService.update(TEST_ORDER);
         Order afterUpdate = orderService.findById(TEST_ID);
         assertNotNull(beforeUpdate);

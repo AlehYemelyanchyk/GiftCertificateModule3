@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +62,7 @@ class GiftCertificateServiceImplTest {
         giftCertificate.setId(id++);
         giftCertificate.setName("Test");
         giftCertificate.setDescription("This is a test cert");
-        giftCertificate.setPrice(9.99);
+        giftCertificate.setPrice(new BigDecimal(9.99));
         giftCertificate.setCreateDate(ZonedDateTime.now().toOffsetDateTime());
         giftCertificate.setLastUpdateDate(ZonedDateTime.now().toOffsetDateTime());
         giftCertificate.setDuration(31);

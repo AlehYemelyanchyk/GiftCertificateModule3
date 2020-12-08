@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.ZonedDateTime;
@@ -49,14 +50,14 @@ class SqlGiftCertificateDAOImplIntegrationTest extends AbstractIntegrationTest {
         EXPECTED_GIFT_CERTIFICATE.setId(1L);
         EXPECTED_GIFT_CERTIFICATE.setName("Holidays");
         EXPECTED_GIFT_CERTIFICATE.setDescription("Holidays special offer");
-        EXPECTED_GIFT_CERTIFICATE.setPrice(64.99);
+        EXPECTED_GIFT_CERTIFICATE.setPrice(new BigDecimal(64.99));
         EXPECTED_GIFT_CERTIFICATE.setCreateDate(ZonedDateTime.now().toOffsetDateTime());
         EXPECTED_GIFT_CERTIFICATE.setLastUpdateDate(ZonedDateTime.now().toOffsetDateTime());
         EXPECTED_GIFT_CERTIFICATE.setDuration(1);
 
         NEW_GIFT_CERTIFICATE.setName("Test");
         NEW_GIFT_CERTIFICATE.setDescription("Test special offer");
-        NEW_GIFT_CERTIFICATE.setPrice(99.99);
+        NEW_GIFT_CERTIFICATE.setPrice(new BigDecimal(99.99));
         NEW_GIFT_CERTIFICATE.setDuration(10);
 
         TEST_SEARCH_PARAMETERS_HOLDER.setTagName("red");

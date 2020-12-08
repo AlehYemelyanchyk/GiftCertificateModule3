@@ -13,6 +13,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -57,10 +58,11 @@ public class OrderController extends AbstractController<Order> {
                     LOGGER.error("GiftCertificate id=: " + id);
                     throw new IllegalArgumentException("Gift Certificate " + id);
                 }
-                price += giftCertificate.getPrice();
+                price += giftCertificate.getPrice().doubleValue();
                 certificates.add(giftCertificate);
             }
-            order.setPrice(Math.round(price * 100.0) / 100.0);
+            BigDecimal bigDecimalPrice = new BigDecimal(price).setScale(2, BigDecimal.ROUND_HALF_EVEN);
+            order.setPrice(bigDecimalPrice);
             order.setUser(user);
             order.setCertificates(certificates);
             orderService.save(order);

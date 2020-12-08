@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.Set;
@@ -23,7 +24,7 @@ public class Order extends BaseEntity implements Serializable {
     private OffsetDateTime date;
 
     @Column(name = "price")
-    private Double price;
+    private BigDecimal price;
 
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
@@ -43,12 +44,12 @@ public class Order extends BaseEntity implements Serializable {
         this.user = user;
     }
 
-    public Order(Double price, User user) {
+    public Order(BigDecimal price, User user) {
         this.price = price;
         this.user = user;
     }
 
-    public Order(Long id, OffsetDateTime date, Double price, User user) {
+    public Order(Long id, OffsetDateTime date, BigDecimal price, User user) {
         this.id = id;
         this.date = date;
         this.price = price;
@@ -75,11 +76,11 @@ public class Order extends BaseEntity implements Serializable {
         this.date = date;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

@@ -5,6 +5,7 @@ import com.epam.esm.giftcertificatemodule4.dao.UserDAO;
 import com.epam.esm.giftcertificatemodule4.entity.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,7 +29,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user;
         try {
             user = userDAO.findByName(username);
-        } catch (Exception e) {
+        } catch (EmptyResultDataAccessException e) {
             LOGGER.info(e);
             throw new UsernameNotFoundException("User with username: " + username + " Not Found");
         }

@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -55,22 +57,27 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        UsernamePasswordAuthenticationToken authenticationToken
+                = new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
+        Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
 
-        return ResponseEntity.ok(new JwtResponse(jwt,
+        return ResponseEntity.ok(new JwtResponse(
+                jwt,
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
-                roles));
+                castAuthoritiesToRoles(userDetails.getAuthorities())));
+    }
+
+    private List<String> castAuthoritiesToRoles(Collection<? extends GrantedAuthority> authorities) {
+        return authorities.stream()
+                .map(item -> item.getAuthority())
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/signup")
@@ -82,7 +89,7 @@ public class AuthController {
                         .body(new MessageResponse("Error: Username is already taken!"));
             }
         } catch (Exception e) {
-            LOGGER.info("The name doesn't exist. Registered successfully");
+            LOGGER.info("The name doesn't exist. Can be registered.");
         }
 
         try {
@@ -92,7 +99,7 @@ public class AuthController {
                         .body(new MessageResponse("Error: Email is already in use!"));
             }
         } catch (Exception e) {
-            LOGGER.info("The email doesn't exist. Registered successfully");
+            LOGGER.info("The email doesn't exist. Can be registered.");
         }
 
         // Create new user's account

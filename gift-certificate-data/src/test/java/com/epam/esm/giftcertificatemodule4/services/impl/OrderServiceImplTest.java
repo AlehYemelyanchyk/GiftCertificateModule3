@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,12 +40,12 @@ class OrderServiceImplTest {
     @BeforeEach
     public void init() {
         expectedOrder.setUser(testUser);
-        expectedOrder.setPrice(9.99);
+        expectedOrder.setPrice(new BigDecimal(9.99));
         expectedOrder.setDate(ZonedDateTime.now().toOffsetDateTime());
         expectedOrder.setId(TEST_ID);
 
         expectedOrder2.setUser(testUser);
-        expectedOrder2.setPrice(8.99);
+        expectedOrder2.setPrice(new BigDecimal(8.99));
         expectedOrder2.setDate(ZonedDateTime.now().toOffsetDateTime());
         expectedOrder2.setId(TEST_ID2);
 
