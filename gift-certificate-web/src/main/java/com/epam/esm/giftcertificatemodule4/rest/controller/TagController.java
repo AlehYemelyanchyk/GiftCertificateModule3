@@ -27,7 +27,7 @@ public class TagController extends AbstractController<Tag> {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("")
+    @PostMapping
     public Tag save(@RequestBody Tag tag) {
         try {
             tagService.save(tag);
@@ -39,7 +39,7 @@ public class TagController extends AbstractController<Tag> {
     }
 
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    @GetMapping("")
+    @GetMapping
     public List<EntityModel<Tag>> findAll(
             @RequestParam(defaultValue = "0") int firstResult,
             @RequestParam(defaultValue = "5") int maxResults
@@ -93,7 +93,7 @@ public class TagController extends AbstractController<Tag> {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("")
+    @PutMapping
     public Tag update(@RequestBody Tag tag) {
         try {
             tagService.update(tag);
@@ -105,7 +105,7 @@ public class TagController extends AbstractController<Tag> {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("")
+    @DeleteMapping
     public void delete(@RequestBody Tag tag) {
         try {
             tagService.delete(tag);

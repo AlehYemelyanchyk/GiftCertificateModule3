@@ -28,7 +28,7 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("")
+    @PostMapping
     public GiftCertificate save(@RequestBody GiftCertificate giftCertificate) {
         try {
             giftCertificateService.save(giftCertificate);
@@ -40,7 +40,7 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
     }
 
     @PreAuthorize("hasRole('GUEST') or hasRole('USER') or hasRole('ADMIN')")
-    @GetMapping("")
+    @GetMapping
     public List<EntityModel<GiftCertificate>> findAll(
             @RequestParam(defaultValue = "0") int firstResult,
             @RequestParam(defaultValue = "5") int maxResults
@@ -108,7 +108,7 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("")
+    @PutMapping
     public GiftCertificate update(@RequestBody GiftCertificate giftCertificate) {
         try {
             giftCertificateService.update(giftCertificate);
@@ -120,7 +120,7 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("")
+    @DeleteMapping
     public void delete(@RequestBody GiftCertificate giftCertificate) {
         try {
             giftCertificateService.delete(giftCertificate);

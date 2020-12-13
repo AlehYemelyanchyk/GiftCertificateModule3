@@ -26,8 +26,8 @@ public class UserController extends AbstractController<User> {
         this.userService = userService;
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    @GetMapping("/")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping
     public List<EntityModel<User>> findAll(
             @RequestParam(defaultValue = "0") int firstResult,
             @RequestParam(defaultValue = "5") int maxResults
@@ -45,7 +45,7 @@ public class UserController extends AbstractController<User> {
         return getEntityModels(returnObject);
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
     @GetMapping("/{id}")
     public EntityModel<User> findById(@PathVariable Long id) {
         User returnObject = null;

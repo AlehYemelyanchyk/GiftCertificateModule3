@@ -38,7 +38,7 @@ public class OrderController extends AbstractController<Order> {
     }
 
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    @PostMapping("")
+    @PostMapping
     public Order save(
             @RequestParam(name = "userId") Long userId,
             @RequestParam(name = "certificateId") List<Long> giftCertificateId
@@ -74,7 +74,7 @@ public class OrderController extends AbstractController<Order> {
     }
 
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    @GetMapping("")
+    @GetMapping
     public List<EntityModel<Order>> findAll(
             @RequestParam(defaultValue = "0") int firstResult,
             @RequestParam(defaultValue = "5") int maxResults
