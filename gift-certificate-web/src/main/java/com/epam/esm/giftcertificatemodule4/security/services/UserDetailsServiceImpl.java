@@ -24,7 +24,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Transactional
-//    @Override
     public UserDetails loadUserById(Long id) throws UsernameNotFoundException {
         User user;
         try {

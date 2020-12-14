@@ -22,6 +22,7 @@ public class JwtUtils {
     private int jwtExpirationMs;
 
     public String generateJwtToken(Authentication authentication) {
+
         return Jwts.builder()
                 .setSubject((((UserDetailsImpl) authentication.getPrincipal()).getId().toString()))
                 .setIssuedAt(new Date())

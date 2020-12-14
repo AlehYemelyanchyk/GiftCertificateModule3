@@ -56,7 +56,6 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
-
         UsernamePasswordAuthenticationToken authenticationToken
                 = new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
@@ -102,7 +101,6 @@ public class AuthController {
             LOGGER.info("The email doesn't exist. Can be registered.");
         }
 
-        // Create new user's account
         User user = new User();
         user.setName(signUpRequest.getUsername());
         user.setEmail(signUpRequest.getEmail());
