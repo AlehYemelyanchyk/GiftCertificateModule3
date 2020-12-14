@@ -7,6 +7,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,7 +28,7 @@ public class UserController extends AbstractController<User> {
         this.userService = userService;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('admin')")
     @GetMapping
     public List<EntityModel<User>> findAll(
             @RequestParam(defaultValue = "0") int firstResult,
@@ -45,9 +47,15 @@ public class UserController extends AbstractController<User> {
         return getEntityModels(returnObject);
     }
 
-    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
+    @Override
+    public EntityModel<User> findById(Long id) {
+        return null;
+    }
+
+    @PreAuthorize("hasRole('admin') or #id == #jwt.subject")
     @GetMapping("/{id}")
-    public EntityModel<User> findById(@PathVariable Long id) {
+    public EntityModel<User> findById(@PathVariable String id,
+                                      @AuthenticationPrincipal Jwt jwt) {
         User returnObject = null;
         try {
             returnObject = userService.findById(id);

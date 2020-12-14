@@ -68,6 +68,11 @@ public class GiftCertificate extends BaseEntity implements Serializable {
         return id;
     }
 
+    @Override
+    public String getStringId() {
+        return null;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }

@@ -27,7 +27,7 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
         this.giftCertificateService = giftCertificateService;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('admin')")
     @PostMapping
     public GiftCertificate save(@RequestBody GiftCertificate giftCertificate) {
         try {
@@ -39,7 +39,7 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
         return giftCertificate;
     }
 
-    @PreAuthorize("hasRole('GUEST') or hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('guest') or hasRole('user') or hasRole('admin')")
     @GetMapping
     public List<EntityModel<GiftCertificate>> findAll(
             @RequestParam(defaultValue = "0") int firstResult,
@@ -59,7 +59,7 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
         return getEntityModels(returnObject);
     }
 
-    @PreAuthorize("hasRole('GUEST') or hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('guest') or hasRole('user') or hasRole('admin')")
     @GetMapping("/{id}")
     public EntityModel<GiftCertificate> findById(@PathVariable Long id) {
         GiftCertificate returnObject;
@@ -75,7 +75,7 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
         return getEntityModel(returnObject);
     }
 
-    @PreAuthorize("hasRole('GUEST') or hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('guest') or hasRole('user') or hasRole('admin')")
     @GetMapping("/findBy")
     public List<EntityModel<GiftCertificate>> findBy(@RequestParam(defaultValue = "0") int firstResult,
                                                      @RequestParam(defaultValue = "5") int maxResults,
@@ -107,7 +107,7 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
         return getEntityModels(returnObject);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('admin')")
     @PutMapping
     public GiftCertificate update(@RequestBody GiftCertificate giftCertificate) {
         try {
@@ -119,7 +119,7 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
         return giftCertificate;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('admin')")
     @DeleteMapping
     public void delete(@RequestBody GiftCertificate giftCertificate) {
         try {
@@ -130,7 +130,7 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('admin')")
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Long id) {
         try {

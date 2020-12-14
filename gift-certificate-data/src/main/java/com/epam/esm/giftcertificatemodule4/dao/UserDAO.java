@@ -32,4 +32,12 @@ public interface UserDAO extends CrudDAO<User, Long> {
      * @return true or false.
      */
     Boolean existsByEmail(String email);
+
+    /**
+     * Returns whether an entity with the given id exists.
+     *
+     * @param id must not be {@literal null}.
+     * @return the entity with the given id or {@literal Optional#empty()} if none found.
+     */
+    User findById(String id);
 }

@@ -26,7 +26,7 @@ public class TagController extends AbstractController<Tag> {
         this.tagService = tagService;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('admin')")
     @PostMapping
     public Tag save(@RequestBody Tag tag) {
         try {
@@ -38,7 +38,7 @@ public class TagController extends AbstractController<Tag> {
         return tag;
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('user') or hasRole('admin')")
     @GetMapping
     public List<EntityModel<Tag>> findAll(
             @RequestParam(defaultValue = "0") int firstResult,
@@ -57,7 +57,7 @@ public class TagController extends AbstractController<Tag> {
         return getEntityModels(returnObject);
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('user') or hasRole('admin')")
     @GetMapping("/{id}")
     public EntityModel<Tag> findById(@PathVariable Long id) {
         Tag returnObject;
@@ -73,7 +73,7 @@ public class TagController extends AbstractController<Tag> {
         return getEntityModel(returnObject);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('admin')")
     @GetMapping("/mostPopularTags")
     public List<EntityModel<Tag>> findMostPopularTags(
             @RequestParam(defaultValue = "0") int firstResult,
@@ -92,7 +92,7 @@ public class TagController extends AbstractController<Tag> {
         return getEntityModels(returnObject);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('admin')")
     @PutMapping
     public Tag update(@RequestBody Tag tag) {
         try {
@@ -104,7 +104,7 @@ public class TagController extends AbstractController<Tag> {
         return tag;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('admin')")
     @DeleteMapping
     public void delete(@RequestBody Tag tag) {
         try {
@@ -115,7 +115,7 @@ public class TagController extends AbstractController<Tag> {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('admin')")
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Long id) {
         try {

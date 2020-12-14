@@ -15,7 +15,7 @@ public class User extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private Long id;
+    private String id;
 
     @Column(name = "name")
     private String name;
@@ -52,10 +52,15 @@ public class User extends BaseEntity implements Serializable {
 
     @Override
     public Long getId() {
+        return null;
+    }
+
+    @Override
+    public String getStringId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

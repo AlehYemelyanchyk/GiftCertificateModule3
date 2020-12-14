@@ -37,7 +37,7 @@ public class OrderController extends AbstractController<Order> {
         this.giftCertificateService = giftCertificateService;
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('user') or hasRole('admin')")
     @PostMapping
     public Order save(
             @RequestParam(name = "userId") Long userId,
@@ -73,7 +73,7 @@ public class OrderController extends AbstractController<Order> {
         return order;
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('user') or hasRole('admin')")
     @GetMapping
     public List<EntityModel<Order>> findAll(
             @RequestParam(defaultValue = "0") int firstResult,
@@ -92,7 +92,7 @@ public class OrderController extends AbstractController<Order> {
         return getEntityModels(returnObject);
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('user') or hasRole('admin')")
     @GetMapping("/{id}")
     public EntityModel<Order> findById(@PathVariable Long id) {
         Order returnObject;

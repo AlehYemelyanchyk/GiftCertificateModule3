@@ -29,6 +29,11 @@ public class UserDAOHibernate implements UserDAO {
     }
 
     @Override
+    public User findById(String id) {
+        return entityManager.find(User.class, id);
+    }
+
+    @Override
     public User findByName(String name) {
         TypedQuery<User> query = entityManager.createQuery("select t from User t where t.name = :name", User.class);
         query.setParameter("name", name);

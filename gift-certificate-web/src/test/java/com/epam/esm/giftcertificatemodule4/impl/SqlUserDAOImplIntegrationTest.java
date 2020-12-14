@@ -33,7 +33,7 @@ class SqlUserDAOImplIntegrationTest extends AbstractIntegrationTest {
 
     @BeforeEach
     void create() throws SQLException {
-        TEST_USER.setId(TEST_ID);
+        TEST_USER.setId("TEST_ID");
         TEST_USER.setName(TEST_NAME);
         connection = executeSqlStartScript();
     }

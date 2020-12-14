@@ -40,7 +40,7 @@ class SqlOrderDAOImplIntegrationTest extends AbstractIntegrationTest {
         TEST_ORDER.setDate(ZonedDateTime.now().toOffsetDateTime());
         TEST_ORDER.setUser(TEST_USER);
 
-        TEST_USER.setId(TEST_ID);
+        TEST_USER.setId("TEST_ID");
         TEST_USER.setName(TEST_NAME);
         connection = executeSqlStartScript();
     }
