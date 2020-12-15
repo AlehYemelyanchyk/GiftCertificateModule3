@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@PreAuthorize("hasAuthority('SCOPE_administrate')")
 @RestController
 @RequestMapping("/api/certificates")
 public class GiftCertificateController extends AbstractController<GiftCertificate> {
@@ -21,13 +22,12 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
     private static final String RESULT_BY_ID = "certificateById";
     private static final String ALL_RESULTS = "allCertificates";
 
-    private GiftCertificateService giftCertificateService;
+    private final GiftCertificateService giftCertificateService;
 
     public GiftCertificateController(GiftCertificateService giftCertificateService) {
         this.giftCertificateService = giftCertificateService;
     }
 
-    @PreAuthorize("hasRole('admin')")
     @PostMapping
     public GiftCertificate save(@RequestBody GiftCertificate giftCertificate) {
         try {
@@ -39,7 +39,7 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
         return giftCertificate;
     }
 
-    @PreAuthorize("hasRole('guest') or hasRole('user') or hasRole('admin')")
+    @PreAuthorize("hasAuthority('SCOPE_administrate') or hasAuthority('SCOPE_read') or hasAuthority('SCOPE_guesting')")
     @GetMapping
     public List<EntityModel<GiftCertificate>> findAll(
             @RequestParam(defaultValue = "0") int firstResult,
@@ -59,7 +59,7 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
         return getEntityModels(returnObject);
     }
 
-    @PreAuthorize("hasRole('guest') or hasRole('user') or hasRole('admin')")
+    @PreAuthorize("hasAuthority('SCOPE_administrate') or hasAuthority('SCOPE_read') or hasAuthority('SCOPE_guesting')")
     @GetMapping("/{id}")
     public EntityModel<GiftCertificate> findById(@PathVariable Long id) {
         GiftCertificate returnObject;
@@ -75,7 +75,7 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
         return getEntityModel(returnObject);
     }
 
-    @PreAuthorize("hasRole('guest') or hasRole('user') or hasRole('admin')")
+    @PreAuthorize("hasAuthority('SCOPE_administrate') or hasAuthority('SCOPE_read') or hasAuthority('SCOPE_guesting')")
     @GetMapping("/findBy")
     public List<EntityModel<GiftCertificate>> findBy(@RequestParam(defaultValue = "0") int firstResult,
                                                      @RequestParam(defaultValue = "5") int maxResults,
@@ -107,7 +107,6 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
         return getEntityModels(returnObject);
     }
 
-    @PreAuthorize("hasRole('admin')")
     @PutMapping
     public GiftCertificate update(@RequestBody GiftCertificate giftCertificate) {
         try {
@@ -119,7 +118,6 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
         return giftCertificate;
     }
 
-    @PreAuthorize("hasRole('admin')")
     @DeleteMapping
     public void delete(@RequestBody GiftCertificate giftCertificate) {
         try {
@@ -130,7 +128,6 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
         }
     }
 
-    @PreAuthorize("hasRole('admin')")
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Long id) {
         try {

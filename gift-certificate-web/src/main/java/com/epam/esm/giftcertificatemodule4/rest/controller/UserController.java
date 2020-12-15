@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@PreAuthorize("hasAuthority('SCOPE_administrate')")
 @RestController
 @RequestMapping("/api/users")
 public class UserController extends AbstractController<User> {
@@ -22,13 +23,12 @@ public class UserController extends AbstractController<User> {
     private static final String RESULT_BY_ID = "usersById";
     private static final String ALL_RESULTS = "allUsers";
 
-    private UserService userService;
+    private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    @PreAuthorize("hasRole('admin')")
     @GetMapping
     public List<EntityModel<User>> findAll(
             @RequestParam(defaultValue = "0") int firstResult,
@@ -52,7 +52,7 @@ public class UserController extends AbstractController<User> {
         return null;
     }
 
-    @PreAuthorize("hasRole('admin') or #id == #jwt.subject")
+    @PreAuthorize("hasAuthority('SCOPE_administrate') or #id == #jwt.subject")
     @GetMapping("/{id}")
     public EntityModel<User> findById(@PathVariable String id,
                                       @AuthenticationPrincipal Jwt jwt) {

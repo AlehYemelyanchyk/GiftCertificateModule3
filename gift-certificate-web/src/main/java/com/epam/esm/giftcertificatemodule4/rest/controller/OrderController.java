@@ -11,6 +11,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -18,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@PreAuthorize("hasAuthority('SCOPE_administrate')")
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController extends AbstractController<Order> {
@@ -27,9 +30,9 @@ public class OrderController extends AbstractController<Order> {
     private static final String RESULT_BY_ID = "ordersById";
     private static final String ALL_RESULTS = "allOrders";
 
-    private OrderService orderService;
-    private UserService userService;
-    private GiftCertificateService giftCertificateService;
+    private final OrderService orderService;
+    private final UserService userService;
+    private final GiftCertificateService giftCertificateService;
 
     public OrderController(OrderService orderService, UserService userService, GiftCertificateService giftCertificateService) {
         this.orderService = orderService;
@@ -37,11 +40,12 @@ public class OrderController extends AbstractController<Order> {
         this.giftCertificateService = giftCertificateService;
     }
 
-    @PreAuthorize("hasRole('user') or hasRole('admin')")
+    @PreAuthorize("hasAuthority('SCOPE_order') and #userId == #jwt.subject")
     @PostMapping
     public Order save(
-            @RequestParam(name = "userId") Long userId,
-            @RequestParam(name = "certificateId") List<Long> giftCertificateId
+            @RequestParam(name = "userId") String userId,
+            @RequestParam(name = "certificateId") List<Long> giftCertificateId,
+            @AuthenticationPrincipal Jwt jwt
     ) {
         Order order = new Order();
         try {
@@ -73,7 +77,6 @@ public class OrderController extends AbstractController<Order> {
         return order;
     }
 
-    @PreAuthorize("hasRole('user') or hasRole('admin')")
     @GetMapping
     public List<EntityModel<Order>> findAll(
             @RequestParam(defaultValue = "0") int firstResult,
@@ -92,7 +95,6 @@ public class OrderController extends AbstractController<Order> {
         return getEntityModels(returnObject);
     }
 
-    @PreAuthorize("hasRole('user') or hasRole('admin')")
     @GetMapping("/{id}")
     public EntityModel<Order> findById(@PathVariable Long id) {
         Order returnObject;
