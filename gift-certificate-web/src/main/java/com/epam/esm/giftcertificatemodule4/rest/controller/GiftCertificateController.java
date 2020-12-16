@@ -42,12 +42,12 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
     @PreAuthorize("hasRole('GUEST') or hasRole('USER') or hasRole('ADMIN')")
     @GetMapping
     public List<EntityModel<GiftCertificate>> findAll(
-            @RequestParam(defaultValue = "0") int firstResult,
-            @RequestParam(defaultValue = "5") int maxResults
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
     ) {
         List<GiftCertificate> returnObject;
         try {
-            returnObject = giftCertificateService.findAll(firstResult, maxResults);
+            returnObject = giftCertificateService.findAll(page, size);
             if (returnObject == null || returnObject.isEmpty()) {
                 throw new IllegalArgumentException("Gift Certificates");
             }
@@ -77,8 +77,8 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
 
     @PreAuthorize("hasRole('GUEST') or hasRole('USER') or hasRole('ADMIN')")
     @GetMapping("/findBy")
-    public List<EntityModel<GiftCertificate>> findBy(@RequestParam(defaultValue = "0") int firstResult,
-                                                     @RequestParam(defaultValue = "5") int maxResults,
+    public List<EntityModel<GiftCertificate>> findBy(@RequestParam(defaultValue = "0") int page,
+                                                     @RequestParam(defaultValue = "5") int size,
                                                      @RequestParam(required = false) Long id,
                                                      @RequestParam(required = false) String tagName,
                                                      @RequestParam(required = false) String name,
@@ -96,7 +96,7 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
         searchParametersHolder.setSortOrder(sortOrder);
 
         try {
-            returnObject = giftCertificateService.findBy(searchParametersHolder, firstResult, maxResults);
+            returnObject = giftCertificateService.findBy(searchParametersHolder, page, size);
         } catch (ServiceException e) {
             LOGGER.error("searchBy error: " + e.getMessage());
             throw new RuntimeException();

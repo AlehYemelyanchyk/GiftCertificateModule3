@@ -11,11 +11,11 @@ public interface CrudService<T, ID> {
     /**
      * Returns all instances of the type.
      *
-     * @param firstResult is the position of the first result in the datasource which should be returned.
-     * @param maxResults is the number of the results by one page.
+     * @param page is the position of the first result in the datasource which should be returned.
+     * @param size is the number of the results by one page.
      * @return all entities
      */
-    List<T> findAll(int firstResult, int maxResults) ;
+    List<T> findAll(int page, int size) ;
 
     /**
      * Returns whether an entity with the given id exists.

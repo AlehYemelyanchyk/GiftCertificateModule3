@@ -1,52 +1,27 @@
 package com.epam.esm.giftcertificatemodule4.dao.impl;
 
-import com.epam.esm.giftcertificatemodule4.dao.TagDAO;
+import com.epam.esm.giftcertificatemodule4.dao.TagRepositoryCustom;
 import com.epam.esm.giftcertificatemodule4.entity.GiftCertificate;
 import com.epam.esm.giftcertificatemodule4.entity.Order;
 import com.epam.esm.giftcertificatemodule4.entity.Tag;
 import com.epam.esm.giftcertificatemodule4.entity.User;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.util.List;
 
 @Repository
-public class TagDAOHibernate implements TagDAO {
+public class TagRepositoryHibernate implements TagRepositoryCustom {
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    public void save(Tag object) {
-        entityManager.persist(object);
-    }
-
-    @Override
-    public List<Tag> findAll(int firstResult, int maxResults) {
-        TypedQuery<Tag> query = entityManager.createQuery("select t from Tag t", Tag.class);
-        query.setFirstResult(firstResult);
-        query.setMaxResults(maxResults);
-        return query.getResultList();
-    }
-
-    @Override
-    public Tag findById(Long id) {
-        return entityManager.find(Tag.class, id);
-    }
-
-    @Override
-    public Tag findByName(String name) {
-        TypedQuery<Tag> query = entityManager.createQuery("select t from Tag t where t.name = :name", Tag.class);
-        query.setParameter("name", name);
-        return query.getSingleResult();
-    }
-
-    @Override
-    public List<Tag> findMostPopularTags(int firstResult, int maxResults) {
+    public List<Tag> findMostPopularTags(Pageable pageable) {
         Long bestCustomerId = findBestCustomerId();
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -62,27 +37,8 @@ public class TagDAOHibernate implements TagDAO {
                 .orderBy(cb.desc(cb.count(tags)));
 
         TypedQuery<Tag> query = entityManager.createQuery(cq);
-        query.setFirstResult(firstResult);
-        query.setMaxResults(maxResults);
 
         return query.getResultList();
-    }
-
-    @Override
-    public void update(Tag object) {
-        entityManager.merge(object);
-    }
-
-    @Override
-    public void delete(Tag object) {
-        entityManager.remove(object);
-    }
-
-    @Override
-    public void deleteById(Long id) {
-        Query query = entityManager.createQuery("delete from Tag t where t.id=:id");
-        query.setParameter("id", id);
-        query.executeUpdate();
     }
 
     private Long findBestCustomerId() {

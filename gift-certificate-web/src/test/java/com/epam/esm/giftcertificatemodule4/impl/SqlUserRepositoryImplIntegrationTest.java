@@ -1,7 +1,7 @@
 package com.epam.esm.giftcertificatemodule4.impl;
 
-import com.epam.esm.giftcertificatemodule4.dao.UserDAO;
 import com.epam.esm.giftcertificatemodule4.entity.User;
+import com.epam.esm.giftcertificatemodule4.services.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,17 +13,16 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles("test")
 @SpringBootTest
-class SqlUserDAOImplIntegrationTest extends AbstractIntegrationTest {
+class SqlUserRepositoryImplIntegrationTest extends AbstractIntegrationTest {
 
     private Connection connection;
 
     @Autowired
-    UserDAO userDAO;
+    UserService userService;
 
     private static final User TEST_USER = new User();
     private static final Long TEST_ID = 1L;
@@ -45,13 +44,13 @@ class SqlUserDAOImplIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void findAllTest() {
-        List<User> actualList = userDAO.findAll(FIRST_RESULT, MAX_RESULTS);
+        List<User> actualList = userService.findAll(FIRST_RESULT, MAX_RESULTS);
         assertNotNull(actualList);
     }
 
     @Test
     void findByIdTest() {
-        User actual = userDAO.findById(TEST_ID);
+        User actual = userService.findById(TEST_ID);
         assertEquals(TEST_USER.getId(), actual.getId());
     }
 }

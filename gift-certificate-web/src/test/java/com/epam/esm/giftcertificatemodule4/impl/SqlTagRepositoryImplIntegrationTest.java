@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles("test")
 @SpringBootTest
-class SqlTagDAOImplIntegrationTest extends AbstractIntegrationTest {
+class SqlTagRepositoryImplIntegrationTest extends AbstractIntegrationTest {
 
     private Connection connection;
 

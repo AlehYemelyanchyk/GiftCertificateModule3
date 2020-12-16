@@ -1,6 +1,7 @@
 package com.epam.esm.giftcertificatemodule4.dao;
 
 import com.epam.esm.giftcertificatemodule4.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  * The interface interface provides methods to work with Users information in
@@ -8,7 +9,7 @@ import com.epam.esm.giftcertificatemodule4.entity.User;
  *
  * @author Aleh Yemelyanchyk
  */
-public interface UserDAO extends CrudDAO<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
     /**
      * Returns the instance of the User type.
      *

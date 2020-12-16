@@ -76,12 +76,12 @@ public class OrderController extends AbstractController<Order> {
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping
     public List<EntityModel<Order>> findAll(
-            @RequestParam(defaultValue = "0") int firstResult,
-            @RequestParam(defaultValue = "5") int maxResults
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
     ) {
         List<Order> returnObject;
         try {
-            returnObject = orderService.findAll(firstResult, maxResults);
+            returnObject = orderService.findAll(page, size);
             if (returnObject == null || returnObject.isEmpty()) {
                 throw new IllegalArgumentException("Orders");
             }

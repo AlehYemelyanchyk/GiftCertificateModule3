@@ -1,6 +1,6 @@
 package com.epam.esm.giftcertificatemodule4.rest.controller;
 
-import com.epam.esm.giftcertificatemodule4.dao.RoleService;
+import com.epam.esm.giftcertificatemodule4.services.RoleService;
 import com.epam.esm.giftcertificatemodule4.entity.Role;
 import com.epam.esm.giftcertificatemodule4.entity.User;
 import com.epam.esm.giftcertificatemodule4.payload.request.LoginRequest;

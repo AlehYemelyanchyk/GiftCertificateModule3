@@ -41,12 +41,12 @@ public class TagController extends AbstractController<Tag> {
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping
     public List<EntityModel<Tag>> findAll(
-            @RequestParam(defaultValue = "0") int firstResult,
-            @RequestParam(defaultValue = "5") int maxResults
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
     ) {
         List<Tag> returnObject;
         try {
-            returnObject = tagService.findAll(firstResult, maxResults);
+            returnObject = tagService.findAll(page, size);
             if (returnObject == null || returnObject.isEmpty()) {
                 throw new IllegalArgumentException("Tags");
             }
@@ -76,12 +76,12 @@ public class TagController extends AbstractController<Tag> {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/mostPopularTags")
     public List<EntityModel<Tag>> findMostPopularTags(
-            @RequestParam(defaultValue = "0") int firstResult,
-            @RequestParam(defaultValue = "1") int maxResults
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int size
     ) {
         List<Tag> returnObject;
         try {
-            returnObject = tagService.findMostPopularTags(firstResult, maxResults);
+            returnObject = tagService.findMostPopularTags(page, size);
             if (returnObject == null || returnObject.isEmpty()) {
                 throw new IllegalArgumentException("Tags");
             }

@@ -1,6 +1,5 @@
 package com.epam.esm.giftcertificatemodule4.impl;
 
-import com.epam.esm.giftcertificatemodule4.dao.GiftCertificateDAO;
 import com.epam.esm.giftcertificatemodule4.entity.GiftCertificate;
 import com.epam.esm.giftcertificatemodule4.entity.Tag;
 import com.epam.esm.giftcertificatemodule4.model.SearchParametersHolder;
@@ -26,12 +25,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ActiveProfiles("test")
 @SpringBootTest
-class SqlGiftCertificateDAOImplIntegrationTest extends AbstractIntegrationTest {
+class SqlGiftCertificateRepositoryImplIntegrationTest extends AbstractIntegrationTest {
 
     private Connection connection;
 
     @Autowired
-    private GiftCertificateDAO sqlGiftCertificateDAO;
+    private GiftCertificateService sqlGiftCertificateService;
 
     @Autowired
     private GiftCertificateService giftCertificateService;
@@ -75,13 +74,14 @@ class SqlGiftCertificateDAOImplIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void findAllTest() {
-        List<GiftCertificate> actualList = sqlGiftCertificateDAO.findAll(FIRST_RESULT, MAX_RESULTS);
+        List<GiftCertificate> actualList = sqlGiftCertificateService.findAll(FIRST_RESULT, MAX_RESULTS);
         assertNotNull(actualList);
     }
 
     @Test
     void findByIdTest() {
-        GiftCertificate actual = sqlGiftCertificateDAO.findById(1L);
+        GiftCertificate actual = sqlGiftCertificateService.findById(1L);
+        assertNotNull(actual);
         assertEquals(EXPECTED_GIFT_CERTIFICATE.getId(), actual.getId());
     }
 

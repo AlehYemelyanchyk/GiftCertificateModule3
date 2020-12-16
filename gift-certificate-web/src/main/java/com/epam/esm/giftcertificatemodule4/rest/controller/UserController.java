@@ -29,12 +29,12 @@ public class UserController extends AbstractController<User> {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public List<EntityModel<User>> findAll(
-            @RequestParam(defaultValue = "0") int firstResult,
-            @RequestParam(defaultValue = "5") int maxResults
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
     ) {
         List<User> returnObject;
         try {
-            returnObject = userService.findAll(firstResult, maxResults);
+            returnObject = userService.findAll(page, size);
             if (returnObject == null || returnObject.isEmpty()) {
                 throw new IllegalArgumentException("Users");
             }

@@ -1,8 +1,10 @@
 package com.epam.esm.giftcertificatemodule4.services.impl;
 
-import com.epam.esm.giftcertificatemodule4.dao.OrderDAO;
+import com.epam.esm.giftcertificatemodule4.dao.OrderRepository;
 import com.epam.esm.giftcertificatemodule4.entity.Order;
 import com.epam.esm.giftcertificatemodule4.services.OrderService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,47 +13,48 @@ import java.util.List;
 @Service
 public class OrderServiceImpl implements OrderService {
 
-    private final OrderDAO orderDAO;
+    private final OrderRepository orderRepository;
 
-    public OrderServiceImpl(OrderDAO orderDAO) {
-        this.orderDAO = orderDAO;
+    public OrderServiceImpl(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
     }
 
     @Transactional
     @Override
-    public List<Order> findAll(int firstResult, int maxResults) {
-        firstResult = Math.max(firstResult, 0);
-        maxResults = Math.max(maxResults, 5);
-        return orderDAO.findAll(firstResult, maxResults);
+    public List<Order> findAll(int page, int size) {
+        page = Math.max(page, 0);
+        size = Math.max(size, 5);
+        Pageable paging = PageRequest.of(page, size);
+        return orderRepository.findAll(paging).getContent();
     }
 
     @Transactional
     @Override
     public Order findById(Long id) {
-        return orderDAO.findById(id);
+        return orderRepository.findById(id).orElse(null);
     }
 
     @Transactional
     @Override
     public void save(Order object) {
-        orderDAO.save(object);
+        orderRepository.save(object);
     }
 
     @Transactional
     @Override
     public void update(Order object) {
-        orderDAO.update(object);
+        orderRepository.save(object);
     }
 
     @Transactional
     @Override
     public void delete(Order object) {
-        orderDAO.delete(object);
+        orderRepository.delete(object);
     }
 
     @Transactional
     @Override
     public void deleteById(Long id) {
-        orderDAO.deleteById(id);
+        orderRepository.deleteById(id);
     }
 }

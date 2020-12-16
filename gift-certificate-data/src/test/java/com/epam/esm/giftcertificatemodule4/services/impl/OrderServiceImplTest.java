@@ -1,6 +1,6 @@
 package com.epam.esm.giftcertificatemodule4.services.impl;
 
-import com.epam.esm.giftcertificatemodule4.dao.OrderDAO;
+import com.epam.esm.giftcertificatemodule4.dao.OrderRepository;
 import com.epam.esm.giftcertificatemodule4.entity.Order;
 import com.epam.esm.giftcertificatemodule4.entity.User;
 import com.epam.esm.giftcertificatemodule4.services.exceptions.ServiceException;
@@ -11,11 +11,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -30,12 +35,14 @@ class OrderServiceImplTest {
     private static final int FIRST_RESULT = 0;
     private static final int MAX_RESULTS = 5;
     private List<Order> expectedList = new ArrayList<>();
+    private Page<Order> expectedPage;
+    private Pageable paging = PageRequest.of(0, 5);
 
     @InjectMocks
     private OrderServiceImpl orderService;
 
     @Mock
-    private OrderDAO orderDAO;
+    private OrderRepository orderRepository;
 
     @BeforeEach
     public void init() {
@@ -51,18 +58,20 @@ class OrderServiceImplTest {
 
         expectedList.add(expectedOrder);
         expectedList.add(expectedOrder2);
+
+        expectedPage = new PageImpl<>(expectedList);
     }
 
     @Test
     void findAllListReturnTest() throws ServiceException {
-        Mockito.when(orderDAO.findAll(FIRST_RESULT, MAX_RESULTS)).thenReturn(expectedList);
+        Mockito.when(orderRepository.findAll(paging)).thenReturn(expectedPage);
         List<Order> actualList = orderService.findAll(FIRST_RESULT, MAX_RESULTS);
-        assertEquals(expectedList, actualList);
+        assertEquals(expectedPage.getContent(), actualList);
     }
 
     @Test
     void findByIdReturnTest() throws ServiceException {
-        Mockito.when(orderDAO.findById(TEST_ID)).thenReturn(expectedOrder);
+        Mockito.when(orderRepository.findById(TEST_ID)).thenReturn(Optional.of(expectedOrder));
         Order actualOrder = orderService.findById(TEST_ID);
         assertEquals(expectedOrder, actualOrder);
     }
@@ -70,24 +79,24 @@ class OrderServiceImplTest {
     @Test
     void saveInvocationTest() throws ServiceException {
         orderService.save(expectedOrder);
-        Mockito.verify(orderDAO).save(expectedOrder);
+        Mockito.verify(orderRepository).save(expectedOrder);
     }
 
     @Test
     void updateInvocationTest() throws ServiceException {
         orderService.update(expectedOrder);
-        Mockito.verify(orderDAO).update(expectedOrder);
+        Mockito.verify(orderRepository).save(expectedOrder);
     }
 
     @Test
     void deleteInvocationTest() throws ServiceException {
         orderService.delete(expectedOrder);
-        Mockito.verify(orderDAO).delete(expectedOrder);
+        Mockito.verify(orderRepository).delete(expectedOrder);
     }
 
     @Test
     void deleteByIdInvocationTest() {
         orderService.deleteById(TEST_ID);
-        Mockito.verify(orderDAO).deleteById(TEST_ID);
+        Mockito.verify(orderRepository).deleteById(TEST_ID);
     }
 }

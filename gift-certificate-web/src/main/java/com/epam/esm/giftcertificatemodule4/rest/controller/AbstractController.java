@@ -15,7 +15,7 @@ public abstract class AbstractController<T extends BaseEntity> {
     private static final int FIRST_RESULT = 0;
     private static final int MAX_RESULTS = 5;
 
-    public abstract List<EntityModel<T>> findAll(int firstResult, int maxResults);
+    public abstract List<EntityModel<T>> findAll(int page, int size);
 
     public abstract EntityModel<T> findById(Long id);
 

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles("test")
 @SpringBootTest
-class SqlOrderDAOImplIntegrationTest extends AbstractIntegrationTest {
+class SqlOrderRepositoryImplIntegrationTest extends AbstractIntegrationTest {
 
     private Connection connection;
 

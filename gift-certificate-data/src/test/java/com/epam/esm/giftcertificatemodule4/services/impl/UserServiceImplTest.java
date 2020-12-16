@@ -1,6 +1,6 @@
 package com.epam.esm.giftcertificatemodule4.services.impl;
 
-import com.epam.esm.giftcertificatemodule4.dao.UserDAO;
+import com.epam.esm.giftcertificatemodule4.dao.UserRepository;
 import com.epam.esm.giftcertificatemodule4.entity.User;
 import com.epam.esm.giftcertificatemodule4.services.exceptions.ServiceException;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,9 +10,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -26,13 +31,15 @@ class UserServiceImplTest {
     private static final int FIRST_RESULT = 0;
     private static final int MAX_RESULTS = 5;
     private List<User> expectedList = new ArrayList<>();
+    private Page<User> expectedPage;
     private Exception expectedException = new UnsupportedOperationException();
+    private Pageable paging = PageRequest.of(0, 5);
 
     @InjectMocks
     private UserServiceImpl userService;
 
     @Mock
-    private UserDAO userDAO;
+    private UserRepository userRepository;
 
     @BeforeEach
     public void init() {
@@ -41,18 +48,20 @@ class UserServiceImplTest {
 
         expectedList.add(expectedUser);
         expectedList.add(expectedUser2);
+
+        expectedPage = new PageImpl<>(expectedList);
     }
 
     @Test
     void findAllListReturnTest() throws ServiceException {
-        Mockito.when(userDAO.findAll(FIRST_RESULT, MAX_RESULTS)).thenReturn(expectedList);
+        Mockito.when(userRepository.findAll(paging)).thenReturn(expectedPage);
         List<User> actualList = userService.findAll(FIRST_RESULT, MAX_RESULTS);
-        assertEquals(expectedList, actualList);
+        assertEquals(expectedPage.getContent(), actualList);
     }
 
     @Test
     void findByIdReturnTest() throws ServiceException {
-        Mockito.when(userDAO.findById(TEST_ID)).thenReturn(expectedUser);
+        Mockito.when(userRepository.findById(TEST_ID)).thenReturn(Optional.of(expectedUser));
         User actualUser = userService.findById(TEST_ID);
         assertEquals(expectedUser, actualUser);
     }
@@ -60,7 +69,7 @@ class UserServiceImplTest {
     @Test
     void saveInvocationTest() {
         userService.save(expectedUser);
-        Mockito.verify(userDAO).save(expectedUser);
+        Mockito.verify(userRepository).save(expectedUser);
     }
 
     @Test
