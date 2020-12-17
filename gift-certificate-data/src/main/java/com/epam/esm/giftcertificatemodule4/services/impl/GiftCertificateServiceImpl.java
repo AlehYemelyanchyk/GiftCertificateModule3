@@ -71,10 +71,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Transactional
     @Override
     public void update(GiftCertificate giftCertificate) {
-        getTagsId(giftCertificate);
         GiftCertificate persistedGiftCertificate = findById(giftCertificate.getId());
-        setUpdatedFields(giftCertificate, persistedGiftCertificate);
-        giftCertificateRepository.save(giftCertificate);
+        if (persistedGiftCertificate != null) {
+            getTagsId(giftCertificate);
+            setUpdatedFields(giftCertificate, persistedGiftCertificate);
+            giftCertificateRepository.save(giftCertificate);
+        }
     }
 
     @Transactional

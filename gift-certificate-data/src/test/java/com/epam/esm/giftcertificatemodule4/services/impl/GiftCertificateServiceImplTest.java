@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith(MockitoExtension.class)
 class GiftCertificateServiceImplTest {
@@ -34,13 +35,13 @@ class GiftCertificateServiceImplTest {
     private SearchParametersHolder testSearchParametersHolder = new SearchParametersHolder();
 
     private Long id = 1L;
+    private static final Long ID = 1L;
     private Tag expectedTag = new Tag();
     private Tag expectedTag2 = new Tag();
     private List<GiftCertificate> expectedList = new ArrayList<>();
     private Page<GiftCertificate> expectedPage;
-    private static final long TEST_ID = 1L;
-    private static final int FIRST_RESULT = 0;
-    private static final int MAX_RESULTS = 5;
+    private int page = 0;
+    private int size = 5;
     private Pageable paging = PageRequest.of(0, 5);
 
     @InjectMocks
@@ -82,16 +83,38 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
+    void findAllListNegativePageTest() throws ServiceException {
+        Mockito.when(giftCertificateRepository.findAll(paging)).thenReturn(expectedPage);
+        List<GiftCertificate> actualList = giftCertificateService.findAll(-1, size);
+        assertEquals(expectedPage.getContent(), actualList);
+    }
+
+    @Test
+    void findAllListNegativeSizeTest() throws ServiceException {
+        Mockito.when(giftCertificateRepository.findAll(paging)).thenReturn(expectedPage);
+        List<GiftCertificate> actualList = giftCertificateService.findAll(page, -1);
+        assertEquals(expectedPage.getContent(), actualList);
+    }
+
+    @Test
+    void findAllReturnNothingTest() throws ServiceException {
+        List<GiftCertificate> emptyList = new ArrayList<>();
+        Mockito.when(giftCertificateRepository.findAll(paging)).thenReturn(new PageImpl<>(emptyList));
+        List<GiftCertificate> actualList = giftCertificateService.findAll(page, -1);
+        assertEquals(emptyList, actualList);
+    }
+
+    @Test
     void findAllListReturnTest() throws ServiceException {
         Mockito.when(giftCertificateRepository.findAll(paging)).thenReturn(expectedPage);
-        List<GiftCertificate> actualList = giftCertificateService.findAll(FIRST_RESULT, MAX_RESULTS);
+        List<GiftCertificate> actualList = giftCertificateService.findAll(page, size);
         assertEquals(expectedPage.getContent(), actualList);
     }
 
     @Test
     void findAllTagsReturnTest() throws ServiceException {
         Mockito.when(giftCertificateRepository.findAll(paging)).thenReturn(expectedPage);
-        List<GiftCertificate> actualList = giftCertificateService.findAll(FIRST_RESULT, MAX_RESULTS);
+        List<GiftCertificate> actualList = giftCertificateService.findAll(page, size);
         for (int i = 0; i < expectedPage.getContent().size(); i++) {
             assertEquals(expectedPage.getContent().get(i).getTags(), actualList.get(i).getTags());
         }
@@ -99,29 +122,36 @@ class GiftCertificateServiceImplTest {
 
     @Test
     void findByIdReturnTest() throws ServiceException {
-        Mockito.when(giftCertificateRepository.findById(TEST_ID)).thenReturn(Optional.of(expectedGiftCertificate));
-        GiftCertificate actualGiftCertificate = giftCertificateService.findById(TEST_ID);
+        Mockito.when(giftCertificateRepository.findById(ID)).thenReturn(Optional.of(expectedGiftCertificate));
+        GiftCertificate actualGiftCertificate = giftCertificateService.findById(ID);
         assertEquals(expectedGiftCertificate, actualGiftCertificate);
     }
 
     @Test
+    void findByIdReturnNullTest() throws ServiceException {
+        Mockito.when(giftCertificateRepository.findById(ID)).thenReturn(Optional.empty());
+        GiftCertificate actualGiftCertificate = giftCertificateService.findById(ID);
+        assertNull(actualGiftCertificate);
+    }
+
+    @Test
     void findByIdTagsReturnTest() throws ServiceException {
-        Mockito.when(giftCertificateRepository.findById(TEST_ID)).thenReturn(Optional.of(expectedGiftCertificate));
-        GiftCertificate actualCertificate = giftCertificateService.findById(TEST_ID);
+        Mockito.when(giftCertificateRepository.findById(id)).thenReturn(Optional.of(expectedGiftCertificate));
+        GiftCertificate actualCertificate = giftCertificateService.findById(id);
         assertEquals(expectedGiftCertificate.getTags(), actualCertificate.getTags());
     }
 
     @Test
     void findByListReturnTest() throws ServiceException {
         Mockito.when(giftCertificateRepositoryCustom.findBy(testSearchParametersHolder, paging)).thenReturn(expectedList);
-        List<GiftCertificate> actualList = giftCertificateService.findBy(testSearchParametersHolder, FIRST_RESULT, MAX_RESULTS);
+        List<GiftCertificate> actualList = giftCertificateService.findBy(testSearchParametersHolder, page, size);
         assertEquals(expectedList, actualList);
     }
 
     @Test
     void findByTagsReturnTest() throws ServiceException {
         Mockito.when(giftCertificateRepositoryCustom.findBy(testSearchParametersHolder, paging)).thenReturn(expectedList);
-        List<GiftCertificate> actualList = giftCertificateService.findBy(testSearchParametersHolder, FIRST_RESULT, MAX_RESULTS);
+        List<GiftCertificate> actualList = giftCertificateService.findBy(testSearchParametersHolder, page, size);
         for (int i = 0; i < expectedList.size(); i++) {
             assertEquals(expectedList.get(i).getTags(), actualList.get(i).getTags());
         }
@@ -135,8 +165,16 @@ class GiftCertificateServiceImplTest {
 
     @Test
     void updateInvocationTest() throws ServiceException {
+        Mockito.when(giftCertificateRepository.findById(id)).thenReturn(Optional.of(expectedGiftCertificate));
+        expectedGiftCertificate.setId(id);
         giftCertificateService.update(expectedGiftCertificate);
         Mockito.verify(giftCertificateRepository).save(expectedGiftCertificate);
+    }
+
+    @Test
+    void updateNoInvocationTest() throws ServiceException {
+        giftCertificateService.update(expectedGiftCertificate);
+        Mockito.verify(giftCertificateRepository, Mockito.never()).save(expectedGiftCertificate);
     }
 
     @Test
@@ -147,7 +185,7 @@ class GiftCertificateServiceImplTest {
 
     @Test
     void deleteByIdInvocationTest() {
-        giftCertificateService.deleteById(TEST_ID);
-        Mockito.verify(giftCertificateRepository).deleteById(TEST_ID);
+        giftCertificateService.deleteById(id);
+        Mockito.verify(giftCertificateRepository).deleteById(id);
     }
 }
