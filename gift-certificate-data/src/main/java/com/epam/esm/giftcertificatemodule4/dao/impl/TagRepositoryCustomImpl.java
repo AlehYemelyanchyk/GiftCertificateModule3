@@ -15,7 +15,7 @@ import javax.persistence.criteria.*;
 import java.util.List;
 
 @Repository
-public class TagRepositoryHibernate implements TagRepositoryCustom {
+public class TagRepositoryCustomImpl implements TagRepositoryCustom {
 
     @PersistenceContext
     private EntityManager entityManager;
