@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@PreAuthorize("hasRole('ADMIN')")
 @RestController
 @RequestMapping("/api/tags")
 public class TagController extends AbstractController<Tag> {
@@ -26,7 +27,6 @@ public class TagController extends AbstractController<Tag> {
         this.tagService = tagService;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public Tag save(@RequestBody Tag tag) {
         try {
@@ -73,7 +73,6 @@ public class TagController extends AbstractController<Tag> {
         return getEntityModel(returnObject);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/mostPopularTags")
     public List<EntityModel<Tag>> findMostPopularTags(
             @RequestParam(defaultValue = "0") int page,
@@ -92,7 +91,6 @@ public class TagController extends AbstractController<Tag> {
         return getEntityModels(returnObject);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping
     public Tag update(@RequestBody Tag tag) {
         try {
@@ -104,7 +102,6 @@ public class TagController extends AbstractController<Tag> {
         return tag;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping
     public void delete(@RequestBody Tag tag) {
         try {
@@ -115,7 +112,6 @@ public class TagController extends AbstractController<Tag> {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Long id) {
         try {

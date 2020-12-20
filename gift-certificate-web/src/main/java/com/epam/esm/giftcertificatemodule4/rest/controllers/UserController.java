@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@PreAuthorize("hasRole('ADMIN')")
 @RestController
 @RequestMapping("/api/users")
 public class UserController extends AbstractController<User> {
@@ -26,7 +27,6 @@ public class UserController extends AbstractController<User> {
         this.userService = userService;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public List<EntityModel<User>> findAll(
             @RequestParam(defaultValue = "0") int page,

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@PreAuthorize("hasRole('ADMIN')")
 @RestController
 @RequestMapping("/api/certificates")
 public class GiftCertificateController extends AbstractController<GiftCertificate> {
@@ -27,7 +28,6 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
         this.giftCertificateService = giftCertificateService;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public GiftCertificate save(@RequestBody GiftCertificate giftCertificate) {
         try {
@@ -107,7 +107,6 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
         return getEntityModels(returnObject);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping
     public GiftCertificate update(@RequestBody GiftCertificate giftCertificate) {
         try {
@@ -119,7 +118,6 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
         return giftCertificate;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping
     public void delete(@RequestBody GiftCertificate giftCertificate) {
         try {
@@ -130,7 +128,6 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Long id) {
         try {

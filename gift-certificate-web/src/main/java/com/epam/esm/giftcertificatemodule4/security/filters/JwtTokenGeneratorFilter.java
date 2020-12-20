@@ -1,6 +1,7 @@
 package com.epam.esm.giftcertificatemodule4.security.filters;
 
 import com.epam.esm.giftcertificatemodule4.security.constants.SecurityConstants;
+import com.epam.esm.giftcertificatemodule4.services.impl.UserDetailsImpl;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.Authentication;
@@ -28,7 +29,8 @@ public class JwtTokenGeneratorFilter extends OncePerRequestFilter {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
             SecretKey key = Keys.hmacShaKeyFor(SecurityConstants.JWT_KEY.getBytes(StandardCharsets.UTF_8));
-            String jwt = Jwts.builder().setIssuer("Gift Certificates").setSubject("JWT Token")
+            Long userId = ((UserDetailsImpl) authentication.getPrincipal()).getId();
+            String jwt = Jwts.builder().setIssuer("Gift Certificates").setSubject(userId.toString())
                     .claim("username", authentication.getName())
                     .claim("authorities", populateAuthorities(authentication.getAuthorities()))
                     .setIssuedAt(new Date())

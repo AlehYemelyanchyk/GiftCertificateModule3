@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@PreAuthorize("hasRole('ADMIN')")
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController extends AbstractController<Order> {
@@ -73,7 +74,6 @@ public class OrderController extends AbstractController<Order> {
         return order;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public List<EntityModel<Order>> findAll(
             @RequestParam(defaultValue = "0") int page,
@@ -92,7 +92,7 @@ public class OrderController extends AbstractController<Order> {
         return getEntityModels(returnObject);
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
     @GetMapping("/{id}")
     public EntityModel<Order> findById(@PathVariable Long id) {
         Order returnObject;
