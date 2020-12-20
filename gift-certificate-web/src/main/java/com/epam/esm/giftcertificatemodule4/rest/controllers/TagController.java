@@ -1,4 +1,4 @@
-package com.epam.esm.giftcertificatemodule4.rest.controller;
+package com.epam.esm.giftcertificatemodule4.rest.controllers;
 
 import com.epam.esm.giftcertificatemodule4.entity.Tag;
 import com.epam.esm.giftcertificatemodule4.services.TagService;

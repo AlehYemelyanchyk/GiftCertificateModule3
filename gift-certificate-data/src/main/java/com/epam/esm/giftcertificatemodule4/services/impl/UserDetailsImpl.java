@@ -1,4 +1,5 @@
-package com.epam.esm.giftcertificatemodule4.security.services;
+package com.epam.esm.giftcertificatemodule4.services.impl;
+
 
 import com.epam.esm.giftcertificatemodule4.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;

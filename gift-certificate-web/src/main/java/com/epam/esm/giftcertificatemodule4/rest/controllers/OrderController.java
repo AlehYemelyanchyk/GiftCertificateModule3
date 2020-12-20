@@ -1,4 +1,4 @@
-package com.epam.esm.giftcertificatemodule4.rest.controller;
+package com.epam.esm.giftcertificatemodule4.rest.controllers;
 
 import com.epam.esm.giftcertificatemodule4.entity.GiftCertificate;
 import com.epam.esm.giftcertificatemodule4.entity.Order;
@@ -73,7 +73,7 @@ public class OrderController extends AbstractController<Order> {
         return order;
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public List<EntityModel<Order>> findAll(
             @RequestParam(defaultValue = "0") int page,
