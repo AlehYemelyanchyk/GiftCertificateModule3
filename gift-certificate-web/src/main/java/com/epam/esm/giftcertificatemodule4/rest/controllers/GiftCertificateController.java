@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasRole('ADMIN') " +
+        "or hasAuthority('SCOPE_administrate')")
 @RestController
 @RequestMapping("/api/certificates")
 public class GiftCertificateController extends AbstractController<GiftCertificate> {
@@ -39,7 +40,8 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
         return giftCertificate;
     }
 
-    @PreAuthorize("hasRole('GUEST') or hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('GUEST', 'USER', 'ADMIN') " +
+            "or hasAnyAuthority('SCOPE_administrate', 'SCOPE_read', 'SCOPE_guesting')")
     @GetMapping
     public List<EntityModel<GiftCertificate>> findAll(
             @RequestParam(defaultValue = "0") int page,
@@ -59,7 +61,8 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
         return getEntityModels(returnObject);
     }
 
-    @PreAuthorize("hasRole('GUEST') or hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('GUEST', 'USER', 'ADMIN') " +
+            "or hasAnyAuthority('SCOPE_administrate', 'SCOPE_read', 'SCOPE_guesting')")
     @GetMapping("/{id}")
     public EntityModel<GiftCertificate> findById(@PathVariable Long id) {
         GiftCertificate returnObject;
@@ -75,7 +78,8 @@ public class GiftCertificateController extends AbstractController<GiftCertificat
         return getEntityModel(returnObject);
     }
 
-    @PreAuthorize("hasRole('GUEST') or hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('GUEST') or hasRole('USER') or hasRole('ADMIN') " +
+            "or hasAuthority('SCOPE_administrate') or hasAuthority('SCOPE_read') or hasAuthority('SCOPE_guesting')")
     @GetMapping("/findBy")
     public List<EntityModel<GiftCertificate>> findBy(@RequestParam(defaultValue = "0") int page,
                                                      @RequestParam(defaultValue = "5") int size,

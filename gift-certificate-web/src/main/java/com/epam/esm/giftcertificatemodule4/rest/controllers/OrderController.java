@@ -18,7 +18,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasRole('ADMIN') " +
+        "or hasAuthority('SCOPE_administrate')")
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController extends AbstractController<Order> {
@@ -38,7 +39,8 @@ public class OrderController extends AbstractController<Order> {
         this.giftCertificateService = giftCertificateService;
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.id " +
+            "or hasAuthority('SCOPE_order')")
     @PostMapping
     public Order save(
             @RequestParam(name = "userId") Long userId,
@@ -92,7 +94,8 @@ public class OrderController extends AbstractController<Order> {
         return getEntityModels(returnObject);
     }
 
-    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
+    @PreAuthorize("hasAnyRole('ADMIN') or #id == principal.attributes.get(\"sub\") " +
+            "or hasAuthority('SCOPE_order')")
     @GetMapping("/{id}")
     public EntityModel<Order> findById(@PathVariable Long id) {
         Order returnObject;

@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasRole('ADMIN') " +
+        "or hasAuthority('SCOPE_administrate')")
 @RestController
 @RequestMapping("/api/tags")
 public class TagController extends AbstractController<Tag> {
@@ -38,7 +39,8 @@ public class TagController extends AbstractController<Tag> {
         return tag;
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN') " +
+            "or hasAuthority('SCOPE_administrate') or hasAuthority('SCOPE_read')")
     @GetMapping
     public List<EntityModel<Tag>> findAll(
             @RequestParam(defaultValue = "0") int page,
@@ -57,7 +59,8 @@ public class TagController extends AbstractController<Tag> {
         return getEntityModels(returnObject);
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN') " +
+            "or hasAuthority('SCOPE_administrate') or hasAuthority('SCOPE_read')")
     @GetMapping("/{id}")
     public EntityModel<Tag> findById(@PathVariable Long id) {
         Tag returnObject;

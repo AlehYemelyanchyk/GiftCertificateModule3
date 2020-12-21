@@ -7,11 +7,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@PreAuthorize("hasRole('ADMIN')")
+//@PreAuthorize("hasRole('ADMIN') " +
+//        "or hasAuthority('SCOPE_administrate')")
 @RestController
 @RequestMapping("/api/users")
 public class UserController extends AbstractController<User> {
@@ -45,9 +48,17 @@ public class UserController extends AbstractController<User> {
         return getEntityModels(returnObject);
     }
 
-    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
+    @Override
+    public EntityModel<User> findById(Long id) {
+        return null;
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN') or #id == principal.attributes.get(\"sub\") " +
+            "or hasAnyAuthority('SCOPE_administrate')")
     @GetMapping("/{id}")
-    public EntityModel<User> findById(@PathVariable Long id) {
+    public EntityModel<User> findById(@PathVariable String id,
+                                      @AuthenticationPrincipal OidcUser principal) {
+        ;
         User returnObject = null;
         try {
             returnObject = userService.findById(id);

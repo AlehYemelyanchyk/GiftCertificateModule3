@@ -35,6 +35,8 @@ public class AuthController {
 
     @PostMapping("/signin")
     public void signin() {
+        // The endpoint is only used to call out the Spring Security FilterChain.
+        // At this stage the logic is fully completed with Spring Security
     }
 
     @PostMapping("/signup")
@@ -43,25 +45,6 @@ public class AuthController {
         String email = signUpRequest.getEmail();
         String password = signUpRequest.getPassword();
         Set<String> roles = signUpRequest.getRole();
-        try {
-            if (userService.existsByName(username)) {
-                return ResponseEntity
-                        .badRequest()
-                        .body("Error: Username is already taken!");
-            }
-        } catch (Exception e) {
-            LOGGER.info("The name doesn't exist. Can be registered.");
-        }
-
-        try {
-            if (userService.existsByEmail(email)) {
-                return ResponseEntity
-                        .badRequest()
-                        .body("Error: Email is already taken!");
-            }
-        } catch (Exception e) {
-            LOGGER.info("The email doesn't exist. Can be registered.");
-        }
 
         User user = new User();
         user.setName(username);
@@ -73,7 +56,7 @@ public class AuthController {
         if (roles == null || roles.size() == 0) {
             Role userRole = roleService.findByName("ROLE_GUEST");
             if (userRole == null) {
-                throw new RuntimeException("Error: Role is not found.");
+                throw new IllegalArgumentException("Role ROLE_GUEST is not found");
             }
             rolesSet.add(userRole);
         } else {
@@ -81,13 +64,13 @@ public class AuthController {
                 if ("user".equals(role)) {
                     Role modRole = this.roleService.findByName("ROLE_USER");
                     if (modRole == null) {
-                        throw new RuntimeException("Error: Role is not found.");
+                        throw new IllegalArgumentException("Role ROLE_USER is not found");
                     }
                     rolesSet.add(modRole);
                 } else {
                     Role guestRole = this.roleService.findByName("ROLE_GUEST");
                     if (guestRole == null) {
-                        throw new RuntimeException("Error: Role is not found.");
+                        throw new IllegalArgumentException("Role ROLE_GUEST is not found");
                     }
                     rolesSet.add(guestRole);
                 }
