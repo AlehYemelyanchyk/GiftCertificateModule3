@@ -2,7 +2,6 @@ package com.epam.esm.giftcertificatemodule4.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -15,7 +14,7 @@ public class User extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private Long id;
+    private String id;
 
     @Column(name = "name")
     private String name;
@@ -42,21 +41,18 @@ public class User extends BaseEntity implements Serializable {
     public User() {
     }
 
-    public void addOrder(Order order) {
-        if (orders == null) {
-            orders = new ArrayList<>();
-        }
-        orders.add(order);
-        order.setUser(this);
+    @Override
+    public Long getId() {
+        return null;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override
-    public Long getId() {
+    public String getStrId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {

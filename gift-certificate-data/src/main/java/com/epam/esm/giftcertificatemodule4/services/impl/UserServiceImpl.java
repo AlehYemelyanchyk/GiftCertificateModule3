@@ -1,6 +1,7 @@
 package com.epam.esm.giftcertificatemodule4.services.impl;
 
 import com.epam.esm.giftcertificatemodule4.dao.UserRepository;
+import com.epam.esm.giftcertificatemodule4.dao.UserRepositoryCustom;
 import com.epam.esm.giftcertificatemodule4.entity.User;
 import com.epam.esm.giftcertificatemodule4.services.UserService;
 import org.springframework.data.domain.PageRequest;
@@ -14,9 +15,11 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UserRepositoryCustom userRepositoryCustom;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserRepositoryCustom userRepositoryCustom) {
         this.userRepository = userRepository;
+        this.userRepositoryCustom = userRepositoryCustom;
     }
 
     @Override
@@ -30,6 +33,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findById(Long id) {
         return userRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public User findById(String id) {
+        return userRepositoryCustom.findById(id);
     }
 
     @Override

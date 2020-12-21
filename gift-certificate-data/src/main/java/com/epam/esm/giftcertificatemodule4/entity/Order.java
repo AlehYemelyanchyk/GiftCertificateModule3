@@ -68,6 +68,11 @@ public class Order extends BaseEntity implements Serializable {
         this.id = id;
     }
 
+    @Override
+    public String getStrId() {
+        return null;
+    }
+
     public OffsetDateTime getDate() {
         return date;
     }

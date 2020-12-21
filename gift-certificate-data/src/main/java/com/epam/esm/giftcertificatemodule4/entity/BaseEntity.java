@@ -21,6 +21,8 @@ public abstract class BaseEntity {
 
     public abstract Long getId();
 
+    public abstract String getStrId();
+
     public String getOperation() {
         return operation;
     }

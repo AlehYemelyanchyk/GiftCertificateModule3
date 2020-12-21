@@ -13,6 +13,14 @@ public interface UserService extends CrudService<User, Long> {
     /**
      * Returns the instance of the User type.
      *
+     * @param id is an ID of User.
+     * @return the instance of User.
+     */
+    User findById(String id);
+
+    /**
+     * Returns the instance of the User type.
+     *
      * @param name is a name of User.
      * @return the instance of User.
      */
