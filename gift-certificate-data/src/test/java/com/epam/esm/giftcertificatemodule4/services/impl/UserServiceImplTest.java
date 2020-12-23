@@ -1,6 +1,7 @@
 package com.epam.esm.giftcertificatemodule4.services.impl;
 
 import com.epam.esm.giftcertificatemodule4.dao.UserRepository;
+import com.epam.esm.giftcertificatemodule4.dao.UserRepositoryCustom;
 import com.epam.esm.giftcertificatemodule4.entity.User;
 import com.epam.esm.giftcertificatemodule4.services.exceptions.ServiceException;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,8 +29,8 @@ class UserServiceImplTest {
     private User expectedUser = new User();
     private User expectedUser2 = new User();
     private static final Long TEST_ID = 1L;
-    private static final int FIRST_RESULT = 0;
-    private static final int MAX_RESULTS = 5;
+    private static final int PAGE = 0;
+    private static final int SIZE = 5;
     private List<User> expectedList = new ArrayList<>();
     private Page<User> expectedPage;
     private Exception expectedException = new UnsupportedOperationException();
@@ -40,6 +41,9 @@ class UserServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private UserRepositoryCustom userRepositoryCustom;
 
     @BeforeEach
     public void init() {
@@ -55,7 +59,7 @@ class UserServiceImplTest {
     @Test
     void findAllListReturnTest() throws ServiceException {
         Mockito.when(userRepository.findAll(paging)).thenReturn(expectedPage);
-        List<User> actualList = userService.findAll(FIRST_RESULT, MAX_RESULTS);
+        List<User> actualList = userService.findAll(PAGE, SIZE);
         assertEquals(expectedPage.getContent(), actualList);
     }
 
@@ -63,6 +67,13 @@ class UserServiceImplTest {
     void findByIdReturnTest() throws ServiceException {
         Mockito.when(userRepository.findById(TEST_ID)).thenReturn(Optional.of(expectedUser));
         User actualUser = userService.findById(TEST_ID);
+        assertEquals(expectedUser, actualUser);
+    }
+
+    @Test
+    void findByStringIdReturnTest() throws ServiceException {
+        Mockito.when(userRepositoryCustom.findById("TEST_ID")).thenReturn(expectedUser);
+        User actualUser = userService.findById("TEST_ID");
         assertEquals(expectedUser, actualUser);
     }
 

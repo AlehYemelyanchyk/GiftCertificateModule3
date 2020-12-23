@@ -25,8 +25,8 @@ class SqlTagRepositoryImplIntegrationTest extends AbstractIntegrationTest {
     TagService tagService;
 
     private static final Tag EXPECTED_TAG = new Tag();
-    private static final int FIRST_RESULT = 0;
-    private static final int MAX_RESULTS = 5;
+    private static final int PAGE = 0;
+    private static final int SIZE = 5;
 
     @BeforeEach
     void create() throws SQLException {
@@ -42,11 +42,11 @@ class SqlTagRepositoryImplIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void saveTest() {
-        List<Tag> beforeTest = tagService.findAll(FIRST_RESULT, MAX_RESULTS);
+        List<Tag> beforeTest = tagService.findAll(PAGE, SIZE);
         Tag newTag = new Tag();
         newTag.setName("NewTag");
         tagService.save(newTag);
-        List<Tag> afterTest = tagService.findAll(FIRST_RESULT, MAX_RESULTS);
+        List<Tag> afterTest = tagService.findAll(PAGE, SIZE);
         assertNotNull(beforeTest);
         assertNotNull(afterTest);
         assertEquals(beforeTest.size(), afterTest.size());
@@ -54,7 +54,7 @@ class SqlTagRepositoryImplIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void findAllTest() {
-        List<Tag> actualList = tagService.findAll(FIRST_RESULT, MAX_RESULTS);
+        List<Tag> actualList = tagService.findAll(PAGE, SIZE);
         assertNotNull(actualList);
     }
 
@@ -72,7 +72,7 @@ class SqlTagRepositoryImplIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void findMostPopularTagsTest() {
-        List<Tag> actual = tagService.findMostPopularTags(FIRST_RESULT, MAX_RESULTS);
+        List<Tag> actual = tagService.findMostPopularTags(PAGE, SIZE);
         assertEquals(4, actual.get(0).getId());
     }
 
