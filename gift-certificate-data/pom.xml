@@ -10,8 +10,4 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>gift-certificate-data</artifactId>
-
-    <properties>
-        <spring.version>5.2.9.RELEASE</spring.version>
-    </properties>
 </project>
