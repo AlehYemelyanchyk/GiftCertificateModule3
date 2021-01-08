@@ -12,8 +12,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 public abstract class AbstractController<T extends BaseEntity> {
 
-    private static final int FIRST_RESULT = 0;
-    private static final int MAX_RESULTS = 5;
+    private static final int PAGE = 0;
+    private static final int SIZE = 5;
 
     public abstract List<EntityModel<T>> findAll(int page, int size);
 
@@ -31,7 +31,7 @@ public abstract class AbstractController<T extends BaseEntity> {
     }
 
     protected EntityModel<T> getEntityModel(T returnObject) {
-        WebMvcLinkBuilder linkToFindAll = linkTo(methodOn(this.getClass()).findAll(FIRST_RESULT, MAX_RESULTS));
+        WebMvcLinkBuilder linkToFindAll = linkTo(methodOn(this.getClass()).findAll(PAGE, SIZE));
         EntityModel<T> entityModel = EntityModel.of(returnObject);
         entityModel.add(linkToFindAll.withRel(getAllResults()));
         return entityModel;
