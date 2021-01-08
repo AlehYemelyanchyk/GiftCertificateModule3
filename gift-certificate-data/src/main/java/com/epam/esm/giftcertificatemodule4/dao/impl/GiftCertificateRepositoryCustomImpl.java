@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class GiftCertificateRepositoryHibernate implements GiftCertificateRepositoryCustom {
+public class GiftCertificateRepositoryCustomImpl implements GiftCertificateRepositoryCustom {
 
     @PersistenceContext
     private EntityManager entityManager;
