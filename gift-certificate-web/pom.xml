@@ -11,6 +11,8 @@
 
     <properties>
         <h2.version>1.4.200</h2.version>
+        <sonar.coverage.jacoco.xmlReportPaths>../target/site/jacoco-aggregate/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <artifactId>gift-certificate-web</artifactId>
