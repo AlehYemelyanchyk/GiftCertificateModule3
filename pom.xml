@@ -27,6 +27,9 @@
         <log4j.version>2.13.2</log4j.version>
         <jakarta.version>3.0.0</jakarta.version>
         <jjwt.version>0.11.2</jjwt.version>
+        <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+        <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
     </properties>
 
     <dependencies>
@@ -128,18 +131,14 @@
                 <version>0.8.6</version>
                 <executions>
                     <execution>
-                        <id>prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
-                    <execution>
-                        <id>report</id>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
                 </executions>
+                <configuration>
+                    <destFile>${sonar.jacoco.reportPath}</destFile>
+                </configuration>
             </plugin>
         </plugins>
     </build>
