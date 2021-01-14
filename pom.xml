@@ -28,13 +28,15 @@
         <jakarta.version>3.0.0</jakarta.version>
         <jjwt.version>0.11.2</jjwt.version>
 
-        <!-- Sonar -->
-        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-        <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
-        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../target/jacocoXmlReport.xml</sonar.coverage.jacoco.xmlReportPaths>
-        <sonar.language>java</sonar.language>
+        <aggregate.report.dir>tests/target/site/jacoco-aggregate/jacoco.xml</aggregate.report.dir>
+
+<!--        &lt;!&ndash; Sonar &ndash;&gt;-->
+<!--        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>-->
+<!--        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>-->
+<!--        <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>-->
+<!--        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>-->
+<!--        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../target/jacocoXmlReport.xml</sonar.coverage.jacoco.xmlReportPaths>-->
+<!--        <sonar.language>java</sonar.language>-->
     </properties>
 
     <dependencies>
@@ -137,31 +139,68 @@
 
     <build>
         <plugins>
+
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.7.0.1746</version>
+            </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.6</version>
-                <configuration>
-                    <destFile>${sonar.jacoco.reportPath}</destFile>
-                    <destFile>${sonar.coverage.jacoco.xmlReportPaths}</destFile>
-                    <append>true</append>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
+
+<!--            <plugin>-->
+<!--                <groupId>org.jacoco</groupId>-->
+<!--                <artifactId>jacoco-maven-plugin</artifactId>-->
+<!--                <version>0.8.6</version>-->
+<!--                <configuration>-->
+<!--                    <destFile>${sonar.jacoco.reportPath}</destFile>-->
+<!--                    <destFile>${sonar.coverage.jacoco.xmlReportPaths}</destFile>-->
+<!--                    <append>true</append>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <goals>-->
+<!--                            <goal>prepare-agent</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                    <execution>-->
+<!--                        <id>report</id>-->
+<!--                        <phase>prepare-package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>report</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>coverage</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>prepare-agent</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
