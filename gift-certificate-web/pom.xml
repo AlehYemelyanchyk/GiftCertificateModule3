@@ -11,14 +11,6 @@
 
     <properties>
         <h2.version>1.4.200</h2.version>
-        <sonar.projectKey>org.springframework.boot:GiftCertificateModule3</sonar.projectKey>
-        <sonar.host.url>http://localhost:9000</sonar.host.url>
-        <sonar.language>java</sonar.language>
-        <sonar.sources>.</sonar.sources>
-        <sonar.java.binaries>.</sonar.java.binaries>
-        <sonar.login>admin</sonar.login>
-        <sonar.password>Ssanchez01E</sonar.password>
-        <sonar.sources>C:/Windows/System32/config/systemprofile/AppData/Local/Jenkins/.jenkins/workspace/Deploying Job</sonar.sources>
     </properties>
 
     <artifactId>gift-certificate-web</artifactId>
@@ -45,31 +37,31 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
-            <plugin>
-                <groupId>org.sonarsource.scanner.maven</groupId>
-                <artifactId>sonar-maven-plugin</artifactId>
-                <version>3.7.0.1746</version>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.sonarsource.scanner.maven</groupId>-->
+<!--                <artifactId>sonar-maven-plugin</artifactId>-->
+<!--                <version>3.7.0.1746</version>-->
+<!--            </plugin>-->
 
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.6</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.jacoco</groupId>-->
+<!--                <artifactId>jacoco-maven-plugin</artifactId>-->
+<!--                <version>0.8.6</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <goals>-->
+<!--                            <goal>prepare-agent</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                    <execution>-->
+<!--                        <id>report</id>-->
+<!--                        <phase>prepare-package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>report</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 </project>
