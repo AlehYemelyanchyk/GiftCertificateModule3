@@ -129,8 +129,6 @@
                         <server>maven-tomcat-war-deployment-server</server>
                         <url>http://localhost:8080/manager/text</url>
                         <path>/gifts</path>
-                        <username>alehyem</username>
-                        <password>alehyem</password>
                     </configuration>
                 </plugin>
                 <plugin>
