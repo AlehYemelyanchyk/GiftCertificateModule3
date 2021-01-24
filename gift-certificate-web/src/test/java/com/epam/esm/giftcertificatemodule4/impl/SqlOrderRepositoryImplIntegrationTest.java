@@ -31,8 +31,8 @@ class SqlOrderRepositoryImplIntegrationTest extends AbstractIntegrationTest {
     private static final User TEST_USER = new User();
     private static final Long TEST_ID = 1L;
     private static final String TEST_NAME = "Test user";
-    private static final int FIRST_RESULT = 0;
-    private static final int MAX_RESULTS = 25;
+    private static final int PAGE = 0;
+    private static final int SIZE = 25;
 
     @BeforeEach
     void create() throws SQLException {
@@ -52,9 +52,9 @@ class SqlOrderRepositoryImplIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void saveTest() {
-        List<Order> listBefore = orderService.findAll(FIRST_RESULT, MAX_RESULTS);
+        List<Order> listBefore = orderService.findAll(PAGE, SIZE);
         orderService.save(TEST_ORDER);
-        List<Order> listAfter = orderService.findAll(FIRST_RESULT, MAX_RESULTS);
+        List<Order> listAfter = orderService.findAll(PAGE, SIZE);
         assertNotNull(listBefore);
         assertNotNull(listAfter);
         assertNotEquals(listBefore, listAfter);
@@ -62,7 +62,7 @@ class SqlOrderRepositoryImplIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void findAllTest() {
-        List<Order> actualList = orderService.findAll(FIRST_RESULT, MAX_RESULTS);
+        List<Order> actualList = orderService.findAll(PAGE, SIZE);
         assertNotNull(actualList);
     }
 
